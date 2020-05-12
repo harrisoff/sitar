@@ -1,0 +1,48 @@
+@import "../../styles/variables.less";
+
+.page-menu {
+  .book-list {
+    .book-wrapper {
+      margin: 30rpx 0;
+      .book__info {
+        view {
+          text-align: center;
+        }
+        .book__cover {
+          display: block;
+          margin: 0 auto;
+          height: 400rpx;
+        }
+        .book__title {
+          font-size: @font24;
+          height: 50rpx;
+          line-height: 50rpx;
+          margin: 10rpx 0;
+        }
+        .book__author {
+          font-size: @font14;
+        }
+        .book__intro {
+          font-size: @font14;
+          color: #999;
+        }
+      }
+      .book__menu {
+        .at-accordion {
+          .at-accordion__header {
+            padding: 12rpx 24rpx;
+          }
+        }
+        .at-list__item.at-list__item--multiple {
+          padding: 12rpx 24rpx;
+          .at-list__item-container
+            .at-list__item-content.item-content
+            .item-content__info
+            .item-content__info-title {
+            font-size: @font16;
+          }
+        }
+      }
+    }
+  }
+}

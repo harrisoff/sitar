@@ -1,0 +1,26 @@
+{
+  "rules": [
+    {
+      "action": "allow",
+      "page": "pages/article/index",
+      "params": ["_id", "real_id"],
+      "matching": "exact"
+    },
+    {
+      "action": "disallow",
+      "page": "pages/search/index"
+    },
+    {
+      "action": "disallow",
+      "page": "pages/user/index"
+    },
+    {
+      "action": "disallow",
+      "page": "pages/user/comment/index"
+    },
+    {
+      "action": "disallow",
+      "page": "pages/user/like/index"
+    }
+  ]
+}

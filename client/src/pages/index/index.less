@@ -1,0 +1,103 @@
+@import "../../styles/variables.less";
+
+.page-homepage {
+  .carousel {
+    .swiper {
+      .swiper-item__image {
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        height: 100%;
+      }
+      .swiper-item__title {
+        color: white;
+        font-weight: bold;
+        font-size: @font14;
+        position: absolute;
+        bottom: 0;
+        padding-left: 20px;
+        padding-bottom: 10px;
+      }
+    }
+  }
+  .section {
+    background-color: #fff;
+    .section__title {
+      font-size: @font20;
+      font-weight: bold;
+      margin: 20rpx;
+    }
+    .section__body {
+      // 随机
+      &.random__wrapper {
+        display: flex;
+        margin: 20rpx;
+        box-shadow: 0 0 20rpx #ddd;
+        background-color: #fff;
+        transition: all 0.2s;
+        .random__item {
+          height: 200rpx;
+          width: 50%;
+          display: flex;
+          flex-direction: column;
+          text-align: center;
+          justify-content: center;
+          .random__item__icon {
+            font-size: @font22;
+          }
+          .random__item__text {
+            font-size: @font14;
+          }
+        }
+        // FIXME: 点击结束后的效果有问题
+        .random__item_hover {
+          background-color: #eee;
+          transition: all 0.2s;
+        }
+      }
+      // 最近更新
+      &.list__wrapper {
+        padding-bottom: 20px;
+        .list__item {
+          display: flex;
+          flex-direction: column;
+          margin: 20rpx;
+          padding: 30rpx;
+          box-sizing: border-box;
+          background: #fff;
+          box-shadow: 0 0 20rpx #ddd;
+          border-radius: 4px;
+          .article_top {
+            color: red;
+            font-size: @font14;
+            position: relative;
+            top: -10rpx;
+          }
+          .article__image {
+            width: 630rpx;
+            height: 260rpx;
+          }
+          .article__info {
+            .info__title {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              color: #333;
+            }
+            .info__intro {
+              font-size: @font14;
+              color: silver;
+            }
+          }
+        }
+      }
+    }
+  }
+  .random-image {
+    .random-image__image {
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      height: 50vh;
+    }
+  }
+}

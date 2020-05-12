@@ -1,0 +1,91 @@
+@import "../../styles/variables.less";
+
+.page-article {
+  .title {
+    padding-left: 20px;
+    margin: 10px 0;
+    font-size: @font20;
+  }
+  .info {
+    padding-left: 20px;
+    font-size: @font14;
+    color: grey;
+    .info__liked {
+      float: right;
+      margin-right: 10rpx;
+    }
+  }
+  .content {
+    font-family: yahei;
+    font-size: @font14;
+    padding: 20px;
+    margin: 10px 0;
+    .rich-text__img {
+      width: 100%;
+    }
+  }
+  .split {
+    height: 10px;
+    background-color: rgb(245, 245, 245);
+    border-top: 1px solid rgb(235, 235, 235);
+    border-bottom: rgb(235, 235, 235);
+  }
+  .comments {
+    padding: 0 10px;
+    padding-bottom: 10px;
+    .comments__header {
+      padding: 10rpx;
+      color: grey;
+      font-size: @font14;
+      .comments__add {
+        // 不能用 float 或 flex
+        // 否则会覆盖到页面的首屏区域
+        // 傻逼小程序
+        position: absolute;
+        right: 20rpx;
+      }
+      .comments__add_login {
+        color: rgb(84, 102, 217);
+        position: absolute;
+        right: 20rpx;
+        display: inline;
+      }
+    }
+    .comments_empty {
+      color: grey;
+      margin: 20rpx;
+      text-align: center;
+    }
+    .comments__item {
+      border-bottom: 1px solid rgb(235, 235, 235);
+      padding: 3px 0;
+      &:last-child {
+        border-bottom: none;
+      }
+      .comment__info {
+        .comment__info__user {
+          font-size: @font14;
+        }
+        .comment__info__time {
+          color: grey;
+          font-size: @font12;
+          padding-left: 10px;
+        }
+      }
+      .comment__content {
+        padding-left: 10px;
+        font-size: @font14;
+      }
+    }
+  }
+  // comment
+  .at-float-layout__container {
+    min-height: unset;
+    .layout-body {
+      min-height: unset;
+      .layout-body__content {
+        min-height: unset;
+      }
+    }
+  }
+}

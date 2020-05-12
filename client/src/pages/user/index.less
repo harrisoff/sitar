@@ -1,0 +1,28 @@
+.page-user {
+  background-color: rgb(245, 245, 245);
+  .profile {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: white;
+    .profile__image {
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .profile__nickname {
+      text-align: center;
+    }
+  }
+  .list {
+    .list__item {
+      background-color: white;
+      // border-bottom: 1px solid rgb(230, 230, 230);
+      margin-bottom: 10px;
+    }
+  }
+}
+
+// 修正 AtListItem arrow='right' 不显示箭头的问题
+.at-list__item-extra.item-extra {
+  overflow: unset;
+}
