@@ -59,7 +59,7 @@ export default class Index extends BaseComponent {
   gridData = [
     {
       type: 'random',
-      icon: 'shuffle-play',
+      icon: 'file-generic',
       title: '随机文章'
     },
     {
