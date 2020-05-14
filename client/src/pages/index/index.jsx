@@ -1,7 +1,7 @@
 import Taro from "@tarojs/taro";
 import { View, Swiper, SwiperItem, Text, Image } from "@tarojs/components";
 import { observer, inject } from "@tarojs/mobx";
-import { AtCurtain, AtMessage, AtSearchBar } from "taro-ui"
+import { AtCurtain, AtMessage, AtSearchBar, AtActivityIndicator } from "taro-ui"
 import { when, computed, observable, action } from "mobx";
 
 import { getHomepageData, getRandomArticle, getRandomImage } from "../../api";
@@ -58,7 +58,7 @@ export default class Index extends BaseComponent {
 
   gridData = [
     {
-      type: 'random',
+      type: 'article',
       icon: 'file-generic',
       title: '随机文章'
     },
@@ -81,6 +81,7 @@ export default class Index extends BaseComponent {
   // random image
   @observable randomUrl = ''
   @observable isRandomImageVisible = false;
+  @observable isGettingRandom = false;
 
   // computed data
 
@@ -119,18 +120,22 @@ export default class Index extends BaseComponent {
     this.isRandomImageVisible = false
   }
 
-  // non-action event handlers
-
   handleClickGrid(id) {
-    if (id === 'random') {
+    // 并不能完全防止多次触发
+    if (this.isGettingRandom) return
+    if (id === 'article') {
+      this.isGettingRandom = true;
       getRandomArticle()
         .then((res) => {
+          this.isGettingRandom = false;
           this.navigateToArticle(res.id, res.realId)
         })
         .catch(this.$error)
     } else if (id === 'image') {
+      this.isGettingRandom = true;
       getRandomImage()
         .then(url => {
+          this.isGettingRandom = false;
           this.randomUrl = url
           this.isRandomImageVisible = true
         })
@@ -159,6 +164,7 @@ export default class Index extends BaseComponent {
     return (
       <View className='page-homepage'>
         <AtMessage />
+        <AtActivityIndicator isOpened={this.isGettingRandom} mode='center' size={48}></AtActivityIndicator>
 
         {/* search */}
         <AtSearchBar
