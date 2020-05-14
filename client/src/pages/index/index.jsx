@@ -56,7 +56,7 @@ export default class Index extends BaseComponent {
 
   // data
 
-  gridData = [
+  randomItems = [
     {
       type: 'article',
       icon: 'file-generic',
@@ -120,28 +120,29 @@ export default class Index extends BaseComponent {
     this.isRandomImageVisible = false
   }
 
-  handleClickGrid(id) {
+  handleGetRandom(id) {
     // 并不能完全防止多次触发
     if (this.isGettingRandom) return
+    this.isGettingRandom = true;
     if (id === 'article') {
-      this.isGettingRandom = true;
       getRandomArticle()
         .then((res) => {
-          this.isGettingRandom = false;
           this.navigateToArticle(res.id, res.realId)
         })
         .catch(this.$error)
+        .finally(_ => {
+          this.isGettingRandom = false
+        })
     } else if (id === 'image') {
-      this.isGettingRandom = true;
       getRandomImage()
         .then(url => {
-          this.isGettingRandom = false;
           this.randomUrl = url
           this.isRandomImageVisible = true
         })
         .catch(this.$error)
-    } else {
-      // ?
+        .finally(_ => {
+          this.isGettingRandom = false
+        })
     }
   }
 
@@ -194,19 +195,19 @@ export default class Index extends BaseComponent {
           </Swiper>
         </View>
 
-        {/* GRID */}
+        {/* random */}
         <View className='section random'>
           <View className='section__title'>
             随机阅读
           </View>
           <View className='section__body random__wrapper'>
             {
-              this.gridData.map(data => {
+              this.randomItems.map(data => {
                 const { type, icon, title } = data
                 return <View key={type}
                   className='random__item'
                   hover-class='random__item_hover'
-                  onClick={this.handleClickGrid.bind(this, type)}
+                  onClick={this.handleGetRandom.bind(this, type)}
                 >
                   <View className='random__item__icon'>
                     <View className={`at-icon at-icon-${icon}`}></View>

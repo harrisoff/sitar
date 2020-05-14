@@ -152,7 +152,6 @@ export default class Index extends BaseComponent {
     try {
       const articleCommentList = await getArticleComments(this.realId)
       this.comments = articleCommentList
-      this.isLoadingComments = false
       this.hasLoadComments = true
       if (updateStore) {
         // 找到刚才发表的
@@ -177,6 +176,8 @@ export default class Index extends BaseComponent {
       }
     } catch (err) {
       this.$error(err)
+    } finally {
+      this.isLoadingComments = false
     }
   }
 
