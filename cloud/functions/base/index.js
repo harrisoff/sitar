@@ -196,6 +196,7 @@ function createUser(openId) {
       data: {
         open_id: openId,
         banned: false, // 是否封禁
+        first_login: new Date().getTime()
       },
     })
 }
