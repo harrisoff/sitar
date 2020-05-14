@@ -136,9 +136,7 @@ export default class Index extends BaseComponent {
         this.isModalVisible = false
         this.commentInput = ''
         this.$success('评论成功')
-        if (this.hasLoadComments) {
-          this.updateComments(true)
-        }
+        this.updateComments(true)
       })
       .catch(this.$error)
   }
@@ -146,21 +144,23 @@ export default class Index extends BaseComponent {
   @action async updateComments(updateStore) {
     this.hasLoadComments = true
     try {
-      let articleCommentList = await getArticleComments(this.realId)
+      const articleCommentList = await getArticleComments(this.realId)
       this.comments = articleCommentList
       if (updateStore) {
         // 找到刚才发表的
         const oldIds = this.props.userStore.commentList.map(e => e.id)
         let newUserComment = null
         for (const comment of articleCommentList) {
-          const { id, content, timestamp } = comment
+          const { id, articleId, realId, content, title, timestamp } = comment
           comment.time = formatTime(timestamp)
           if (!oldIds.includes(id)) {
             newUserComment = {
               id,
+              articleId,
               content,
               timestamp,
-              realId: this.realId
+              realId,
+              title
             }
             break
           }
