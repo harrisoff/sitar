@@ -65,6 +65,7 @@ export default class Index extends BaseComponent {
   @observable view = 0; // 阅读量
   // comment
   @observable hasLoadComments = false; // 默认不显示评论
+  @observable isLoadingComments = false;
   @observable comments = [];
   @observable isModalVisible = false;
   @observable commentInput = "";
@@ -72,6 +73,9 @@ export default class Index extends BaseComponent {
   @observable isTipVisible = false;
 
   @computed get commentHeaderText() {
+    if (this.isLoadingComments) {
+      return '加载中...'
+    }
     return this.hasLoadComments ? `评论 (${this.comments.length})` : '显示评论'
   }
 
@@ -106,7 +110,8 @@ export default class Index extends BaseComponent {
   }
   // 评论
   @action loadComments() {
-    if (this.hasLoadComments) return
+    if (this.isLoadingComments || this.hasLoadComments) return
+    this.isLoadingComments = true
     this.updateComments(false)
   }
   @action handleOpenForm() {
@@ -142,10 +147,11 @@ export default class Index extends BaseComponent {
   }
   // 更新当前文章的/userStore 的评论列表
   @action async updateComments(updateStore) {
-    this.hasLoadComments = true
     try {
       const articleCommentList = await getArticleComments(this.realId)
       this.comments = articleCommentList
+      this.isLoadingComments = false
+      this.hasLoadComments = true
       if (updateStore) {
         // 找到刚才发表的
         const oldIds = this.props.userStore.commentList.map(e => e.id)
@@ -164,9 +170,8 @@ export default class Index extends BaseComponent {
             break
           }
         }
-        // 添加到 userStore
+        // 添加到 userStore，更新 commentLimit
         this.props.userStore.updateComments(newUserComment)
-        // 更新 commentLimit
       }
     } catch (err) {
       this.$error(err)
@@ -231,7 +236,7 @@ export default class Index extends BaseComponent {
         {/* comments */}
         <View className='comments'>
           <View className='comments__header'>
-            <Text onClick={this.loadComments.bind(this)} className={`${this.hasLoadComments ? '' : 'text_link'}`}>{this.commentHeaderText}</Text>
+            <Text onClick={this.loadComments.bind(this)} className={`${this.hasLoadComments || this.isLoadingComments ? '' : 'text_link'}`}>{this.commentHeaderText}</Text>
             {
               hasAuth ?
                 <Text
@@ -241,7 +246,7 @@ export default class Index extends BaseComponent {
                   发表评论
                   </Text>
                 : <Button
-                  className='button_text text_link'
+                  className='comments__add button_text text_link'
                   openType='getUserInfo'
                   onGetUserInfo={this.handleUserInfo.bind(this)}
                 >登录后可评论</Button>
@@ -267,7 +272,8 @@ export default class Index extends BaseComponent {
           isOpened={this.isModalVisible}
           onClose={this.handleCloseForm.bind(this)}
         >
-          <AtTextarea value={this.commentInput} onChange={this.handleInputChange.bind(this)}></AtTextarea>
+          {/* https://github.com/NervJS/taro-ui/issues/75 */}
+          {this.isModalVisible && <AtTextarea placeholder='write something' value={this.commentInput} onChange={this.handleInputChange.bind(this)}></AtTextarea>}
           <Button onClick={this.handleSubmitComment.bind(this)}>提交</Button>
         </AtFloatLayout>
       </View>
