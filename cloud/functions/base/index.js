@@ -133,7 +133,8 @@ function getUserData(event) {
           if (c.timestamp > now - oneDay) commentLimit -= 1
           if (c.show) {
             realIds.add(c.article_id)
-            commentList.push({
+            // 查询结果时间正序，这里改成倒序
+            commentList.unshift({
               id: c._id,
               timestamp: c.timestamp,
               content: c.content,
@@ -420,6 +421,9 @@ function getArticleComments(event) {
         localField: 'article_id',
         foreignField: 'real_id',
         as: 'article',
+      })
+      .sort({
+        timestamp: -1
       })
       .end()
       .then(({ list }) => {

@@ -152,7 +152,6 @@ export default class Index extends BaseComponent {
         let newUserComment = null
         for (const comment of articleCommentList) {
           const { id, articleId, realId, content, title, timestamp } = comment
-          comment.time = formatTime(timestamp)
           if (!oldIds.includes(id)) {
             newUserComment = {
               id,
@@ -255,7 +254,7 @@ export default class Index extends BaseComponent {
                 <View className='comments__item' key={item.ID}>
                   <View className='comment__info'>
                     <Text className='comment__info__user'>{item.nickName}</Text>
-                    <Text className='comment__info__time'>{item.time}</Text>
+                    <Text className='comment__info__time'>{formatTime(item.timestamp)}</Text>
                   </View>
                   <View className='comment__content'>{item.content}</View>
                 </View>

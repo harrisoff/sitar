@@ -25,7 +25,8 @@ class UserStore {
     this.banned = banned;
   }
   @action updateComments(comment) {
-    this.commentList.push(comment)
+    // 时间降序排列
+    this.commentList.unshift(comment)
     this.commentLimit -= 1
   }
 }
