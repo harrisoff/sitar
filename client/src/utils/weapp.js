@@ -14,5 +14,5 @@ export function genFileURL(fileId) {
 }
 
 export function formatTime(t) {
-  return dayjs(t).format("YYYY-MM-DD hh:mm:ss");
+  return dayjs(t).format("YYYY-MM-DD HH:mm:ss");
 }
