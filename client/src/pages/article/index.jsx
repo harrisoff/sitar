@@ -41,9 +41,7 @@ export default class Index extends BaseComponent {
         this.view = view;
         Taro.setNavigationBarTitle({ title })
       })
-      .catch(({ errMsg }) => {
-        this.$error(errMsg);
-      });
+      .catch(this.$error);
   }
   componentDidShow() { }
   componentDidHide() { }
@@ -131,6 +129,10 @@ export default class Index extends BaseComponent {
     if (this.commentInput === '') {
       return
     }
+    // 这里有一个问题
+    // 如果用户被封禁，不会请求 getUserData 接口
+    // 所以 commentLimit 是初始值 0
+    // 评论的时候的提示不是用户被封禁，而是评论次数不足
     if (this.props.userStore.commentLimit <= 0) {
       this.$warn('每天最多可以评论 5 次')
       return

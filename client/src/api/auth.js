@@ -40,9 +40,8 @@ export function getAndSaveUserInfo() {
           .then(resolve)
           .catch(reject)
       })
-      .catch(err => {
-        // const { errMsg } = err
-        reject(err.errMsg)
+      .catch(({ errMsg }) => {
+        reject(errMsg)
       })
   })
 }
