@@ -130,7 +130,7 @@ export default class Index extends BaseComponent {
           this.navigateToArticle(res.id, res.realId)
         })
         .catch(this.$error)
-        .finally(_ => {
+        .then(_ => {
           this.isGettingRandom = false
         })
     } else if (id === 'image') {
@@ -140,7 +140,7 @@ export default class Index extends BaseComponent {
           this.isRandomImageVisible = true
         })
         .catch(this.$error)
-        .finally(_ => {
+        .then(_ => {
           this.isGettingRandom = false
         })
     }
