@@ -3,6 +3,7 @@ import { View, Text, RichText, Button } from "@tarojs/components";
 import { observer, inject } from "@tarojs/mobx";
 import { AtIcon, AtFloatLayout, AtTextarea, AtMessage } from "taro-ui";
 import { observable, computed, action } from "mobx";
+import "taro-ui/dist/style/components/article.scss";
 
 import { getArticleById, toggleLike, addComment, getArticleComments } from "../../api";
 import { getAuthSetting, getAndSaveUserInfo } from '../../api/auth'
@@ -203,38 +204,46 @@ export default class Index extends BaseComponent {
     return (
       <View className='page-article'>
         <AtMessage />
-        {/* info */}
-        <View className='title'>{this.title}</View>
-        <View className='info'>
-          {this.author} {this.time}
-          <Text style='float:right;margin-right:40rpx'>
-            {this.liked ? "已赞" : "点赞"}
-          </Text>
-          <AtIcon
-            className='info__liked'
-            onClick={this.handleToggleLike.bind(this)}
-            value={this.liked ? "heart-2" : "heart"}
-            size='18'
-            color='rgb(7,193,96)'
-          ></AtIcon>
-          <Text
-            className='info__liked'
-          >
-            {this.view}
-          </Text>
-          <AtIcon
-            className='info__liked'
-            value='eye'
-            size='18'
-            color='rgb(7,193,96)'
-          ></AtIcon>
-        </View>
 
+        <View className='at-article'>
+          <View className='at-article__h2'>{this.title}</View>
+        {/* info */}
+          <View className='at-article__info'>
+            {this.author} {this.time}
+            <View className='at-article__info__action'
+              onClick={this.handleToggleLike.bind(this)}
+            >
+              <AtIcon
+                className='at-article__info__action__icon'
+                value={this.liked ? "heart-2" : "heart"}
+                size='18'
+                color='rgb(7,193,96)'
+              ></AtIcon>
+              <Text style=''>
+                {this.liked ? "已赞" : "点赞"}
+              </Text>
+            </View>
+            <View className='at-article__info__action'>
+              <AtIcon
+                className='at-article__info__action__icon'
+                value='eye'
+                size='18'
+                color='rgb(7,193,96)'
+              ></AtIcon>
+              <Text>
+                {this.view}
+              </Text>
+            </View>
+          </View>
         {/* content */}
-        <View className='content'>
-          <RichText nodes={this.html} style='word-wrap:break-word;word-break:break-all;'></RichText>
+          <View className='at-article__content'>
+            <View className='at-article__section'>
+              <RichText nodes={this.html} style='word-wrap:break-word;word-break:break-all;'></RichText>
+            </View>
+          </View>
         </View>
         <View className='split'></View>
+
 
         {/* comments */}
         <View className='comments'>
@@ -252,7 +261,7 @@ export default class Index extends BaseComponent {
                   className='comments__add button_text text_link'
                   openType='getUserInfo'
                   onGetUserInfo={this.handleUserInfo.bind(this)}
-                >登录后可评论</Button>
+                >点击登录</Button>
             }
           </View>
           {this.hasLoadComments && this.comments.length === 0 ? (

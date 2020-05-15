@@ -1,5 +1,7 @@
 @import './variables.less';
 
 .text_link {
-  color: @linkColor;
+  // 当有其他 class 设置了 color unset 时会被覆盖
+  // 所以 important 一下
+  color: @linkColor !important;
 }
