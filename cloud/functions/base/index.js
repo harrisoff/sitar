@@ -267,6 +267,7 @@ function getHomepage(event) {
           show: true,
         })
     )
+    .orderBy('timestamp', 'desc')
     .get();
 }
 
