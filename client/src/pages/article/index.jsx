@@ -18,7 +18,7 @@ import "./index.less";
 export default class Index extends BaseComponent {
   componentWillMount() { }
   componentDidMount() {
-    let { _id, real_id } = this.$router.params;
+    let { _id, real_id, keyword } = this.$router.params;
     this.id = _id;
     this.realId = real_id;
     getArticleById(_id)
@@ -35,7 +35,7 @@ export default class Index extends BaseComponent {
         } = articleData;
         this.title = title;
         this.author = author;
-        this.html = html;
+        this.html = keyword ? this.highlightKeyword(html, keyword) : html;
         this.time = formatTime(timestamp);
         this.likeIds = like_id;
         this.liked = like_id.includes(this.props.userStore.openId);
@@ -187,6 +187,28 @@ export default class Index extends BaseComponent {
     } finally {
       this.isLoadingComments = false
     }
+  }
+
+  highlightKeyword(html, keyword) {
+    const reg = new RegExp(keyword, 'g')
+    html = html.replace(reg, `<span style="color:red; font-weight: bold">${keyword}</span>`)
+    return html
+    // 下面是为每个关键词处添加锚点的实现
+    // 参考 https://juejin.im/post/5c48307be51d45067235572d
+    // 但是貌似 rich-text 不支持锚点定位
+    // const arr = html.split(keyword)
+    // let resultArr = []
+    // arr.forEach((item, index) => {
+    //   if (index !== arr.length - 1) {
+    //     const id = `anchor-${index}`
+    //     this.anchors.push(id)
+    //     item += `<span id='${id}' style="color:red; font-weight: bold">${keyword}</span>`
+    //     resultArr.push(item)
+    //   } else {
+    //     resultArr.push(item)
+    //   }
+    // })
+    // return resultArr.join('')
   }
 
   onShareAppMessage(res) {

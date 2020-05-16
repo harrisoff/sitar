@@ -16,6 +16,7 @@ export default class Index extends BaseComponent {
   componentWillMount() { }
   componentDidMount() {
     const { keyword } = this.$router.params
+    Taro.setNavigationBarTitle({ title: `搜索结果: ${keyword}` })
     searchArticleByKeyword(keyword)
       .then(({ data }) => {
         this.searchResults = data
@@ -29,11 +30,11 @@ export default class Index extends BaseComponent {
   @observable searchResults = []
 
   config = {
-    navigationBarTitleText: "搜索结果"
+    navigationBarTitleText: ""
   };
 
   handleClickResult(articleId, realId) {
-    this.navigateToArticle(articleId, realId)
+    this.navigateToArticle(articleId, realId, this.$router.params.keyword)
   }
 
   render() {

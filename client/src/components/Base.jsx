@@ -41,9 +41,11 @@ export default class Index extends Component {
       url,
     })
   }
-  navigateToArticle(id, realId) {
+  navigateToArticle(id, realId, keyword) {
+    let url = `${ROUTES.ARTICLE}?_id=${id}&real_id=${realId}`
+    if (keyword) url += `&keyword=${keyword}`
     Taro.navigateTo({
-      url: `${ROUTES.ARTICLE}?_id=${id}&real_id=${realId}`,
+      url,
       events: {
         // 为指定事件添加一个监听器，获取被打开页面传送到当前页面的数据
         // 被打开页面还能向当前页面传送数据？？
