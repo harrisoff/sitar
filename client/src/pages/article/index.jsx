@@ -86,6 +86,13 @@ export default class Index extends BaseComponent {
     })
       .then(() => {
         this.liked = !this.liked;
+        // 更新用户页已赞数据
+        this.props.userStore.updateLike({
+          id: this.id,
+          title: this.title,
+          timestamp: this.timestamp,
+          realId: this.realId
+        }, this.liked)
       })
       .catch(this.$error);
   }
@@ -207,7 +214,7 @@ export default class Index extends BaseComponent {
 
         <View className='at-article'>
           <View className='at-article__h2'>{this.title}</View>
-        {/* info */}
+          {/* info */}
           <View className='at-article__info'>
             {this.author} {this.time}
             <View className='at-article__info__action'
@@ -235,7 +242,7 @@ export default class Index extends BaseComponent {
               </Text>
             </View>
           </View>
-        {/* content */}
+          {/* content */}
           <View className='at-article__content'>
             <View className='at-article__section'>
               <RichText nodes={this.html} style='word-wrap:break-word;word-break:break-all;'></RichText>

@@ -29,6 +29,18 @@ class UserStore {
     this.commentList.unshift(comment)
     this.commentLimit -= 1
   }
+  @action updateLike(article, like) {
+    if (like) {
+      this.likeList.push(article)
+    } else {
+      for (let i = 0; i < this.likeList.length; i += 1) {
+        if (this.likeList[i].id === article.id) {
+          this.likeList.splice(i, 1)
+          break
+        }
+      }
+    }
+  }
 }
 
 export default new UserStore();
