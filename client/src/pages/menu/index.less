@@ -1,6 +1,20 @@
 @import "../../styles/variables.less";
 
 .page-menu {
+  .at-tabs{
+    .at-tabs__header {
+      position: fixed;
+      top: 0;
+      z-index: 99;
+    }
+    .at-tabs__body {
+      position: relative;
+      top: 70rpx;
+    }
+    .at-tabs-pane {
+      margin-bottom: 70rpx;
+    }
+  }
   .book-list {
     .book-wrapper {
       margin: 30rpx 0;

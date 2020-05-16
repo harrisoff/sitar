@@ -277,43 +277,86 @@ function getHomepage(event) {
 // 书籍列表
 function getBookList(event) {
   return new Promise((resolve, reject) => {
-    db.collection(COLLECTIONS.BOOK).aggregate()
-      .lookup({
-        from: COLLECTIONS.ARTICLE,
-        localField: '_id',
-        foreignField: 'book_id',
-        as: 'articles',
+    db.collection(COLLECTIONS.ARTICLE).aggregate()
+      .project({
+        html: false,
+        text: false
       })
+      .lookup({
+        from: COLLECTIONS.BOOK,
+        localField: 'book_id',
+        foreignField: '_id',
+        as: 'itsBook',
+      })
+      .limit(999)
       .end()
-      .then(res => {
-        const books = res.list.map(book => {
-          const { _id, author, cover_id, intro, title, articles } = book
-          const newArticles = []
-          articles.forEach(article => {
-            const { book_id, _id, real_id, like_id, view, show, title, timestamp, url } = article
-            if (show) {
-              newArticles.push({
-                bookId: book_id,
-                id: _id,
-                realId: real_id,
-                likeId: like_id,
-                view,
-                title,
-                timestamp,
-                url
-              })
+      .then(({ list }) => {
+        const books = []
+        const booklets = []
+        const otherArticles = []
+
+        list.forEach(article => {
+          const { book_id, _id, real_id, like_id, view, show, title, timestamp, url, itsBook } = article
+          if (show) {
+            // article
+            const a = {
+              id: _id,
+              realId: real_id,
+              likeId: like_id,
+              view,
+              title,
+              timestamp,
+              url
             }
-          })
-          return {
-            id: _id, author, coverId: cover_id, intro, title, articles: newArticles
+            const book = itsBook[0]
+            // book & booklet
+            if (book) {
+              const { _id, author, cover_id, intro, title, type } = book
+              if (type === 'book') {
+                const b = books.find(e => e.id === _id)
+                if (b) {
+                  b.articles.push(a)
+                } else {
+                  books.push({
+                    id: _id,
+                    author,
+                    coverId: cover_id,
+                    intro,
+                    title,
+                    articles: [a]
+                  })
+                }
+              }
+              // booklets
+              else if (type === 'booklet') {
+                const b = booklets.find(e => e.id === _id)
+                if (b) {
+                  b.articles.push(a)
+                } else {
+                  booklets.push({
+                    id: _id,
+                    author,
+                    coverId: cover_id,
+                    intro,
+                    title,
+                    articles: [a]
+                  })
+                }
+              }
+            }
+            // 未分类
+            else {
+              otherArticles.push(a)
+            }
           }
         })
-        resolve(books)
+        resolve({
+          books,
+          booklets,
+          others: otherArticles
+        })
       })
-      .catch(err => {
-        console.error(err)
-        reject(err)
-      })
+      .catch(reject)
   })
 }
 

@@ -9,7 +9,6 @@ const { BOOKS, HOMEPAGE, VERSION, DIRTY, BANNED, RANDOM } = CACHE;
 export function setHomepageCache(data) {
   Taro.setStorageSync(HOMEPAGE, data);
 }
-
 export function getHomepageCache() {
   const dft = {
     list: [],
@@ -22,9 +21,9 @@ export function getHomepageCache() {
 // books
 
 export function setBooksCache(data) {
+  console.log('set cache', data)
   Taro.setStorageSync(BOOKS, data);
 }
-
 export function getBooksCache() {
   return Taro.getStorageSync(BOOKS) || [];
 }
@@ -34,7 +33,6 @@ export function getBooksCache() {
 export function setVersionCache(data) {
   Taro.setStorageSync(VERSION, data);
 }
-
 export function getVersionCache() {
   return Taro.getStorageSync(VERSION) || 0;
 }
@@ -46,13 +44,11 @@ export function setDirtyCache(...keys) {
   keys.forEach(key => (cache[key] = true));
   Taro.setStorageSync(DIRTY, cache);
 }
-
 export function setCleanCache(...keys) {
   const cache = getDirtyCache();
   keys.forEach(key => (cache[key] = false));
   Taro.setStorageSync(DIRTY, cache);
 }
-
 export function getDirtyCache() {
   const cache = Taro.getStorageSync(DIRTY);
   if (cache) {
@@ -70,17 +66,14 @@ export function getDirtyCache() {
 }
 
 // user/auth
-
 export function setBanned(banned) {
   Taro.setStorageSync(BANNED, banned);
 }
-
 export function getBanned() {
   return Taro.getStorageSync(BANNED)
 }
 
 // TODO: random
-
 export function setRandomCount(count) {
   const timestamp = new Date().getTime()
   Taro.setStorageSync(RANDOM, {
@@ -88,7 +81,6 @@ export function setRandomCount(count) {
     count
   });
 }
-
 export function getRandomCount() {
   return Taro.getStorageSync(BANNED)
 }
