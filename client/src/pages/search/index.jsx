@@ -1,7 +1,7 @@
 import Taro from "@tarojs/taro";
 import { observer } from "@tarojs/mobx";
 import { View } from "@tarojs/components";
-import { AtMessage, AtDivider } from "taro-ui";
+import { AtMessage, AtDivider, AtActivityIndicator } from "taro-ui";
 import { observable } from 'mobx'
 
 import { searchArticleByKeyword } from '../../api'
@@ -22,11 +22,15 @@ export default class Index extends BaseComponent {
         this.searchResults = data
       })
       .catch(this.$error)
+      .then(_ => {
+        this.hasResponse = true
+      })
   }
   componentDidShow() { }
   componentDidHide() { }
   componentDidCatchError() { }
 
+  @observable hasResponse = false
   @observable searchResults = []
 
   config = {
@@ -41,15 +45,24 @@ export default class Index extends BaseComponent {
     return (
       <View className='page-search'>
         <AtMessage />
-        {this.searchResults.length === 0 && <AtDivider content='莫得结果' fontColor='#aaa' />}
-        {this.searchResults.map(result => {
-          const { _id, url, timestamp, title, real_id, book_title, book_id } = result
-          return <View key={_id} className='search-item' onClick={this.handleClickResult.bind(this, _id, real_id)}>
-            <View className='book-title'>{book_title}</View>
-            <View className='article-title'>{title}</View>
-            <View className='time'>{formatTime(timestamp)} </View>
-          </View>
-        })}
+        {
+          this.hasResponse
+            ?
+            this.searchResults.length === 0
+              ?
+              <AtDivider content='莫得结果' fontColor='#aaa' />
+              :
+              this.searchResults.map(result => {
+                const { _id, url, timestamp, title, real_id, book_title, book_id } = result
+                return <View key={_id} className='search-item' onClick={this.handleClickResult.bind(this, _id, real_id)}>
+                  <View className='book-title'>{book_title}</View>
+                  <View className='article-title'>{title}</View>
+                  <View className='time'>{formatTime(timestamp)} </View>
+                </View>
+              })
+            :
+            <AtActivityIndicator mode='center' content='搜索中...'></AtActivityIndicator>
+        }
       </View>
     );
   }
