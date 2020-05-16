@@ -1,19 +1,3 @@
-const N10 = '1302052182'
-const DEV_ENV = {
-  N4: '7369',
-  CLOUD_ENV: 'sitar-dev'
-}
-const PROD_ENV = {
-  N4: '',
-  CLOUD_ENV: ''
-}
-const PROCESS_ENV = 'dev'
-export const ENV = {
-  N10: N10,
-  N4: PROCESS_ENV === 'dev' ? DEV_ENV.N4 : PROD_ENV.N4,
-  CLOUD_ENV: PROCESS_ENV === 'dev' ? DEV_ENV.CLOUD_ENV : PROD_ENV.CLOUD_ENV
-}
-
 export const COLLECTIONS = {
   TYPES: 'types',
   SERIES: 'series',

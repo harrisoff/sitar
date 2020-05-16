@@ -6,7 +6,7 @@ import { when, computed, observable, action } from "mobx";
 
 import { getBookList } from "../../api";
 import { setBooksCache, setCleanCache } from "../../utils/cache";
-import { genFileURL, formatTime } from '../../utils/weapp'
+import { formatTime } from '../../utils/weapp'
 
 import BaseComponent from '../../components/Base.jsx'
 
@@ -76,7 +76,8 @@ export default class Index extends BaseComponent {
     getBookList()
       .then(books => {
         books.forEach(book => {
-          book.coverUrl = genFileURL(book.coverId)
+          // 2.3.0 开始支持以 cloudId 作为 image src
+          book.coverUrl = book.coverId
           book.articles.forEach(article => {
             article.time = formatTime(article.timestamp);
           });
