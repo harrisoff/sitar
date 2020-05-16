@@ -150,7 +150,8 @@ function getUserData(event) {
               id: l._id,
               realId: l.real_id,
               timestamp: l.timestamp,
-              like: l.like_id.length,
+              // 点赞数不能及时更新，显示出来意义不大
+              // like: l.like_id.length,
               title: l.title
             })
           }

@@ -1,7 +1,7 @@
 import Taro from "@tarojs/taro";
 import { View } from "@tarojs/components";
 import { observer, inject } from "@tarojs/mobx";
-import { AtMessage, AtIcon, AtDivider } from "taro-ui";
+import { AtMessage, AtDivider } from "taro-ui";
 
 import { formatTime } from '../../../utils/weapp'
 
@@ -30,20 +30,11 @@ export default class Index extends BaseComponent {
         <View className='like-list'>
           {
             this.props.userStore.likeList.map(article => {
-              const { id, realId, timestamp, title, like } = article
+              const { id, realId, timestamp, title } = article
               return <View className='article' key={id} onClick={this.navigateToArticle.bind(this, id, realId)}>
                 <View className='left'>
                   <View className='title'>{title}</View>
                   <View className='time'>{formatTime(timestamp)}</View>
-                </View>
-                <View className='right'>
-                  <AtIcon
-                    className='info__liked'
-                    value='heart'
-                    size='18'
-                    color='rgb(7,193,96)'
-                  ></AtIcon>
-                  {like}
                 </View>
               </View>
             })
