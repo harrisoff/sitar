@@ -47,21 +47,11 @@
             padding: 12rpx 24rpx;
           }
         }
-        .at-list__item.at-list__item--multiple {
-          padding: 12rpx 24rpx;
-          .at-list__item-container
-            .at-list__item-content.item-content
-            .item-content__info
-            .item-content__info-title {
-            font-size: @font16;
-          }
-        }
       }
     }
   }
   .non-book-list {
     .non-book-wrapper {
-      margin: 20rpx;
     }
     .non-book__title {
       font-weight: bold;
@@ -82,5 +72,15 @@
     }
     .non-book__articles {
     }
+  }
+}
+
+.at-list__item {
+  padding: 12rpx 24rpx;
+  .at-list__item-container
+    .at-list__item-content.item-content
+    .item-content__info
+    .item-content__info-title {
+    white-space: unset;
   }
 }
