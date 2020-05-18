@@ -13,7 +13,7 @@ import { login, getAuthSetting, getUserData } from "./api/auth";
 import { getVersion } from "./api";
 import {
   getDirtyCache,
-  getBooksCache,
+  getMenuCache,
   getHomepageCache,
   getVersionCache,
   setVersionCache,
@@ -51,7 +51,7 @@ class App extends BaseComponent {
     });
     // init homepage/menu data
     cacheStore.setHomepageData(getHomepageCache());
-    cacheStore.setBooksData(getBooksCache());
+    cacheStore.setMenuData(getMenuCache());
     cacheStore.setVersion(getVersionCache());
 
     // await 不能阻塞子组件的渲染
@@ -88,8 +88,8 @@ class App extends BaseComponent {
             console.log("find new version");
             cacheStore.setVersion(newVersion);
             setVersionCache(newVersion);
-            cacheStore.setDirty("homepage", "books");
-            setDirtyCache("homepage", "books");
+            cacheStore.setDirty("homepage", "menu");
+            setDirtyCache("homepage", "menu");
           }
         })
         .catch(err => {
@@ -98,8 +98,8 @@ class App extends BaseComponent {
           const t = new Date().getTime();
           cacheStore.setVersion(t);
           setVersionCache(t);
-          cacheStore.setDirty("homepage", "books");
-          setDirtyCache("homepage", "books");
+          cacheStore.setDirty("homepage", "menu");
+          setDirtyCache("homepage", "menu");
         });
     } catch (err) {
       this.$error(err);

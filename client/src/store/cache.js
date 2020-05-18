@@ -7,9 +7,11 @@ class CacheStore {
     top: []
   };
   @observable booksData = [];
+  @observable bookletsData = [];
+  @observable othersData = [];
   @observable version = 0;
   @observable dirty = {
-    books: false,
+    menu: false,
     homepage: false
   };
 
@@ -17,8 +19,10 @@ class CacheStore {
   @action setHomepageData(data) {
     this.homepageData = data;
   }
-  @action setBooksData(data) {
-    this.booksData = data;
+  @action setMenuData({ books, booklets, others }) {
+    this.booksData = books;
+    this.bookletsData = booklets
+    this.othersData = others
   }
   // 只有 version 变化时
   @action setVersion(version) {

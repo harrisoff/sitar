@@ -335,9 +335,6 @@ function getBookList(event) {
                 } else {
                   booklets.push({
                     id: _id,
-                    author,
-                    coverId: cover_id,
-                    intro,
                     title,
                     articles: [a]
                   })

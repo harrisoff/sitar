@@ -2,7 +2,7 @@ import Taro from "@tarojs/taro";
 
 import { CACHE } from "../config";
 
-const { BOOKS, HOMEPAGE, VERSION, DIRTY, BANNED, RANDOM } = CACHE;
+const { MENU, HOMEPAGE, VERSION, DIRTY, BANNED, RANDOM } = CACHE;
 
 // homepage
 
@@ -18,14 +18,19 @@ export function getHomepageCache() {
   return Taro.getStorageSync(HOMEPAGE) || dft;
 }
 
-// books
+// menu
 
-export function setBooksCache(data) {
+export function setMenuCache(data) {
   console.log('set cache', data)
-  Taro.setStorageSync(BOOKS, data);
+  Taro.setStorageSync(MENU, data);
 }
-export function getBooksCache() {
-  return Taro.getStorageSync(BOOKS) || [];
+export function getMenuCache() {
+  const dft = {
+    books: [],
+    booklets: [],
+    others: []
+  }
+  return Taro.getStorageSync(MENU) || dft;
 }
 
 // version
@@ -58,7 +63,7 @@ export function getDirtyCache() {
   else {
     const dft = {
       homepage: true,
-      books: true
+      menu: true
     };
     Taro.setStorageSync(DIRTY, dft);
     return dft;

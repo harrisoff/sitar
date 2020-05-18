@@ -59,4 +59,28 @@
       }
     }
   }
+  .non-book-list {
+    .non-book-wrapper {
+      margin: 20rpx;
+    }
+    .non-book__title {
+      font-weight: bold;
+      margin: 30rpx 0 10rpx 0;
+      position: relative;
+      padding-left: 30rpx;
+      &::before {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        left: 0rpx;
+        width: 8rpx;
+        height: 100%;
+        background-color: rgb(97, 144, 232);
+        box-shadow: rgba(97, 144, 232, 0.2) 0px 0.14933rem 0.256rem 0px;
+        border-radius: 1px;
+      }
+    }
+    .non-book__articles {
+    }
+  }
 }

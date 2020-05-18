@@ -7,7 +7,7 @@ export const COLLECTIONS = {
 // local storage
 export const CACHE = {
   VERSION: 'cache-version',
-  BOOKS: 'cache-books',
+  MENU: 'cache-menu',
   HOMEPAGE: 'cache-homepage',
   DIRTY: 'cache-need-refresh',
   BANNED: 'cache-user-banned',

@@ -7,7 +7,7 @@ import { when, computed, observable, action } from "mobx";
 import "taro-ui/dist/style/components/tabs.scss"
 
 import { getBookList } from "../../api";
-import { setBooksCache, setCleanCache } from "../../utils/cache";
+import { setMenuCache, setCleanCache } from "../../utils/cache";
 import { formatTime } from '../../utils/weapp'
 
 import BaseComponent from '../../components/Base.jsx'
@@ -25,23 +25,23 @@ import "./index.less";
 export default class Index extends BaseComponent {
   componentDidMount() {
     const { cacheStore } = this.props;
-    const isDirty = cacheStore.dirty.books;
+    const isDirty = cacheStore.dirty.menu;
     if (cacheStore.version === 0) {
-      console.log("[books] no cache");
+      console.log("[menu] no cache");
     } else if (isDirty) {
-      console.log("[books] cache is dirty");
+      console.log("[menu] cache is dirty");
       this.isRequesting = true;
       this.requestBooksData();
     } else {
-      console.log("[books] cache is available");
+      console.log("[menu] cache is available");
     }
-    this.initTabStatus();
+    this.initBooksAccordion();
 
     when(
-      () => cacheStore.dirty.books,
+      () => cacheStore.dirty.menu,
       () => {
         if (!this.isRequesting) {
-          console.log("[books] cache version was updated");
+          console.log("[menu] cache version was updated");
           this.requestBooksData();
         }
       }
@@ -56,49 +56,52 @@ export default class Index extends BaseComponent {
   };
 
   @observable isRequesting = false;
-  @observable tabStatus = {}
   // tab
   tabList = [
     { title: '书籍' },
     { title: '其他' },
   ]
   @observable currentTabIndex = 0;
+  // accordion
+  @observable booksAccordion = {}
+  @observable bookletsAccordion = {}
 
   @computed get bookList() {
     return this.props.cacheStore.booksData;
   }
-  @action toggleTab(bookId) {
-    const tabStatus = { ...this.tabStatus };
-    tabStatus[bookId] = !tabStatus[bookId];
-    this.tabStatus = tabStatus
+  // booklets & others
+  @computed get nonBookList() {
+    const others = {
+      id: '',
+      title: '其他',
+      articles: this.props.cacheStore.othersData
+    }
+    return this.props.cacheStore.bookletsData.concat(others)
   }
-  @action initTabStatus() {
-    const tabStatus = {};
+  @action toggleAccordion(bookId) {
+    const booksAccordion = { ...this.booksAccordion };
+    booksAccordion[bookId] = !booksAccordion[bookId];
+    this.booksAccordion = booksAccordion
+  }
+  @action initBooksAccordion() {
+    const booksAccordion = {};
     this.props.cacheStore.booksData.forEach(book => {
-      tabStatus[book._id] = false;
+      booksAccordion[book._id] = false;
     });
-    this.tabStatus = tabStatus
+    this.booksAccordion = booksAccordion
   }
   @action requestBooksData() {
-    console.log("[books] send request");
+    console.log("[menu] send request");
     getBookList()
       .then((data) => {
         console.log(data)
-        const { books, booklets, others } = data;
-        books.forEach(book => {
-          // 2.3.0 开始支持以 cloudId 作为 image src
-          book.coverUrl = book.coverId
-          book.articles.forEach(article => {
-            article.time = formatTime(article.timestamp);
-          });
-        });
         this.isRequesting = false;
         const { cacheStore } = this.props;
-        cacheStore.setBooksData(books);
-        cacheStore.setClean("books");
-        setBooksCache(books);
-        setCleanCache("books");
-        this.initTabStatus();
+        cacheStore.setMenuData(data);
+        cacheStore.setClean("menu");
+        setMenuCache(data);
+        setCleanCache("menu");
+        this.initBooksAccordion();
       })
       .catch(this.$error);
   }
@@ -112,13 +115,14 @@ export default class Index extends BaseComponent {
         <AtMessage />
 
         <AtTabs current={this.currentTabIndex} tabList={this.tabList} onClick={this.handleClickTab.bind(this)}>
+          {/* BOOKS */}
           <AtTabsPane current={this.currentTabIndex} index={0} >
             <View className='book-list'>
               {this.bookList.map(book => {
                 const {
                   id,
                   url,
-                  coverUrl,
+                  coverId,
                   intro,
                   title,
                   author,
@@ -127,9 +131,10 @@ export default class Index extends BaseComponent {
                 return (
                   <View key={id} className='book-wrapper'>
                     <View className='book__info'>
+                      {/* 2.3.0 开始支持以 cloudId 作为 image src */}
                       <Image
                         className='book__cover'
-                        src={coverUrl}
+                        src={coverId}
                         mode='aspectFit'
                       ></Image>
                       <View className='book__title'>{title}</View>
@@ -138,25 +143,20 @@ export default class Index extends BaseComponent {
                     </View>
                     <View className='book__menu'>
                       <AtAccordion
-                        open={this.tabStatus[id]}
-                        onClick={this.toggleTab.bind(this, id)}
+                        open={this.booksAccordion[id]}
+                        onClick={this.toggleAccordion.bind(this, id)}
                         title='目录'
                       >
                         <AtList hasBorder={false}>
-                          {articles.map(article => {
-                            const {
-                              realId,
-                              time,
-                            } = article;
-                            return (
-                              <AtListItem
-                                key={realId}
-                                title={article.title}
-                                note={time}
-                                onClick={() => this.navigateToArticle(article.id, realId)}
-                              />
-                            );
-                          })}
+                          {articles.map(article => (
+                            <AtListItem
+                              key={article.realId}
+                              title={article.title}
+                              note={formatTime(article.timestamp)}
+                              onClick={() => this.navigateToArticle(article.id, article.realId)}
+                            />)
+
+                          )}
                         </AtList>
                       </AtAccordion>
                     </View>
@@ -165,8 +165,29 @@ export default class Index extends BaseComponent {
               })}
             </View>
           </AtTabsPane>
+          {/* BOOKLETS & OTHERS */}
           <AtTabsPane current={this.currentTabIndex} index={1}>
-            <View style='padding: 100px 50px;background-color: #FAFBFC;text-align: center;'>
+            <View className='non-book-list'>
+              {
+                this.nonBookList.map(item => {
+                  const { id, title, articles } = item
+                  return <View key={id} className='non-book-wrapper'>
+                    <View className='non-book__title'>{title}</View>
+                    <View className='non-book__articles'>
+                      <AtList hasBorder={false}>
+                        {articles.map(article => (
+                          <AtListItem
+                            key={article.realId}
+                            title={article.title}
+                            note={formatTime(article.timestamp)}
+                            onClick={() => this.navigateToArticle(article.id, article.realId)}
+                          />)
+                        )}
+                      </AtList>
+                    </View>
+                  </View>
+                })
+              }
             </View>
           </AtTabsPane>
         </AtTabs>

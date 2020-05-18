@@ -25,7 +25,8 @@ export default class Index extends BaseComponent {
     // 初次加载
     if (cacheStore.version === 0) {
       console.log("[homepage] no cache");
-      // 会触发 version 变化，不需要额外处理
+      // 会触发 version 变化，然后再触发 homepage/menu dirty
+      // 这里不需要额外处理
     }
     // 初始数据缓存过期
     else if (isDirty) {
