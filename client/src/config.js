@@ -11,7 +11,8 @@ export const CACHE = {
   HOMEPAGE: 'cache-homepage',
   DIRTY: 'cache-need-refresh',
   BANNED: 'cache-user-banned',
-  RANDOM: 'cache-random'
+  RANDOM: 'cache-random',
+  ARTICLE: 'cache-articles'
 }
 
 export const ROUTES = {
@@ -26,5 +27,6 @@ export const ROUTES = {
 }
 
 export const SETTINGS = {
-  COMMENT_PER_DAY: 5 // 每天限制评论 5 次
+  COMMENT_PER_DAY: 5, // 每天限制评论 5 次
+  ARTICLE_CACHE_LIMIT: 5 // mb
 }

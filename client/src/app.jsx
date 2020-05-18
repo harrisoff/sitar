@@ -121,8 +121,12 @@ class App extends BaseComponent {
     }
   }
   componentWillUnmount() { }
-  componentDidShow() { }
-  componentDidHide() { }
+  componentDidShow() {
+    console.log('[app] did show')
+  }
+  componentDidHide() {
+    console.log('[app] did hide')
+  }
   componentDidCatchError() { }
 
   config = {

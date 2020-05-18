@@ -57,15 +57,16 @@ export function getBookList() {
 
 // ===== article =====
 
-export function getArticleById(id) {
+export function getArticleById(id, if_modified_since) {
   return new Promise((resolve, reject) => {
     callFunction("base", {
       fn: "getArticleById",
-      id
+      id,
+      if_modified_since
     })
-      .then(({ data }) => {
-        if (data.length === 0) reject({ errMsg: "没有找到文章!" });
-        else resolve(data[0]);
+      .then((data) => {
+        if (data) resolve(data)
+        else reject({ errMsg: "没有找到文章!" });
       })
       .catch(reject);
   });
@@ -77,6 +78,8 @@ export function getArticleComments(realId) {
     realId
   })
 }
+
+// ===== comments =====
 
 export function addComment({ realId, content, replyId }) {
   return callFunction("base", {

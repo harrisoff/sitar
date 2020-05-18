@@ -8,6 +8,7 @@ import "taro-ui/dist/style/components/article.scss";
 import { getArticleById, toggleLike, addComment, getArticleComments } from "../../api";
 import { getAuthSetting, getAndSaveUserInfo } from '../../api/auth'
 import { formatTime } from "../../utils/weapp";
+import { getArticleCache, setArticleCache, updateArticleCacheTime, garbageCollect } from '../../utils/cache'
 
 import BaseComponent from '../../components/Base.jsx'
 
@@ -21,26 +22,36 @@ export default class Index extends BaseComponent {
     let { _id, real_id, keyword } = this.$router.params;
     this.id = _id;
     this.realId = real_id;
-    getArticleById(_id)
+    this.keyword = keyword
+    // 找缓存
+    const articleCache = getArticleCache(real_id)
+    let lastModified = ''
+    // 如果有缓存，先显示本地缓存
+    if (articleCache) {
+      console.log('[article] use cache')
+      lastModified = articleCache.last_modified
+      this.applyArticleData(articleCache, true)
+      updateArticleCacheTime(real_id)
+    }
+    getArticleById(_id, lastModified)
       .then(articleData => {
-        const {
-          title,
-          author,
-          timestamp,
-          like_id,
-          url, // 公众号 url
-          view,
-          html
-          // need update
-        } = articleData;
-        this.title = title;
-        this.author = author;
-        this.html = keyword ? this.highlightKeyword(html, keyword) : html;
-        this.time = formatTime(timestamp);
-        this.likeIds = like_id;
-        this.liked = like_id.includes(this.props.userStore.openId);
-        this.view = view;
-        Taro.setNavigationBarTitle({ title })
+        // 缓存未过期时，只返回点赞/点击数
+        if (!articleData.html) {
+          this.applyArticleData(articleData, false)
+        }
+        // 缓存过期，或本地无缓存
+        else {
+          this.applyArticleData(articleData, true)
+          setArticleCache(articleData)
+
+          if (lastModified) {
+            console.log('[article] update cache')
+          } else {
+            console.log('[article] add cache')
+          }
+          // 计算当前缓存大小，判断是否需要清理
+          garbageCollect()
+        }
       })
       .catch(this.$error);
   }
@@ -78,6 +89,28 @@ export default class Index extends BaseComponent {
     return this.hasLoadComments ? `评论 (${this.comments.length})` : '显示评论'
   }
 
+  @action applyArticleData(articleData, isFull) {
+    const {
+      title,
+      author,
+      timestamp,
+      like_id,
+      url, // 公众号 url
+      view,
+      html
+      // need update
+    } = articleData;
+    this.likeIds = like_id;
+    this.liked = like_id.includes(this.props.userStore.openId);
+    this.view = view;
+    if (isFull) {
+      this.title = title;
+      this.author = author;
+      this.html = this.keyword ? this.highlightKeyword(html, this.keyword) : html;
+      this.time = formatTime(timestamp);
+      Taro.setNavigationBarTitle({ title })
+    }
+  }
   // 点赞/取消赞
   @action handleToggleLike() {
     toggleLike({

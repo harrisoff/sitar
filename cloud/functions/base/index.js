@@ -360,35 +360,58 @@ function getBookList(event) {
 // ===== 文章 =====
 
 function getArticleById(event) {
-  const { id } = event; // real_id
+  const { id, if_modified_since } = event;
   // 阅读量 +1
   db.collection(COLLECTIONS.ARTICLE)
     .doc(id)
     .update({
       data: {
-        view: _.inc(1),
+        view: _.inc(1), // 阅读 +1
       },
     });
-  return db
-    .collection(COLLECTIONS.ARTICLE)
-    .where({
-      _id: id,
-    })
-    .field(
-      createFieldObj(
-        "book_id",
-        "_id",
-        "author",
-        "like_id",
-        "html",
-        "real_id",
-        "title",
-        "timestamp",
-        "url",
-        "view"
+  return new Promise((resolve, reject) => {
+    db.collection(COLLECTIONS.ARTICLE)
+      .where({
+        _id: id,
+      })
+      .field(
+        createFieldObj(
+          "book_id",
+          "_id",
+          "author",
+          "like_id",
+          "html",
+          "real_id",
+          "title",
+          "timestamp",
+          "url",
+          "view",
+          "last_modified"
+        )
       )
-    )
-    .get();
+      .get()
+      .then((res) => {
+        const data = res.data
+        if (!data.length) {
+          resolve(null)
+        } else {
+          const article = data[0]
+          const { last_modified } = article
+          // 无缓存/缓存过期时返回完整数据
+          if (!if_modified_since || last_modified > if_modified_since) {
+            resolve(article)
+          }
+          // 缓存未过期时，只返回点赞/点击数据
+          else {
+            resolve({
+              like_id: article.like_id,
+              view: article.view
+            })
+          }
+        }
+      })
+      .catch(reject)
+  })
 }
 
 function searchArticleByKeyword(event) {
