@@ -2,7 +2,7 @@ import Taro from "@tarojs/taro";
 import { View, Image } from "@tarojs/components";
 import { observer, inject } from "@tarojs/mobx";
 import { AtAccordion, AtList, AtListItem, AtMessage, AtTabs, AtTabsPane } from "taro-ui";
-import { when, computed, observable, action } from "mobx";
+import { computed, observable, action, observe } from "mobx";
 
 import "taro-ui/dist/style/components/tabs.scss"
 
@@ -28,24 +28,28 @@ export default class Index extends BaseComponent {
     const isDirty = cacheStore.dirty.menu;
     if (cacheStore.version === 0) {
       console.log("[menu] no cache");
+      this.requestBooksData();
     } else if (isDirty) {
       console.log("[menu] cache is dirty");
-      this.isRequesting = true;
       this.requestBooksData();
     } else {
       console.log("[menu] cache is available");
     }
     this.initBooksAccordion();
 
-    when(
-      () => cacheStore.dirty.menu,
-      () => {
-        if (!this.isRequesting) {
-          console.log("[menu] cache version was updated");
-          this.requestBooksData();
-        }
+
+    observe(cacheStore, ({ name, type, oldValue, newValue }) => {
+      if (name !== 'version') return
+      // init
+      if (!oldValue && newValue) {
+        //
       }
-    );
+      // update
+      else {
+        console.log('[menu] version update')
+        this.requestBooksData();
+      }
+    })
   }
   componentDidShow() { }
   componentDidHide() { }
@@ -55,7 +59,6 @@ export default class Index extends BaseComponent {
     navigationBarTitleText: "目录"
   };
 
-  @observable isRequesting = false;
   // tab
   tabList = [
     { title: '书籍' },
@@ -95,7 +98,6 @@ export default class Index extends BaseComponent {
     getBookList()
       .then((data) => {
         console.log(data)
-        this.isRequesting = false;
         const { cacheStore } = this.props;
         cacheStore.setMenuData(data);
         cacheStore.setClean("menu");

@@ -21,7 +21,6 @@ export function getHomepageCache() {
 // menu
 
 export function setMenuCache(data) {
-  console.log('set cache', data)
   Taro.setStorageSync(MENU, data);
 }
 export function getMenuCache() {
@@ -45,16 +44,16 @@ export function getVersionCache() {
 // dirty list
 
 export function setDirtyCache(...keys) {
-  let cache = getDirtyCache();
+  let cache = getCacheStatus();
   keys.forEach(key => (cache[key] = true));
   Taro.setStorageSync(DIRTY, cache);
 }
 export function setCleanCache(...keys) {
-  const cache = getDirtyCache();
+  const cache = getCacheStatus();
   keys.forEach(key => (cache[key] = false));
   Taro.setStorageSync(DIRTY, cache);
 }
-export function getDirtyCache() {
+export function getCacheStatus() {
   const cache = Taro.getStorageSync(DIRTY);
   if (cache) {
     return cache;

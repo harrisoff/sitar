@@ -12,7 +12,7 @@ import Index from "./pages/index";
 import { login, getAuthSetting, getUserData } from "./api/auth";
 import { getVersion } from "./api";
 import {
-  getDirtyCache,
+  getCacheStatus,
   getMenuCache,
   getHomepageCache,
   getVersionCache,
@@ -38,20 +38,24 @@ class App extends BaseComponent {
     // 这里 async/await 无效
   }
   async componentDidMount() {
-    if (process.env.TARO_ENV === "weapp") {
-      Taro.cloud.init();
-    }
+    Taro.cloud.init();
 
     const { cacheStore, userStore } = store;
-    // init dirty list
-    const dirty = getDirtyCache();
-    Object.keys(dirty).forEach(key => {
-      if (dirty[key]) cacheStore.setDirty(key);
+
+    // 使用 local storage 初始化 store 数据
+    // 1. 缓存状态
+    console.log('[store] init cache status')
+    const cacheStatus = getCacheStatus();
+    Object.keys(cacheStatus).forEach(key => {
+      if (cacheStatus[key]) cacheStore.setDirty(key);
       else cacheStore.setClean(key);
     });
-    // init homepage/menu data
+    // 2. 首页/目录页数据
+    console.log('[store] init homepage/menu data')
     cacheStore.setHomepageData(getHomepageCache());
     cacheStore.setMenuData(getMenuCache());
+    // 3. 版本号
+    console.log('[store] init version')
     cacheStore.setVersion(getVersionCache());
 
     // await 不能阻塞子组件的渲染
@@ -84,12 +88,23 @@ class App extends BaseComponent {
       // get version api
       getVersion()
         .then(newVersion => {
-          if (newVersion !== cacheStore.version) {
+          const oldVersion = cacheStore.version
+          if (newVersion !== oldVersion) {
+            // TODO: 这里依赖子组件的 observe
+            // 但是如果 version 变化时子组件尚未挂载 observe
+            // 就会导致无法重新请求数据
+            // 比如从一个非首页/目录页的分享页面打开时？？
             console.log("find new version");
             cacheStore.setVersion(newVersion);
             setVersionCache(newVersion);
-            cacheStore.setDirty("homepage", "menu");
-            setDirtyCache("homepage", "menu");
+            // 初次进入 oldVersion === 0
+            // 避免子组件请求成功后又被这里设置成 dirty
+            if (!oldVersion) {
+              console.log("no local version");
+            } else {
+              cacheStore.setDirty("homepage", "menu");
+              setDirtyCache("homepage", "menu");
+            }
           }
         })
         .catch(err => {

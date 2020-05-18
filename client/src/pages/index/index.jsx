@@ -2,7 +2,7 @@ import Taro from "@tarojs/taro";
 import { View, Swiper, SwiperItem, Text, Image } from "@tarojs/components";
 import { observer, inject } from "@tarojs/mobx";
 import { AtCurtain, AtMessage, AtSearchBar, AtActivityIndicator } from "taro-ui"
-import { when, computed, observable, action } from "mobx";
+import { computed, observable, action, observe } from "mobx";
 
 import { getHomepageData, getRandomArticle, getRandomImage } from "../../api";
 import { setHomepageCache, setCleanCache } from "../../utils/cache";
@@ -25,31 +25,31 @@ export default class Index extends BaseComponent {
     // 初次加载
     if (cacheStore.version === 0) {
       console.log("[homepage] no cache");
-      // 会触发 version 变化，然后再触发 homepage/menu dirty
-      // 这里不需要额外处理
+      this.requestHomepageData();
     }
-    // 初始数据缓存过期
+    // 缓存过期
     else if (isDirty) {
       console.log("[homepage] cache is dirty");
       this.requestHomepageData();
     }
-    // 初始数据没有过期
+    // 缓存没有过期
     else {
       console.log("[homepage] cache is available");
       // computed
     }
 
-    // 这时还在等待 getVersion 接口
-    // 如果缓存过期，重新请求首页数据
-    when(
-      () => cacheStore.dirty.homepage,
-      () => {
-        if (!this.isRequesting) {
-          console.log("[homepage] cache version was updated");
-          this.requestHomepageData();
-        }
+    observe(cacheStore, ({ name, type, oldValue, newValue }) => {
+      if (name !== 'version') return
+      // init
+      if (!oldValue && newValue) {
+        //
       }
-    );
+      // update
+      else {
+        console.log('[homepage] version update')
+        this.requestHomepageData();
+      }
+    })
   }
   componentWillUnmount() { }
   componentDidShow() { }
@@ -76,7 +76,6 @@ export default class Index extends BaseComponent {
 
   // reactive data
 
-  @observable isRequesting = false;
   // search
   @observable keyword = '';
   // random image
