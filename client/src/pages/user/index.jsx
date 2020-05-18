@@ -75,6 +75,7 @@ export default class Index extends BaseComponent {
             </View>
             <View className='list__item'>
               <AtList>
+                <AtListItem title='文章缓存' onClick={this.navigateTo.bind(this, ROUTES.CACHE)} />
                 <AtListItem title='关于' onClick={this.navigateTo.bind(this, ROUTES.ABOUT)} />
               </AtList>
             </View>

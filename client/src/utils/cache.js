@@ -81,9 +81,12 @@ export function setArticleCache(article) {
   articleCaches[real_id] = {
     last_modified,
     article,
-    last: new Date().getTime() // 最后一次访问的时间
+    last_visit: new Date().getTime() // 最后一次访问的时间
   }
   Taro.setStorageSync(ARTICLE, articleCaches);
+}
+export function getArticleCaches() {
+  return Taro.getStorageSync(ARTICLE) || {}
 }
 export function getArticleCache(realId) {
   const articleCaches = Taro.getStorageSync(ARTICLE)
@@ -94,7 +97,7 @@ export function getArticleCache(realId) {
 export function updateArticleCacheTime(realId) {
   const articleCaches = Taro.getStorageSync(ARTICLE)
   const articleCache = articleCaches[realId]
-  articleCache.last = new Date().getTime()
+  articleCache.last_visit = new Date().getTime()
   Taro.setStorageSync(ARTICLE, articleCaches);
 }
 // 计算文章缓存大小，判断是否需要清理
@@ -108,7 +111,7 @@ export function garbageCollect() {
     const times = realIds.map(realId => {
       return {
         realId,
-        last: articleCaches[realId].last
+        last_visit: articleCaches[realId].last_visit
       }
     })
     times.sort()
@@ -119,6 +122,11 @@ export function garbageCollect() {
     })
     Taro.setStorageSync(ARTICLE, articleCaches);
   }
+}
+export function deleteArticleCache(realId) {
+  const articleCaches = Taro.getStorageSync(ARTICLE)
+  if (articleCaches[realId]) delete articleCaches[realId]
+  Taro.setStorageSync(ARTICLE, articleCaches);
 }
 
 // TODO: 限制随机功能使用次数

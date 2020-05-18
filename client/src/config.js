@@ -23,6 +23,7 @@ export const ROUTES = {
   USER: '/pages/user/index',
   USER_COMMENT: '/pages/user/comment/index',
   USER_LIKE: '/pages/user/like/index',
+  CACHE: '/pages/cache/index',
   ABOUT: '/pages/about/index',
 }
 

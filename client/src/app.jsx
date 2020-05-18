@@ -137,6 +137,7 @@ class App extends BaseComponent {
       "pages/user/like/index",
       "pages/user/comment/index",
       "pages/article/index",
+      "pages/cache/index",
       "pages/about/index",
       "pages/search/index",
     ],
