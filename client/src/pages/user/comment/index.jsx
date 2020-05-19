@@ -34,7 +34,7 @@ export default class Index extends BaseComponent {
           {
             this.props.userStore.commentList.map(comment => {
               const { id, content, articleId, realId, timestamp, title } = comment
-              return <View className='comment' key={id} onClick={this.navigateToArticle.bind(this, articleId, realId)}>
+              return <View className='comment' key={id} onClick={() => this.navigateToArticle(articleId, realId)}>
                 <View className='comment__article'>{title}</View>
                 <View className='comment__content'>{content}</View>
                 <View className='comment__time'>{formatTime(timestamp)}</View>

@@ -31,7 +31,7 @@ export default class Index extends BaseComponent {
           {
             this.props.userStore.likeList.map(article => {
               const { id, realId, timestamp, title } = article
-              return <View className='article' key={id} onClick={this.navigateToArticle.bind(this, id, realId)}>
+              return <View className='article' key={id} onClick={() => this.navigateToArticle(id, realId)}>
                 <View className='left'>
                   <View className='title'>{title}</View>
                   <View className='time'>{formatTime(timestamp)}</View>
