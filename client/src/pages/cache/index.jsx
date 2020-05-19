@@ -58,7 +58,7 @@ export default class Index extends BaseComponent {
           size
         }
       })
-      cacheList.sort()
+      cacheList.sort((a, b) => b.last_visit - a.last_visit)
       this.cacheList = cacheList
     }
   }
