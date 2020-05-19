@@ -28,6 +28,7 @@ export const ROUTES = {
 }
 
 export const SETTINGS = {
-  COMMENT_PER_DAY: 5, // 每天限制评论 5 次
-  ARTICLE_CACHE_LIMIT: 5 // mb
+  COMMENT_PER_DAY: 10, // 24 小时内评论次数限制
+  RANDOM_PER_DAY: 50, // 24 小时内随机文章/图片功能次数限制
+  ARTICLE_CACHE_LIMIT: 5, // mb
 }

@@ -5,8 +5,9 @@ import { AtCurtain, AtMessage, AtSearchBar, AtActivityIndicator } from "taro-ui"
 import { computed, observable, action, observe } from "mobx";
 
 import { getHomepageData, getRandomArticle, getRandomImage } from "../../api";
-import { setHomepageCache, setCleanCache } from "../../utils/cache";
+import { setHomepageCache, setCleanCache, getRandomLimit, setRandomRecord } from "../../utils/cache";
 import { ROUTES } from '../../config'
+import { MESSAGES } from '../../constants/message'
 
 import BaseComponent from '../../components/Base.jsx'
 
@@ -123,6 +124,9 @@ export default class Index extends BaseComponent {
   handleGetRandom(id) {
     // 并不能完全防止多次触发
     if (this.isGettingRandom) return
+    const limit = getRandomLimit()
+    if (!limit) return this.$info(MESSAGES.RANDOM_LIMIT)
+    setRandomRecord()
     this.isGettingRandom = true;
     if (id === 'article') {
       getRandomArticle()

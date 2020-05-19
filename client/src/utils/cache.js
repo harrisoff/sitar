@@ -135,14 +135,20 @@ export function deleteArticleCache(realId) {
   Taro.setStorageSync(ARTICLE, articleCaches);
 }
 
-// TODO: 限制随机功能使用次数
-export function setRandomCount(count) {
-  const timestamp = new Date().getTime()
-  Taro.setStorageSync(RANDOM, {
-    timestamp, // 最后一次使用时间
-    count
-  });
+// 随机图片/文章次数控制
+export function setRandomRecord() {
+  const randomRecord = Taro.getStorageSync(RANDOM) || []
+  // 50 条记录总大小在 10kB 以下
+  randomRecord.push(new Date().getTime())
+  Taro.setStorageSync(RANDOM, randomRecord)
 }
-export function getRandomCount() {
-  return Taro.getStorageSync(BANNED)
+export function getRandomLimit() {
+  const oneDay = 24 * 60 * 60 * 1000;
+  const now = new Date().getTime()
+  let randomRecord = Taro.getStorageSync(RANDOM) || []
+  // 删除一天以前的记录
+  randomRecord = randomRecord.filter(r => r > now - oneDay)
+  // 一天内的使用次数
+  const used = randomRecord.length
+  return SETTINGS.RANDOM_PER_DAY - used
 }
