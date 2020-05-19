@@ -49,9 +49,9 @@ export function searchArticleByKeyword(keyword) {
 
 // ===== menu =====
 
-export function getBookList() {
+export function getMenuData() {
   return callFunction("base", {
-    fn: "getBookList"
+    fn: "getMenuData"
   })
 }
 

@@ -274,8 +274,8 @@ function getHomepage(event) {
 
 // ===== 目录 =====
 
-// 书籍列表
-function getBookList(event) {
+// book + booklet + other
+function getMenuData(event) {
   return new Promise((resolve, reject) => {
     db.collection(COLLECTIONS.ARTICLE).aggregate()
       .project({
@@ -315,7 +315,7 @@ function getBookList(event) {
               if (type === 'book') {
                 const b = books.find(e => e.id === _id)
                 if (b) {
-                  b.articles.push(a)
+                  insert(b.articles, a)
                 } else {
                   books.push({
                     id: _id,
@@ -331,7 +331,7 @@ function getBookList(event) {
               else if (type === 'booklet') {
                 const b = booklets.find(e => e.id === _id)
                 if (b) {
-                  b.articles.push(a)
+                  insert(b.articles, a)
                 } else {
                   booklets.push({
                     id: _id,
@@ -343,7 +343,7 @@ function getBookList(event) {
             }
             // 未分类
             else {
-              otherArticles.push(a)
+              insert(otherArticles, a)
             }
           }
         })
@@ -575,6 +575,20 @@ function createFieldObj(...fields) {
   return fieldObj;
 }
 
+// 按 timestamp 倒序排序并加入数组
+function insert(arr, ele) {
+  for (let i = 0; i < arr.length; i += 1) {
+    if (ele.timestamp > arr[i].timestamp) {
+      arr.splice(i, 0, ele)
+      break
+    }
+    if (i === arr.length - 1) {
+      arr.push(ele)
+      break
+    }
+  }
+}
+
 exports.main = (event, context) => {
   const eventSample = {
     userInfo: {
@@ -604,8 +618,8 @@ exports.main = (event, context) => {
     case "getHomepage":
       return getHomepage(event);
     // 目录页获取书籍及下属文章
-    case "getBookList":
-      return getBookList(event);
+    case "getMenuData":
+      return getMenuData(event);
     // 随机抽一篇文章
     case "getRandomArticle":
       return getRandomArticle(event);

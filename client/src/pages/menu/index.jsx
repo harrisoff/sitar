@@ -6,7 +6,7 @@ import { computed, observable, action, observe } from "mobx";
 
 import "taro-ui/dist/style/components/tabs.scss"
 
-import { getBookList } from "../../api";
+import { getMenuData } from "../../api";
 import { setMenuCache, setCleanCache } from "../../utils/cache";
 import { formatTime } from '../../utils/weapp'
 
@@ -95,7 +95,7 @@ export default class Index extends BaseComponent {
   }
   @action requestBooksData() {
     console.log("[menu] send request");
-    getBookList()
+    getMenuData()
       .then((data) => {
         console.log(data)
         const { cacheStore } = this.props;
