@@ -18,7 +18,7 @@ export function getHomepageCache() {
   return Taro.getStorageSync(HOMEPAGE) || dft;
 }
 
-// 目录页缓存
+// 目录页缓存，这里会占 50kB+
 export function setMenuCache(data) {
   Taro.setStorageSync(MENU, data);
 }
@@ -114,7 +114,7 @@ export function garbageCollect() {
         last_visit: articleCaches[realId].last_visit
       }
     })
-    times.sort()
+    times.sort((a, b) => a.last_visit - b.last_visit)
     // 删除最久未被访问的两项
     times.splice(0, 2).forEach(i => {
       console.log(articleCaches[i.realId].article.title)
