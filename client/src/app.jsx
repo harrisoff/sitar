@@ -18,7 +18,8 @@ import {
   getVersionCache,
   setVersionCache,
   setDirtyCache,
-  setBanned
+  setBanned,
+  deleteBannedCache
 } from "./utils/cache";
 import { MESSAGES } from './constants/message'
 
@@ -67,16 +68,24 @@ class App extends BaseComponent {
 
       if (userStore.hasAuth) {
         // TODO: 这里应该干啥
-        const res = await Taro.getUserInfo();
+        // const res = await Taro.getUserInfo();
       }
       else {
         // 没授权过 undefined，或拒绝 false
       }
 
       const { params } = this.$router
+      // FIXME: 这里不会阻塞首页渲染
+      // 当用户解封时，login 和 getHomepageData 基本同时发送
+      // 后者会因为 localStorage 的 banned 仍然为 true 而请求失败
       const banned = await login(params);
       setBanned(banned)
-      if (banned) throw MESSAGES.BANNED
+      if (banned) {
+        deleteBannedCache()
+        cacheStore.deleteBannedData()
+        userStore.deleteBannedData()
+        throw MESSAGES.BANNED
+      }
 
       getUserData()
         .then(userData => {

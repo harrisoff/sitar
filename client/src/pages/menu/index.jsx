@@ -74,12 +74,15 @@ export default class Index extends BaseComponent {
   }
   // booklets & others
   @computed get nonBookList() {
-    const others = {
-      id: '',
-      title: '其他',
-      articles: this.props.cacheStore.othersData
+    const otherList = []
+    if (this.props.cacheStore.othersData.length) {
+      otherList.push({
+        id: '',
+        title: '其他',
+        articles: this.props.cacheStore.othersData
+      })
     }
-    return this.props.cacheStore.bookletsData.concat(others)
+    return this.props.cacheStore.bookletsData.concat(otherList)
   }
   @action toggleAccordion(bookId) {
     const booksAccordion = { ...this.booksAccordion };

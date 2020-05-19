@@ -36,6 +36,15 @@ class CacheStore {
     if (!Array.isArray(keys)) keys = [keys];
     keys.forEach(key => (this.dirty[key] = false));
   }
+  // 封禁用户删除数据
+  @action deleteBannedData() {
+    this.homepageData.carousel = []
+    this.homepageData.list = []
+    this.homepageData.top = []
+    this.booksData = []
+    this.bookletsData = []
+    this.othersData = []
+  }
 }
 
 export default new CacheStore();

@@ -73,6 +73,12 @@ export function setBanned(banned) {
 export function getBanned() {
   return Taro.getStorageSync(BANNED)
 }
+// 封禁后，除了 cache-user-banned 其他缓存全部删除
+export function deleteBannedCache() {
+  Object.keys(CACHE).forEach(key => {
+    if (CACHE[key] !== BANNED) Taro.removeStorageSync(CACHE[key])
+  })
+}
 
 // 文章缓存
 export function setArticleCache(article) {

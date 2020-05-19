@@ -41,6 +41,11 @@ class UserStore {
       }
     }
   }
+  // 封禁用户删除数据
+  @action deleteBannedData() {
+    this.commentList = []
+    this.likeList = []
+  }
 }
 
 export default new UserStore();
