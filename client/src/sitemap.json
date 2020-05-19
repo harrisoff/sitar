@@ -8,6 +8,14 @@
     },
     {
       "action": "disallow",
+      "page": "pages/index/index"
+    },
+    {
+      "action": "disallow",
+      "page": "pages/menu/index"
+    },
+    {
+      "action": "disallow",
       "page": "pages/search/index"
     },
     {
@@ -21,6 +29,14 @@
     {
       "action": "disallow",
       "page": "pages/user/like/index"
+    },
+    {
+      "action": "disallow",
+      "page": "pages/cache/index"
+    },
+    {
+      "action": "disallow",
+      "page": "pages/about/index"
     }
   ]
 }
