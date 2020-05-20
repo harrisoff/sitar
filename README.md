@@ -2,6 +2,7 @@
 
 ## TODO
 
+- [ ] 持续集成，参考 https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html
 - [ ] 随机音频
 - [ ] 封装日志类，onHide 触发时一次性上传日志
 - [ ] 分享设置图片
