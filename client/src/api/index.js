@@ -40,6 +40,12 @@ export function getRandomImage() {
   })
 }
 
+export function getRandomSong() {
+  return callFunction("base", {
+    fn: "getRandomSong"
+  })
+}
+
 export function searchArticleByKeyword(keyword) {
   return callFunction("base", {
     fn: "searchArticleByKeyword",

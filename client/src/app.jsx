@@ -178,6 +178,7 @@ class App extends BaseComponent {
       navigationBarTitleText: "WeChat",
       navigationBarTextStyle: "black"
     },
+    requiredBackgroundModes: ['audio'],
     usingComponents: {}
   };
 

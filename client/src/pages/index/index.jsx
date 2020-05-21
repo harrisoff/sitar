@@ -1,11 +1,13 @@
 import Taro from "@tarojs/taro";
 import { View, Swiper, SwiperItem, Text, Image } from "@tarojs/components";
 import { observer, inject } from "@tarojs/mobx";
-import { AtCurtain, AtMessage, AtSearchBar, AtActivityIndicator } from "taro-ui"
+import { AtCurtain, AtMessage, AtSearchBar, AtActivityIndicator, AtGrid } from "taro-ui"
 import { computed, observable, action, observe } from "mobx";
+import "taro-ui/dist/style/components/grid.scss";
 
-import { getHomepageData, getRandomArticle, getRandomImage } from "../../api";
+import { getHomepageData, getRandomArticle, getRandomImage, getRandomSong } from "../../api";
 import { setHomepageCache, setCleanCache, getRandomLimit, setRandomRecord } from "../../utils/cache";
+import { genCloudFileURL } from '../../utils/weapp'
 import { ROUTES } from '../../config'
 import { MESSAGES } from '../../constants/message'
 
@@ -61,13 +63,18 @@ export default class Index extends BaseComponent {
   randomItems = [
     {
       type: 'article',
-      icon: 'file-generic',
-      title: '随机文章'
+      iconInfo: { value: 'align-left' },
+      value: '随机文章'
+    },
+    {
+      type: 'song',
+      iconInfo: { value: 'sound' },
+      value: '随机歌曲'
     },
     {
       type: 'image',
-      icon: 'image',
-      title: '随机图片'
+      iconInfo: { value: 'image' },
+      value: '随机图片'
     }
   ]
 
@@ -121,14 +128,14 @@ export default class Index extends BaseComponent {
     this.isRandomImageVisible = false
   }
 
-  handleGetRandom(id) {
+  handleGetRandom({ type }) {
     // 并不能完全防止多次触发
     if (this.isGettingRandom) return
     const limit = getRandomLimit()
     if (!limit) return this.$info(MESSAGES.RANDOM_LIMIT)
     setRandomRecord()
     this.isGettingRandom = true;
-    if (id === 'article') {
+    if (type === 'article') {
       getRandomArticle()
         .then((res) => {
           this.navigateToArticle(res.id, res.realId)
@@ -137,7 +144,7 @@ export default class Index extends BaseComponent {
         .then(_ => {
           this.isGettingRandom = false
         })
-    } else if (id === 'image') {
+    } else if (type === 'image') {
       getRandomImage()
         .then(url => {
           this.randomUrl = url
@@ -147,6 +154,24 @@ export default class Index extends BaseComponent {
         .then(_ => {
           this.isGettingRandom = false
         })
+    } else {
+      getRandomSong()
+      .then(({ title, cover, album, url, artist }) => {
+        const backgroundAudioManager = Taro.getBackgroundAudioManager()
+        backgroundAudioManager.onError(err => {
+          console.error(err)
+          this.$error(err.errCode)
+        })
+        backgroundAudioManager.title = title
+        backgroundAudioManager.epname = album
+        backgroundAudioManager.singer = artist
+        backgroundAudioManager.coverImgUrl = genCloudFileURL(cover)
+        backgroundAudioManager.src = genCloudFileURL(url)
+      })
+      .catch(console.error)
+      .then(_ => {
+        this.isGettingRandom = false
+      })
     }
   }
 
@@ -205,23 +230,7 @@ export default class Index extends BaseComponent {
             随机阅读
           </View>
           <View className='section__body random__wrapper'>
-            {
-              this.randomItems.map(data => {
-                const { type, icon, title } = data
-                return <View key={type}
-                  className='random__item'
-                  hover-class='random__item_hover'
-                  onClick={this.handleGetRandom.bind(this, type)}
-                >
-                  <View className='random__item__icon'>
-                    <View className={`at-icon at-icon-${icon}`}></View>
-                  </View>
-                  <View className='random__item__text'>
-                    <View>{title}</View>
-                  </View>
-                </View>
-              })
-            }
+            <AtGrid data={this.randomItems} onClick={this.handleGetRandom.bind(this)}></AtGrid>
           </View>
         </View>
 

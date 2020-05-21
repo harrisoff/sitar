@@ -19,6 +19,8 @@ const COLLECTIONS = {
   BACKUP: "backup",
   SETTING: "setting",
   LOG: "log",
+  SONG: "song",
+  ALBUM: "album",
   // raw
   MATERIAL_RAW: "wx_material",
   VOICE_RAW: "wx_voice",
@@ -272,6 +274,71 @@ function getHomepage(event) {
     .get();
 }
 
+function getRandomArticle(event) {
+  return new Promise((resolve, reject) => {
+    db.collection(COLLECTIONS.ARTICLE)
+      .aggregate()
+      .match({
+        show: true
+      })
+      .sample({
+        size: 1
+      })
+      .end()
+      .then(({ list }) => {
+        const { _id, real_id } = list[0]
+        resolve({
+          id: _id,
+          realId: real_id
+        })
+      }).catch(reject)
+  })
+}
+
+function getRandomImage(event) {
+  return new Promise((resolve, reject) => {
+    db.collection(COLLECTIONS.IMAGE_RAW)
+      .aggregate()
+      .sample({
+        size: 1
+      })
+      .end()
+      .then(({ list }) => {
+        resolve(list[0].url)
+      }).catch(reject)
+  })
+}
+
+function getRandomSong(event) {
+  return new Promise((resolve, reject) => {
+    db.collection(COLLECTIONS.SONG)
+      .aggregate()
+      .sample({
+        size: 1
+      })
+      .lookup({
+        from: COLLECTIONS.ALBUM,
+        localField: 'album_id',
+        foreignField: '_id',
+        as: 'albums',
+      })
+      .end()
+      .then(({ list }) => {
+        const song = list[0]
+        const { albums, cloud_id, title } = song
+        const album = albums[0]
+        const result = {
+          title,
+          album: album.title,
+          cover: album.cover_id,
+          artist: album.artist,
+          url: cloud_id
+        }
+        resolve(result)
+      }).catch(reject)
+  })
+}
+
 // ===== 目录 =====
 
 // book + booklet + other
@@ -428,41 +495,6 @@ function searchArticleByKeyword(event) {
       }
     )
     .get()
-}
-
-function getRandomArticle(event) {
-  return new Promise((resolve, reject) => {
-    db.collection(COLLECTIONS.ARTICLE)
-      .aggregate()
-      .match({
-        show: true
-      })
-      .sample({
-        size: 1
-      })
-      .end()
-      .then(({ list }) => {
-        const { _id, real_id } = list[0]
-        resolve({
-          id: _id,
-          realId: real_id
-        })
-      }).catch(reject)
-  })
-}
-
-function getRandomImage(event) {
-  return new Promise((resolve, reject) => {
-    db.collection(COLLECTIONS.IMAGE_RAW)
-      .aggregate()
-      .sample({
-        size: 1
-      })
-      .end()
-      .then(({ list }) => {
-        resolve(list[0].url)
-      }).catch(reject)
-  })
 }
 
 // 获取评论
@@ -624,9 +656,12 @@ exports.main = (event, context) => {
     // 随机抽一篇文章
     case "getRandomArticle":
       return getRandomArticle(event);
-    // 随机抽一张图片图片
+    // 随机抽一张图片
     case "getRandomImage":
       return getRandomImage(event);
+    // 随机抽一首歌
+    case "getRandomSong":
+      return getRandomSong(event);
     // 文章页根据 real_id 获取文章内容
     case "getArticleById":
       return getArticleById(event);
