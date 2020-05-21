@@ -8,7 +8,7 @@ import "taro-ui/dist/style/components/tabs.scss"
 
 import { getMenuData } from "../../api";
 import { setMenuCache, setCleanCache } from "../../utils/cache";
-import { formatTime } from '../../utils/weapp'
+import { formatTime, genCloudFileURL } from '../../utils/weapp'
 
 import BaseComponent from '../../components/Base.jsx'
 
@@ -136,10 +136,9 @@ export default class Index extends BaseComponent {
                 return (
                   <View key={id} className='book-wrapper'>
                     <View className='book__info'>
-                      {/* 2.3.0 开始支持以 cloudId 作为 image src */}
                       <Image
                         className='book__cover'
-                        src={coverId}
+                        src={genCloudFileURL(coverId)}
                         mode='aspectFit'
                       ></Image>
                       <View className='book__title'>{title}</View>

@@ -3,6 +3,8 @@ module.exports = {
     NODE_ENV: '"production"'
   },
   defineConstants: {
+    N4: 7369,
+    CLOUD_ENV: 'sitar-dev'
   },
   mini: {},
   uglify: {

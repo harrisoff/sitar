@@ -39,6 +39,7 @@ const config = {
     ]
   },
   defineConstants: {
+    N10: 1302052182
   },
   mini: {
     postcss: {

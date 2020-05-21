@@ -7,5 +7,10 @@
     "react/forbid-elements": "off", // <template />
     "import/prefer-default-export": "off"
   },
-  "parser": "babel-eslint"
+  "parser": "babel-eslint",
+  "globals": {
+    "N4": true,
+    "N10": true,
+    "CLOUD_ENV": true
   }
+}
