@@ -45,7 +45,7 @@ class Logger {
     this._logs.push({
       level,
       type,
-      subType,
+      sub_type: subType,
       data,
       timestamp: new Date().getTime()
     })
