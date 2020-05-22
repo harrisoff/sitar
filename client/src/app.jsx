@@ -135,7 +135,7 @@ class App extends BaseComponent {
     console.log('[app] did show')
   }
   componentDidHide() {
-    this.logger.upload()
+    this.upload()
     console.log('[app] did hide')
   }
   componentDidCatchError() { }
