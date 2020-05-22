@@ -165,6 +165,9 @@ export default class Index extends BaseComponent {
             this.error('miniApi', 'backgroundAudioManager', err)
             this.$error(err.errCode)
           })
+          backgroundAudioManager.onEnded(_ => {
+            backgroundAudioManager.play()
+          })
           backgroundAudioManager.title = title
           backgroundAudioManager.epname = album
           backgroundAudioManager.singer = artist
