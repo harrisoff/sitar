@@ -231,7 +231,7 @@ export default class Index extends BaseComponent {
         {/* random */}
         <View className='section random'>
           <View className='section__title'>
-            随机阅读
+            手气不错
           </View>
           <View className='section__body random__wrapper'>
             <AtGrid data={this.randomItems} onClick={this.handleGetRandom.bind(this)}></AtGrid>
