@@ -4,7 +4,7 @@ class Logger {
   constructor() {
     this._logs = []
     this._isUploading = false
-    this._maxLen = 10
+    this._maxLen = 20
     this._timer = null
     this._delay = 3000
   }
@@ -41,10 +41,11 @@ class Logger {
         this._isUploading = false
       })
   }
-  _add(level, type, data) {
+  _add(level, type, subType, data = {}) {
     this._logs.push({
       level,
       type,
+      subType,
       data,
       timestamp: new Date().getTime()
     })
@@ -53,14 +54,14 @@ class Logger {
 
   // public methods
 
-  debug(type, data) {
-    this._add('debug', type, data)
+  debug(type, subType, data) {
+    this._add('debug', type, subType, data)
   }
-  log(type, data) {
-    this._add('log', type, data)
+  log(type, subType, data) {
+    this._add('log', type, subType, data)
   }
-  error(type, data) {
-    this._add('error', type, data)
+  error(type, subType, data) {
+    this._add('error', type, subType, data)
   }
   // 上传
   upload() {

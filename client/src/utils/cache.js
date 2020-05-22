@@ -114,9 +114,8 @@ export function garbageCollect() {
   const mbSize = getUtf8StringMb(cacheString)
   if (mbSize >= SETTINGS.ARTICLE_CACHE_LIMIT) {
     console.log('clean article cache')
-    logger.log('cache', {
-      sub_type: 'clean',
-      auto: true,
+    logger.log('auto', 'cache', {
+      action: 'auto delete',
       size: mbSize + 'mb'
     })
     const realIds = Object.keys(articleCaches)

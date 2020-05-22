@@ -6,7 +6,6 @@ import { observable, computed, action } from "mobx";
 import "taro-ui/dist/style/components/article.scss";
 
 import { getArticleById, toggleLike, addComment, getArticleComments } from "../../api";
-import { getAuthSetting, getAndSaveUserInfo } from '../../api/auth'
 import { formatTime } from "../../utils/weapp";
 import { getArticleCache, setArticleCache, updateArticleCacheTime, garbageCollect } from '../../utils/cache'
 
@@ -38,7 +37,7 @@ export default class Index extends BaseComponent {
         // 缓存未过期时，只返回点赞/点击数
         if (!articleData.html) {
           this.applyArticleData(articleData, false)
-          this.log('article', {
+          this.log('user', 'article', {
             cache: 'old',
             real_id,
             keyword
@@ -51,14 +50,14 @@ export default class Index extends BaseComponent {
 
           if (lastModified) {
             console.log('[article] update cache')
-            this.log('article', {
+            this.log('user', 'article', {
               cache: 'update',
               real_id,
               keyword
             })
           } else {
             console.log('[article] add cache')
-            this.log('article', {
+            this.log('user', 'article', {
               cache: 'add',
               real_id,
               keyword
@@ -145,22 +144,12 @@ export default class Index extends BaseComponent {
       .catch(this.$error);
   }
   // 授权 userInfo
-  @action handleUserInfo(res) {
-    if (res.detail.errMsg === 'getUserInfo:fail auth deny') {
-      // 拒绝了就不刷新 authSetting 了
-    }
-    else {
-      // 更新授权状态
-      getAuthSetting()
-        .then(({ authSetting }) => {
-          this.props.userStore.setAuthSetting(authSetting);
-        })
-        .catch(this.$error)
-      // 更新 user 信息
-      getAndSaveUserInfo()
-        .then(console.log)
-        .catch(this.$error)
-    }
+  @action handleGetUserInfo(res) {
+    this.onGetUserInfo(res)
+      .then(authSetting => {
+        this.props.userStore.setAuthSetting(authSetting);
+      })
+      .catch(this.$error)
   }
   // 评论
   @action loadComments() {
@@ -337,7 +326,7 @@ export default class Index extends BaseComponent {
                 : <Button
                   className='comments__add button_text text_link'
                   openType='getUserInfo'
-                  onGetUserInfo={this.handleUserInfo.bind(this)}
+                  onGetUserInfo={this.handleGetUserInfo.bind(this)}
                 >点击登录</Button>
             }
           </View>

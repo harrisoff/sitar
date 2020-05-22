@@ -1,6 +1,7 @@
 import Taro, { Component } from "@tarojs/taro";
 
 import { ROUTES } from '../config'
+import { getAndUpdateUserInfo, getAuthSetting } from '../api/auth'
 import logger from '../utils/Logger'
 
 export default class Index extends Component {
@@ -10,15 +11,38 @@ export default class Index extends Component {
   componentDidHide() { }
   componentDidCatchError() { }
 
+  // auth
+  onGetUserInfo(res) {
+    return new Promise((resolve, reject) => {
+      if (res.detail.errMsg === 'getUserInfo:fail auth deny') {
+        this.log('miniApi', 'getUserInfo', {
+          ...res.detail
+        })
+        // reject
+        reject('已拒绝')
+      }
+      else {
+        // 更新授权状态
+        getAuthSetting()
+          .then(resolve)
+          .catch(reject)
+        // 更新 user 信息
+        getAndUpdateUserInfo()
+          .then()
+          .catch(this.$error)
+      }
+
+    })
+  }
   // log
-  log(type, data) {
-    logger.log(type, data)
+  log(...params) {
+    logger.log(...params)
   }
-  debug(type, data) {
-    logger.debug(type, data)
+  debug(...params) {
+    logger.debug(...params)
   }
-  error(type, data) {
-    logger.error(type, data)
+  error(...params) {
+    logger.error(...params)
   }
   upload() {
     logger.upload()

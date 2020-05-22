@@ -139,7 +139,7 @@ export default class Index extends BaseComponent {
       getRandomArticle()
         .then(({ id, realId }) => {
           this.navigateToArticle(id, realId)
-          this.log('random', { type, real_id: realId })
+          this.log('user', 'random', { type, real_id: realId })
         })
         .catch(this.$error)
         .then(_ => {
@@ -150,7 +150,7 @@ export default class Index extends BaseComponent {
         .then(res => {
           this.randomUrl = res.url
           this.isRandomImageVisible = true
-          this.log('random', { type, media_id: res.media_id })
+          this.log('user', 'random', { type, media_id: res.media_id })
         })
         .catch(this.$error)
         .then(_ => {
@@ -162,7 +162,7 @@ export default class Index extends BaseComponent {
           const { title, cover, album, url, artist } = res
           const backgroundAudioManager = Taro.getBackgroundAudioManager()
           backgroundAudioManager.onError(err => {
-            this.error('backgroundAudioManager', err)
+            this.error('miniApi', 'backgroundAudioManager', err)
             this.$error(err.errCode)
           })
           backgroundAudioManager.title = title
@@ -170,7 +170,7 @@ export default class Index extends BaseComponent {
           backgroundAudioManager.singer = artist
           backgroundAudioManager.coverImgUrl = genCloudFileURL(cover)
           backgroundAudioManager.src = genCloudFileURL(url)
-          this.log('random', { type, _id: res._id, title })
+          this.log('user', 'random', { type, _id: res._id, title })
         })
         .catch(this.$error)
         .then(_ => {

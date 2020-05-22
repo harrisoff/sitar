@@ -205,7 +205,7 @@ function saveLog(openId, type, data) {
 
 // 用户授权 userInfo 后更新 user 表
 // 不管是首次授权还是多次授权
-function saveUserInfo(event) {
+function updateUserInfo(event) {
   const { userInfo, data } = event;
   const { openId } = userInfo;
   return db.collection(COLLECTIONS.USER)
@@ -680,8 +680,8 @@ exports.main = (event, context) => {
     case "getVersion":
       return getVersion(event);
     // 用户授权 userInfo 后更新 user 表
-    case "saveUserInfo":
-      return saveUserInfo(event);
+    case "updateUserInfo":
+      return updateUserInfo(event);
     // 添加评论
     case "addComment":
       return addComment(event);

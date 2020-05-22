@@ -22,24 +22,15 @@ export default function callFunction(name, data) {
           result
         } = response;
         if (errMsg === "cloud.callFunction:ok") {
-          logger.log('cloud', {
-            ...response,
-            function_name: name
-          })
+          if (data.fn !== 'uploadLogs') logger.log('callFunction', data.fn)
           resolve(result);
         } else {
-          logger.error('cloud', {
-            ...response,
-            function_name: name
-          })
+          logger.error('callFunction', data.fn, response)
           reject(response);
         }
       })
       .catch(error => {
-        logger.error('cloud', {
-          ...error,
-          function_name: name
-        })
+        logger.error('callFunction', data.fn, error)
         // const { errCode, errMsg, requestID } = error;
         console.error(error);
         reject(error.errMsg);

@@ -4,7 +4,6 @@ import { AtList, AtListItem, AtAvatar, AtButton, AtMessage } from "taro-ui";
 import { observer, inject } from "@tarojs/mobx";
 import { action } from "mobx";
 
-import { getAuthSetting, getAndSaveUserInfo } from '../../api/auth'
 import { ROUTES } from '../../config'
 
 import BaseComponent from '../../components/Base.jsx'
@@ -29,22 +28,12 @@ export default class Index extends BaseComponent {
     navigationBarTitleText: "我的"
   };
 
-  @action handleUserInfo(res) {
-    if (res.detail.errMsg === 'getUserInfo:fail auth deny') {
-      // reject
-    }
-    else {
-      // 更新授权状态
-      getAuthSetting()
-        .then(({ authSetting }) => {
-          this.props.userStore.setAuthSetting(authSetting);
-        })
-        .catch(this.$error)
-      // 更新 user 信息
-      getAndSaveUserInfo()
-        .then(console.log)
-        .catch(this.$error)
-    }
+  @action handleGetUserInfo(res) {
+    this.onGetUserInfo(res)
+      .then(authSetting => {
+        this.props.userStore.setAuthSetting(authSetting);
+      })
+      .catch(this.$error)
   }
 
   render() {
@@ -84,7 +73,7 @@ export default class Index extends BaseComponent {
           <View className='list'>
             <AtButton
               openType='getUserInfo'
-              onGetUserInfo={this.handleUserInfo.bind(this)}
+              onGetUserInfo={this.handleGetUserInfo.bind(this)}
             >
               点击授权
             </AtButton >

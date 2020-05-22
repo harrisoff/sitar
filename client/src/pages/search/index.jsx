@@ -16,7 +16,7 @@ export default class Index extends BaseComponent {
   componentWillMount() { }
   componentDidMount() {
     const { keyword } = this.$router.params
-    this.log('search', {
+    this.log('user', 'search', {
       keyword: this.keyword
     })
     Taro.setNavigationBarTitle({ title: `搜索结果: ${keyword}` })

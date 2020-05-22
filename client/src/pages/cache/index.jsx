@@ -36,9 +36,8 @@ export default class Index extends BaseComponent {
   @observable totalSize = 0;
 
   @action handleDelete(realId, title) {
-    this.log('cache', {
-      sub_type: 'delete',
-      auto: false,
+    this.log('user', 'cache', {
+      action: 'delete',
       real_id: realId,
       title
     })
