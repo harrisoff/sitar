@@ -79,7 +79,7 @@ class App extends BaseComponent {
       // 当用户解封时，login 和 getHomepageData 基本同时发送
       // 后者会因为 localStorage 的 banned 仍然为 true 而请求失败
       const banned = await login(params);
-      this.log('user', 'login', { authSetting, params, systemInfo: Taro.getSystemInfoSync() })
+      this.log('user', 'login', { banned, authSetting, params, systemInfo: Taro.getSystemInfoSync() })
       setBanned(banned)
       if (banned) {
         deleteBannedCache()
