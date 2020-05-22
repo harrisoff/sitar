@@ -166,7 +166,9 @@ export default class Index extends BaseComponent {
             this.$error(err.errCode)
           })
           backgroundAudioManager.onEnded(_ => {
-            backgroundAudioManager.play()
+            // 傻逼小程序
+            // 这时 play() 没用，貌似是因为 onEnded() 会删除 src
+            backgroundAudioManager.src = genCloudFileURL(url)
           })
           backgroundAudioManager.title = title
           backgroundAudioManager.epname = album
