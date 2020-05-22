@@ -1,7 +1,4 @@
 // 获取字符串占空间大小
-export function getUtf8StringMb(str, fix = 2) {
-  return (getUtf8StringBytes(str) / 1024 / 1024).toFixed(fix);
-}
 export function getUtf8StringKb(str, fix = 2) {
   return (getUtf8StringBytes(str) / 1024).toFixed(fix);
 }

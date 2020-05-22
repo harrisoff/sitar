@@ -1,7 +1,7 @@
 import Taro from "@tarojs/taro";
 
 import logger from '../utils/Logger'
-import { getUtf8StringMb } from '../utils/index'
+import { getUtf8StringKb } from '../utils/index'
 import { CACHE, SETTINGS } from "../config";
 
 const { MENU, HOMEPAGE, VERSION, DIRTY, BANNED, RANDOM, ARTICLE } = CACHE;
@@ -111,12 +111,12 @@ export function updateArticleCacheTime(realId) {
 export function garbageCollect() {
   const articleCaches = Taro.getStorageSync(ARTICLE)
   const cacheString = JSON.stringify(articleCaches)
-  const mbSize = getUtf8StringMb(cacheString)
-  if (mbSize >= SETTINGS.ARTICLE_CACHE_LIMIT) {
+  const kbSize = getUtf8StringKb(cacheString)
+  if (kbSize >= SETTINGS.ARTICLE_CACHE_LIMIT) {
     console.log('clean article cache')
     logger.log('auto', 'cache', {
       action: 'auto delete',
-      size: mbSize + 'mb'
+      size: kbSize + 'mb'
     })
     const realIds = Object.keys(articleCaches)
     const times = realIds.map(realId => {
