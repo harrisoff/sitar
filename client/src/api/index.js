@@ -115,3 +115,10 @@ export function getVersion() {
       .catch(reject);
   });
 }
+
+export function uploadLogs(data) {
+  return callFunction("base", {
+    fn: "uploadLogs",
+    data
+  })
+}

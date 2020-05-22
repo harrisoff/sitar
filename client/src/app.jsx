@@ -79,6 +79,7 @@ class App extends BaseComponent {
       // 当用户解封时，login 和 getHomepageData 基本同时发送
       // 后者会因为 localStorage 的 banned 仍然为 true 而请求失败
       const banned = await login(params);
+      this.log('login', { params })
       setBanned(banned)
       if (banned) {
         deleteBannedCache()
@@ -134,6 +135,7 @@ class App extends BaseComponent {
     console.log('[app] did show')
   }
   componentDidHide() {
+    this.logger.upload()
     console.log('[app] did hide')
   }
   componentDidCatchError() { }

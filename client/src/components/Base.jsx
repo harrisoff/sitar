@@ -1,6 +1,7 @@
 import Taro, { Component } from "@tarojs/taro";
 
 import { ROUTES } from '../config'
+import logger from '../utils/Logger'
 
 export default class Index extends Component {
   componentWillMount() { }
@@ -9,6 +10,19 @@ export default class Index extends Component {
   componentDidHide() { }
   componentDidCatchError() { }
 
+  // log
+  log(type, data) {
+    logger.log(type, data)
+  }
+  debug(type, data) {
+    logger.debug(type, data)
+  }
+  error(type, data) {
+    logger.error(type, data)
+  }
+  upload() {
+    logger.upload()
+  }
   // message
   $success(message) {
     Taro.atMessage({

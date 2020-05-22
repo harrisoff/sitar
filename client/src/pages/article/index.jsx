@@ -38,6 +38,11 @@ export default class Index extends BaseComponent {
         // 缓存未过期时，只返回点赞/点击数
         if (!articleData.html) {
           this.applyArticleData(articleData, false)
+          this.log('article', {
+            cache: 'old',
+            real_id,
+            keyword
+          })
         }
         // 缓存过期，或本地无缓存
         else {
@@ -46,8 +51,18 @@ export default class Index extends BaseComponent {
 
           if (lastModified) {
             console.log('[article] update cache')
+            this.log('article', {
+              cache: 'update',
+              real_id,
+              keyword
+            })
           } else {
             console.log('[article] add cache')
+            this.log('article', {
+              cache: 'add',
+              real_id,
+              keyword
+            })
           }
           // 计算当前缓存大小，判断是否需要清理
           garbageCollect()

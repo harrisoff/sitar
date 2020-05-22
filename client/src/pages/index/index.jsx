@@ -137,8 +137,9 @@ export default class Index extends BaseComponent {
     this.isGettingRandom = true;
     if (type === 'article') {
       getRandomArticle()
-        .then((res) => {
-          this.navigateToArticle(res.id, res.realId)
+        .then(({ id, realId }) => {
+          this.navigateToArticle(id, realId)
+          this.log('random', { type, real_id: realId })
         })
         .catch(this.$error)
         .then(_ => {
@@ -146,9 +147,10 @@ export default class Index extends BaseComponent {
         })
     } else if (type === 'image') {
       getRandomImage()
-        .then(url => {
-          this.randomUrl = url
+        .then(res => {
+          this.randomUrl = res.url
           this.isRandomImageVisible = true
+          this.log('random', { type, media_id: res.media_id })
         })
         .catch(this.$error)
         .then(_ => {
@@ -156,22 +158,24 @@ export default class Index extends BaseComponent {
         })
     } else {
       getRandomSong()
-      .then(({ title, cover, album, url, artist }) => {
-        const backgroundAudioManager = Taro.getBackgroundAudioManager()
-        backgroundAudioManager.onError(err => {
-          console.error(err)
-          this.$error(err.errCode)
+        .then((res) => {
+          const { title, cover, album, url, artist } = res
+          const backgroundAudioManager = Taro.getBackgroundAudioManager()
+          backgroundAudioManager.onError(err => {
+            this.error('backgroundAudioManager', err)
+            this.$error(err.errCode)
+          })
+          backgroundAudioManager.title = title
+          backgroundAudioManager.epname = album
+          backgroundAudioManager.singer = artist
+          backgroundAudioManager.coverImgUrl = genCloudFileURL(cover)
+          backgroundAudioManager.src = genCloudFileURL(url)
+          this.log('random', { type, _id: res._id, title })
         })
-        backgroundAudioManager.title = title
-        backgroundAudioManager.epname = album
-        backgroundAudioManager.singer = artist
-        backgroundAudioManager.coverImgUrl = genCloudFileURL(cover)
-        backgroundAudioManager.src = genCloudFileURL(url)
-      })
-      .catch(console.error)
-      .then(_ => {
-        this.isGettingRandom = false
-      })
+        .catch(this.$error)
+        .then(_ => {
+          this.isGettingRandom = false
+        })
     }
   }
 

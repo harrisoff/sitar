@@ -1,6 +1,7 @@
 import Taro from '@tarojs/taro'
 import { getBanned } from '../utils/cache'
 import { MESSAGES } from '../constants/message';
+import logger from '../utils/Logger'
 
 // interceptor
 export default function callFunction(name, data) {
@@ -21,12 +22,24 @@ export default function callFunction(name, data) {
           result
         } = response;
         if (errMsg === "cloud.callFunction:ok") {
+          logger.log('cloud', {
+            ...response,
+            function_name: name
+          })
           resolve(result);
         } else {
+          logger.error('cloud', {
+            ...response,
+            function_name: name
+          })
           reject(response);
         }
       })
       .catch(error => {
+        logger.error('cloud', {
+          ...error,
+          function_name: name
+        })
         // const { errCode, errMsg, requestID } = error;
         console.error(error);
         reject(error.errMsg);

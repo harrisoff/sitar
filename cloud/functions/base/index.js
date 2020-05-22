@@ -51,16 +51,6 @@ const _ = db.command;
 function login(event) {
   return new Promise(async (resolve, reject) => {
     try {
-      // 获取 WX Context (微信调用上下文)，包括 OPENID、APPID、及 UNIONID（需满足 UNIONID 获取条件）
-      const wxContext = cloud.getWXContext();
-      const wxContextSample = {
-        CLIENTIP: "",
-        CLIENTIPV6: "",
-        APPID: "",
-        OPENID: "",
-        ENV: "",
-        SOURCE: "",
-      };
       const { openId } = event.userInfo;
       const user = await findUser(event);
       const banned = user ? user.banned : false
@@ -69,9 +59,6 @@ function login(event) {
         // 1. 初始化用户，相应的表中添加一条记录
         await createUser(openId);
       }
-      // 更新登录记录
-      const { params } = event
-      await saveLog(openId, 'login', { context: wxContext, params })
       resolve(banned);
     } catch (err) {
       reject(err);
@@ -304,7 +291,8 @@ function getRandomImage(event) {
       })
       .end()
       .then(({ list }) => {
-        resolve(list[0].url)
+        const { url, media_id } = list[0]
+        resolve({ url, media_id })
       }).catch(reject)
   })
 }
@@ -325,9 +313,10 @@ function getRandomSong(event) {
       .end()
       .then(({ list }) => {
         const song = list[0]
-        const { albums, cloud_id, title } = song
+        const { _id, albums, cloud_id, title } = song
         const album = albums[0]
         const result = {
+          _id,
           title,
           album: album.title,
           cover: album.cover_id,
@@ -598,6 +587,28 @@ function getVersion(event) {
   });
 }
 
+// interface wxContextSample {
+//   CLIENTIP: String;
+//   CLIENTIPV6: String;
+//   APPID: String;
+//   OPENID: String;
+//   ENV: String;
+//   SOURCE: String;
+// };
+function uploadLogs(event) {
+  const { userInfo, data } = event;
+  data.forEach(item => {
+    item.open_id = userInfo.openId
+    if (item.level === 'error' || item.type === 'login') {
+      item.context = cloud.getWXContext()
+    }
+  })
+  return db.collection(COLLECTIONS.LOG)
+    .add({
+      data
+    })
+}
+
 // ===== utils =====
 function createFieldObj(...fields) {
   const fieldObj = {};
@@ -674,6 +685,9 @@ exports.main = (event, context) => {
     // 添加评论
     case "addComment":
       return addComment(event);
+    // 上传日志
+    case "uploadLogs":
+      return uploadLogs(event);
     default:
       return Promise.reject("empty function");
   }

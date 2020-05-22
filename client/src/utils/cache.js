@@ -1,5 +1,6 @@
 import Taro from "@tarojs/taro";
 
+import logger from '../utils/Logger'
 import { getUtf8StringMb } from '../utils/index'
 import { CACHE, SETTINGS } from "../config";
 
@@ -113,6 +114,11 @@ export function garbageCollect() {
   const mbSize = getUtf8StringMb(cacheString)
   if (mbSize >= SETTINGS.ARTICLE_CACHE_LIMIT) {
     console.log('clean article cache')
+    logger.log('cache', {
+      sub_type: 'clean',
+      auto: true,
+      size: mbSize + 'mb'
+    })
     const realIds = Object.keys(articleCaches)
     const times = realIds.map(realId => {
       return {
