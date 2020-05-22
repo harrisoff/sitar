@@ -10,6 +10,10 @@ module.exports = {
   uglify: {
     enable: true,
     config: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
     }
   },
   h5: {
