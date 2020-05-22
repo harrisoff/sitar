@@ -116,7 +116,7 @@ export function garbageCollect() {
     console.log('clean article cache')
     logger.log('auto', 'cache', {
       action: 'auto delete',
-      size: kbSize + 'mb'
+      size: kbSize + 'kb'
     })
     const realIds = Object.keys(articleCaches)
     const times = realIds.map(realId => {
