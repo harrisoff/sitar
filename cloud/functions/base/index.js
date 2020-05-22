@@ -34,6 +34,7 @@ const ENV = {
   CLOUD_ENV: PROCESS_ENV === "dev" ? DEV_ENV.CLOUD_ENV : PROD_ENV.CLOUD_ENV,
 };
 const { CLOUD_ENV } = ENV;
+const cdnPrefix = 'https://cdn.jjlin.online/sitar'
 
 // TIPS:
 // __dirname 是 /var/usr
@@ -321,7 +322,8 @@ function getRandomSong(event) {
           album: album.title,
           cover: album.cover_id,
           artist: album.artist,
-          url: cloud_id
+          cloudId: cloud_id,
+          cdnUrl: `${cdnPrefix}/${title}.mp3`
         }
         resolve(result)
       }).catch(reject)

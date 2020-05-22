@@ -136,12 +136,12 @@ export default class Index extends BaseComponent {
       const info = type === 'song' ? MESSAGES.RANDOM_SONG_LIMIT : MESSAGES.RANDOM_LIMIT
       return this.$info(info)
     }
-    setRandomRecord(type)
     this.isGettingRandom = true;
     if (type === 'article') {
       getRandomArticle()
         .then(({ id, realId }) => {
           this.navigateToArticle(id, realId)
+          setRandomRecord(type)
           this.log('user', 'random', { type, real_id: realId })
         })
         .catch(this.$error)
@@ -153,6 +153,7 @@ export default class Index extends BaseComponent {
         .then(res => {
           this.randomUrl = res.url
           this.isRandomImageVisible = true
+          setRandomRecord(type)
           this.log('user', 'random', { type, media_id: res.media_id })
         })
         .catch(this.$error)
@@ -165,22 +166,25 @@ export default class Index extends BaseComponent {
           if (!res) {
             return this.$warn(MESSAGES.RANDOM_SONG_ERROR)
           }
-          const { _id, title, cover, album, url, artist } = res
+          const { _id, title, cover, album, cloudId, cdnUrl, artist } = res
+          const url = cdnUrl ? encodeURI(cdnUrl) : genCloudFileURL(cloudId)
           const backgroundAudioManager = Taro.getBackgroundAudioManager()
           backgroundAudioManager.onError(err => {
+            console.error(err)
             this.error('miniApi', 'backgroundAudioManager', err)
             this.$error(err.errCode)
           })
           backgroundAudioManager.onEnded(_ => {
             // 傻逼小程序
             // 这时 play() 没用，貌似是因为 onEnded() 会删除 src
-            backgroundAudioManager.src = genCloudFileURL(url)
+            backgroundAudioManager.src = url
           })
           backgroundAudioManager.title = title
           backgroundAudioManager.epname = album
           backgroundAudioManager.singer = artist
           backgroundAudioManager.coverImgUrl = genCloudFileURL(cover)
-          backgroundAudioManager.src = genCloudFileURL(url)
+          backgroundAudioManager.src = url
+          setRandomRecord(type)
           this.log('user', 'random', { type, _id, title })
         })
         .catch(this.$error)
