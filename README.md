@@ -2,9 +2,10 @@
 
 ## TODO
 
-- [ ] 随机歌曲添加次数限制
+- [ ] 歌曲上传到七牛云，文档 https://developer.qiniu.com/kodo/sdk/1283/javascript
+- [ ] beatles 风格 UI
+- [ ] 分解 getUserInfo 接口
 - [ ] 持续集成，参考 https://juejin.im/post/5ec527dff265da770a61520d
-- [ ] 封装日志类，onHide 触发时一次性上传日志
 - [ ] 分享设置图片
 - [ ] 目录的数据可以提前请求，但是注意不能写在 /index 里
 - [ ] 小程序内关注公众号
@@ -59,3 +60,6 @@
 - [x] 封禁用户清空本地缓存
 - [x] 随机文章/图片接口限制调用次数
 - [x] 随机歌曲
+- [x] request 并未覆盖所有请求，还有一些是微信 API
+- [x] 日志上报功能
+- [x] 随机歌曲添加次数限制
