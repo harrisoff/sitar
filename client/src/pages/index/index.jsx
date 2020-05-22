@@ -131,9 +131,12 @@ export default class Index extends BaseComponent {
   handleGetRandom({ type }) {
     // 并不能完全防止多次触发
     if (this.isGettingRandom) return
-    const limit = getRandomLimit()
-    if (!limit) return this.$info(MESSAGES.RANDOM_LIMIT)
-    setRandomRecord()
+    const limit = getRandomLimit(type)
+    if (limit <= 0) {
+      const info = type === 'song' ? MESSAGES.RANDOM_SONG_LIMIT : MESSAGES.RANDOM_LIMIT
+      return this.$info(info)
+    }
+    setRandomRecord(type)
     this.isGettingRandom = true;
     if (type === 'article') {
       getRandomArticle()
@@ -159,7 +162,10 @@ export default class Index extends BaseComponent {
     } else {
       getRandomSong()
         .then((res) => {
-          const { title, cover, album, url, artist } = res
+          if (!res) {
+            return this.$warn(MESSAGES.RANDOM_SONG_ERROR)
+          }
+          const { _id, title, cover, album, url, artist } = res
           const backgroundAudioManager = Taro.getBackgroundAudioManager()
           backgroundAudioManager.onError(err => {
             this.error('miniApi', 'backgroundAudioManager', err)
@@ -175,7 +181,7 @@ export default class Index extends BaseComponent {
           backgroundAudioManager.singer = artist
           backgroundAudioManager.coverImgUrl = genCloudFileURL(cover)
           backgroundAudioManager.src = genCloudFileURL(url)
-          this.log('user', 'random', { type, _id: res._id, title })
+          this.log('user', 'random', { type, _id, title })
         })
         .catch(this.$error)
         .then(_ => {

@@ -12,6 +12,7 @@ export const CACHE = {
   DIRTY: 'cache-need-refresh',
   BANNED: 'cache-user-banned',
   RANDOM: 'cache-random',
+  RANDOM_SONG: 'cache-random-song',
   ARTICLE: 'cache-articles'
 }
 
@@ -30,5 +31,6 @@ export const ROUTES = {
 export const SETTINGS = {
   COMMENT_PER_DAY: 10, // 24 小时内评论次数限制
   RANDOM_PER_DAY: 50, // 24 小时内随机文章/图片功能次数限制
+  RANDOM_SONG_PER_DAY: 1, // 24 小时内随机歌曲次数限制
   ARTICLE_CACHE_LIMIT: 5 * 1024, // kb
 }

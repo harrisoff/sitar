@@ -4,7 +4,7 @@ import logger from '../utils/Logger'
 import { getUtf8StringKb } from '../utils/index'
 import { CACHE, SETTINGS } from "../config";
 
-const { MENU, HOMEPAGE, VERSION, DIRTY, BANNED, RANDOM, ARTICLE } = CACHE;
+const { MENU, HOMEPAGE, VERSION, DIRTY, BANNED, RANDOM, RANDOM_SONG, ARTICLE } = CACHE;
 
 // 首页缓存
 export function setHomepageCache(data) {
@@ -140,20 +140,24 @@ export function deleteArticleCache(realId) {
   Taro.setStorageSync(ARTICLE, articleCaches);
 }
 
-// 随机图片/文章次数控制
-export function setRandomRecord() {
-  const randomRecord = Taro.getStorageSync(RANDOM) || []
-  // 50 条记录总大小在 10kB 以下
+// 随机图片/文章/歌曲次数控制
+// 图片/文章共享限制次数，歌曲单独限制次数
+export function setRandomRecord(type) {
+  const key = type === 'song' ? RANDOM_SONG : RANDOM
+  const randomRecord = Taro.getStorageSync(key) || []
+  // 对于 50 条记录总大小在 10kB 以下
   randomRecord.push(new Date().getTime())
-  Taro.setStorageSync(RANDOM, randomRecord)
+  Taro.setStorageSync(key, randomRecord)
 }
-export function getRandomLimit() {
+export function getRandomLimit(type) {
+  const key = type === 'song' ? RANDOM_SONG : RANDOM
+  const limit = type === 'song' ? SETTINGS.RANDOM_SONG_PER_DAY : SETTINGS.RANDOM_PER_DAY
   const oneDay = 24 * 60 * 60 * 1000;
   const now = new Date().getTime()
-  let randomRecord = Taro.getStorageSync(RANDOM) || []
+  let randomRecord = Taro.getStorageSync(key) || []
   // 删除一天以前的记录
   randomRecord = randomRecord.filter(r => r > now - oneDay)
   // 一天内的使用次数
   const used = randomRecord.length
-  return SETTINGS.RANDOM_PER_DAY - used
+  return limit - used
 }
