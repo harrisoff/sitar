@@ -2,14 +2,13 @@
 
 ## TODO
 
-- [ ] 歌曲上传到七牛云，文档 https://developer.qiniu.com/kodo/sdk/1283/javascript
-- [ ] beatles 风格 UI
+- [ ] eslint
 - [ ] 分解 getUserInfo 接口
 - [ ] 持续集成，参考 https://juejin.im/post/5ec527dff265da770a61520d
-- [ ] 分享设置图片
 - [ ] 目录的数据可以提前请求，但是注意不能写在 /index 里
 - [ ] 小程序内关注公众号
 - [ ] getMenuData 接口好像有点慢
+- [ ] assets 上传到 cdn
 
 ### 有空再搞
 
@@ -63,3 +62,10 @@
 - [x] request 并未覆盖所有请求，还有一些是微信 API
 - [x] 日志上报功能
 - [x] 随机歌曲添加次数限制
+- [x] 歌曲上传到七牛云，不需要 API，直接用七牛云后台
+- [x] 分享设置图片
+- [x] beatles 风格 UI
+
+## NOTES
+
+1. 当一个 fixed 在底部的 view 中套一个 input 的时候，input focus 时软键盘弹出，会覆盖 input 下方的部分，除非显式设置了 input 的 margin-bottom。
