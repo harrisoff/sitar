@@ -444,7 +444,8 @@ function getArticleById(event) {
           "timestamp",
           "url",
           "view",
-          "last_modified"
+          "last_modified",
+          "thumb_url"
         )
       )
       .get()

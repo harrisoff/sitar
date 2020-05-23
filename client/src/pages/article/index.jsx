@@ -111,7 +111,8 @@ export default class Index extends BaseComponent {
       like_id,
       url, // 公众号 url
       view,
-      html
+      html,
+      thumb_url,
       // need update
     } = articleData;
     this.likeIds = like_id;
@@ -122,6 +123,7 @@ export default class Index extends BaseComponent {
       this.author = author;
       this.html = this.keyword ? this.highlightKeyword(html, this.keyword) : html;
       this.time = formatTime(timestamp);
+      this.thumb_url = thumb_url;
       Taro.setNavigationBarTitle({ title })
     }
   }
@@ -259,11 +261,14 @@ export default class Index extends BaseComponent {
     }
     let { path, params } = this.$router;
     const { _id, real_id } = params
-    return {
+    const option = {
       title: this.title,
       path: `${path}?_id=${_id}&real_id=${real_id}`,
-      // imageUrl: ''
     }
+    if (this.thumb_url) {
+      option.imageUrl = this.thumb_url
+    }
+    return option
   }
 
   render() {
@@ -284,7 +289,7 @@ export default class Index extends BaseComponent {
                 className='at-article__info__action__icon'
                 value={this.liked ? "heart-2" : "heart"}
                 size='18'
-                color='rgb(7,193,96)'
+                color='#6190E8'
               ></AtIcon>
               <Text style=''>
                 {this.liked ? "已赞" : "点赞"}
@@ -295,7 +300,7 @@ export default class Index extends BaseComponent {
                 className='at-article__info__action__icon'
                 value='eye'
                 size='18'
-                color='rgb(7,193,96)'
+                color='#6190E8'
               ></AtIcon>
               <Text>
                 {this.view}
