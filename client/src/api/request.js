@@ -22,7 +22,8 @@ export default function callFunction(name, data) {
           result
         } = response;
         if (errMsg === "cloud.callFunction:ok") {
-          if (data.fn !== 'uploadLogs') logger.log('callFunction', data.fn)
+          // 先不记录了，太多了
+          // if (data.fn !== 'uploadLogs') logger.log('callFunction', data.fn)
           resolve(result);
         } else {
           logger.error('callFunction', data.fn, response)
