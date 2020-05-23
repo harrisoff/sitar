@@ -1,7 +1,7 @@
 import Taro from "@tarojs/taro";
-import { View, Text, RichText, Button } from "@tarojs/components";
+import { View, Text, RichText, Button, Input } from "@tarojs/components";
 import { observer, inject } from "@tarojs/mobx";
-import { AtIcon, AtFloatLayout, AtTextarea, AtMessage } from "taro-ui";
+import { AtIcon, AtMessage, AtDivider, AtActivityIndicator } from "taro-ui";
 import { observable, computed, action } from "mobx";
 import "taro-ui/dist/style/components/article.scss";
 
@@ -91,16 +91,12 @@ export default class Index extends BaseComponent {
   @observable hasLoadComments = false; // 默认不显示评论
   @observable isLoadingComments = false;
   @observable comments = [];
-  @observable isModalVisible = false;
   @observable commentInput = "";
   // auth
   @observable isTipVisible = false;
 
   @computed get commentHeaderText() {
-    if (this.isLoadingComments) {
-      return '加载中...'
-    }
-    return this.hasLoadComments ? `评论 (${this.comments.length})` : '显示评论'
+    return this.hasLoadComments ? `评论 (${this.comments.length})` : '评论'
   }
 
   @action applyArticleData(articleData, isFull) {
@@ -160,18 +156,8 @@ export default class Index extends BaseComponent {
     this.isLoadingComments = true
     this.updateComments(false)
   }
-  @action handleOpenForm() {
-    if (!this.props.userStore.hasAuth) {
-      this.isTipVisible = true
-      return
-    }
-    this.isModalVisible = true;
-  }
-  @action handleCloseForm() {
-    this.isModalVisible = false;
-  }
-  @action handleInputChange(value) {
-    this.commentInput = value
+  @action handleInputChange(e) {
+    this.commentInput = e.target.value
   }
   @action handleSubmitComment() {
     if (this.commentInput === '') {
@@ -188,14 +174,13 @@ export default class Index extends BaseComponent {
     const data = { realId: this.realId, content: this.commentInput, replyId: '' }
     addComment(data)
       .then(() => {
-        this.isModalVisible = false
         this.commentInput = ''
         this.$success('评论成功')
         this.updateComments(true)
       })
       .catch(this.$error)
   }
-  // 更新当前文章的/userStore 的评论列表
+  // 更新当前文章的 userStore 的评论列表
   @action async updateComments(updateStore) {
     try {
       const articleCommentList = await getArticleComments(this.realId)
@@ -265,6 +250,7 @@ export default class Index extends BaseComponent {
       title: this.title,
       path: `${path}?_id=${_id}&real_id=${real_id}`,
     }
+    // 微信图文素材不一定都有 thumb_url
     if (this.thumb_url) {
       option.imageUrl = this.thumb_url
     }
@@ -314,52 +300,57 @@ export default class Index extends BaseComponent {
             </View>
           </View>
         </View>
-        <View className='split'></View>
-
-
         {/* comments */}
         <View className='comments'>
-          <View className='comments__header'>
-            <Text onClick={this.loadComments.bind(this)} className={`${this.hasLoadComments || this.isLoadingComments ? '' : 'text_link'}`}>{this.commentHeaderText}</Text>
+          <View className='comments__header'>{this.commentHeaderText}</View>
+          <View className='comments__body'>
             {
-              hasAuth ?
-                <Text
-                  className='comments__add text_link'
-                  onClick={this.handleOpenForm.bind(this)}
-                >
-                  评论
-                  </Text>
-                : <Button
-                  className='comments__add button_text text_link'
-                  openType='getUserInfo'
-                  onGetUserInfo={this.handleGetUserInfo.bind(this)}
-                >评论</Button>
+              this.hasLoadComments
+                ? this.comments.length === 0
+                  ? (<View className='comments_empty'><AtDivider content='抢沙发！' fontColor='#aaa' /></View>)
+                  : (
+                    this.comments.map(item => (
+                      <View className='comments__item' key={item.ID}>
+                        <View className='comment__info'>
+                          <Text className='comment__info__user'>{item.nickName}</Text>
+                          <Text className='comment__info__time'>{formatTime(item.timestamp)}</Text>
+                        </View>
+                        <View className='comment__content'>{item.content}</View>
+                      </View>
+                    ))
+                  )
+                : <View className='comments_empty'>
+                  {
+                    this.isLoadingComments
+                      ? <AtActivityIndicator mode='center'></AtActivityIndicator>
+                      : <Text onClick={this.loadComments.bind(this)}>点击加载评论</Text>
+                  }
+                </View>
             }
           </View>
-          {this.hasLoadComments && this.comments.length === 0 ? (
-            <View className='comments_empty'>暂无评论</View>
-          ) : (
-              this.comments.map(item => (
-                <View className='comments__item' key={item.ID}>
-                  <View className='comment__info'>
-                    <Text className='comment__info__user'>{item.nickName}</Text>
-                    <Text className='comment__info__time'>{formatTime(item.timestamp)}</Text>
-                  </View>
-                  <View className='comment__content'>{item.content}</View>
-                </View>
-              ))
-            )}
         </View>
-
-        {/* 评论 */}
-        <AtFloatLayout
-          isOpened={this.isModalVisible}
-          onClose={this.handleCloseForm.bind(this)}
-        >
-          {/* https://github.com/NervJS/taro-ui/issues/75 */}
-          {this.isModalVisible && <AtTextarea value={this.commentInput} onChange={this.handleInputChange.bind(this)}></AtTextarea>}
-          <Button onClick={this.handleSubmitComment.bind(this)}>提交</Button>
-        </AtFloatLayout>
+        {/* 发表评论 */}
+        <View className='comment__fixed'>
+          <Input
+            className='comment__input'
+            value={this.commentInput} onChange={this.handleInputChange.bind(this)}
+            disabled={!hasAuth}
+            placeholder={hasAuth ? '' : '登录才能评论'}
+          />
+          {/* <Text className='text_link'>发送</Text> */}
+          {
+            hasAuth
+              ? <Button
+                className='comments__add button_text text_link'
+                onClick={this.handleSubmitComment.bind(this)}
+              >评论</Button>
+              : <Button
+                className='comments__add button_text text_link'
+                openType='getUserInfo'
+                onGetUserInfo={this.handleGetUserInfo.bind(this)}
+              >登录</Button>
+          }
+        </View>
       </View>
     );
   }

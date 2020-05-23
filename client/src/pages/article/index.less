@@ -15,17 +15,29 @@
       width: 100%;
     }
   }
-  .split {
-    height: 10px;
-    background-color: rgb(245, 245, 245);
-    border-top: 1px solid rgb(235, 235, 235);
-    border-bottom: rgb(235, 235, 235);
-  }
   .comments {
-    padding: 10px;
+    // 傻逼小程序，真机上 margin-bottom 无效
+    // margin-bottom: 98rpx;
+    padding-bottom: 98rpx;
+
     .comments__header {
       color: grey;
       font-size: @font14;
+      font-weight: bold;
+      // margin: 30rpx 0 10rpx 0;
+      position: relative;
+      padding-left: 30rpx;
+      &::before {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        left: 0rpx;
+        width: 8rpx;
+        height: 100%;
+        background-color: rgb(97, 144, 232);
+        box-shadow: rgba(97, 144, 232, 0.2) 0px 0.14933rem 0.256rem 0px;
+        border-radius: 1px;
+      }
       .comments__add {
         display: inline;
         // 不能用 float 或 flex
@@ -41,31 +53,61 @@
         display: inline;
       }
     }
-    .comments_empty {
-      color: grey;
-      margin: 20rpx;
-      text-align: center;
-    }
-    .comments__item {
-      border-bottom: 1px solid rgb(235, 235, 235);
-      padding: 3px 0;
-      &:last-child {
-        border-bottom: none;
+    .comments__body {
+      min-height: 52rpx;
+      padding: 10rpx;
+      .comments_empty {
+        color: grey;
+        text-align: center;
+        font-size: @font14;
+        position: relative;
+        .at-divider {
+          height: 62rpx;
+        }
       }
-      .comment__info {
-        .comment__info__user {
+      .comments__item {
+        border-bottom: 1px solid rgb(235, 235, 235);
+        padding: 3px 0;
+        &:last-child {
+          border-bottom: none;
+        }
+        .comment__info {
+          .comment__info__user {
+            font-size: @font14;
+          }
+          .comment__info__time {
+            color: grey;
+            font-size: @font12;
+            padding-left: 10px;
+          }
+        }
+        .comment__content {
+          padding-left: 10px;
           font-size: @font14;
         }
-        .comment__info__time {
-          color: grey;
-          font-size: @font12;
-          padding-left: 10px;
-        }
       }
-      .comment__content {
-        padding-left: 10px;
+
+    }
+  }
+  .comment__fixed {
+    position: fixed; 
+    z-index: 999;
+    bottom: 0; 
+    height: 90rpx; 
+    width: 100%; 
+    background-color: white; 
+    box-shadow: 0 0 8rpx 0 #eee; 
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+      .comment__input {
+        border: 1rpx solid #f2f2f2;
+        width: 70%; 
+        height: 70rpx;
+        margin: 10rpx 0;
+        padding: 0 35rpx;
+        border-radius: 35rpx;
         font-size: @font14;
-      }
     }
   }
   // comment

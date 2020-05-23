@@ -11,6 +11,7 @@ export function genCloudFileURL(cloudId) {
   );
 }
 
-export function formatTime(t) {
-  return dayjs(t).format("YYYY-MM-DD HH:mm:ss");
+export function formatTime(t, dropSecond) {
+  const format = dropSecond ? "YYYY-MM-DD HH:mm" : "YYYY-MM-DD HH:mm:ss"
+  return dayjs(t).format(format);
 }
