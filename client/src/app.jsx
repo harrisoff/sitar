@@ -144,6 +144,7 @@ class App extends BaseComponent {
     pages: [
       "pages/index/index",
       "pages/menu/index",
+      "pages/activity/index",
       "pages/user/index",
       "pages/user/like/index",
       "pages/user/comment/index",
@@ -153,31 +154,38 @@ class App extends BaseComponent {
       "pages/search/index",
     ],
     tabBar: {
+      selectedColor: "#6190E8",
       list: [
         {
           pagePath: "pages/index/index",
           text: "首页",
-          iconPath: "assets/images/home-normal.png",
-          selectedIconPath: "assets/images/home-selected.png"
+          iconPath: "assets/images/george1.png",
+          selectedIconPath: "assets/images/george2.png"
         },
         {
           pagePath: "pages/menu/index",
           text: "目录",
-          iconPath: "assets/images/menu-normal.png",
-          selectedIconPath: "assets/images/menu-selected.png"
+          iconPath: "assets/images/paul1.png",
+          selectedIconPath: "assets/images/paul2.png"
+        },
+        {
+          pagePath: "pages/activity/index",
+          text: "活动",
+          iconPath: "assets/images/ringo1.png",
+          selectedIconPath: "assets/images/ringo2.png"
         },
         {
           pagePath: "pages/user/index",
           text: "我的",
-          iconPath: "assets/images/user-normal.png",
-          selectedIconPath: "assets/images/user-selected.png"
+          iconPath: "assets/images/john1.png",
+          selectedIconPath: "assets/images/john2.png"
         }
       ]
     },
     window: {
       backgroundTextStyle: "light",
       navigationBarBackgroundColor: "#fff",
-      navigationBarTitleText: "WeChat",
+      navigationBarTitleText: "西塔尔之声",
       navigationBarTextStyle: "black"
     },
     requiredBackgroundModes: ['audio'],

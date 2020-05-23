@@ -148,6 +148,7 @@ export default class Index extends BaseComponent {
     this.onGetUserInfo(res)
       .then(authSetting => {
         this.props.userStore.setAuthSetting(authSetting);
+        this.handleOpenForm()
       })
       .catch(this.$error)
   }
@@ -321,13 +322,13 @@ export default class Index extends BaseComponent {
                   className='comments__add text_link'
                   onClick={this.handleOpenForm.bind(this)}
                 >
-                  发表评论
+                  评论
                   </Text>
                 : <Button
                   className='comments__add button_text text_link'
                   openType='getUserInfo'
                   onGetUserInfo={this.handleGetUserInfo.bind(this)}
-                >点击登录</Button>
+                >评论</Button>
             }
           </View>
           {this.hasLoadComments && this.comments.length === 0 ? (
@@ -351,7 +352,7 @@ export default class Index extends BaseComponent {
           onClose={this.handleCloseForm.bind(this)}
         >
           {/* https://github.com/NervJS/taro-ui/issues/75 */}
-          {this.isModalVisible && <AtTextarea placeholder='write something' value={this.commentInput} onChange={this.handleInputChange.bind(this)}></AtTextarea>}
+          {this.isModalVisible && <AtTextarea value={this.commentInput} onChange={this.handleInputChange.bind(this)}></AtTextarea>}
           <Button onClick={this.handleSubmitComment.bind(this)}>提交</Button>
         </AtFloatLayout>
       </View>

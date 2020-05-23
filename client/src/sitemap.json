@@ -16,6 +16,10 @@
     },
     {
       "action": "disallow",
+      "page": "pages/activity/index"
+    },
+    {
+      "action": "disallow",
       "page": "pages/search/index"
     },
     {

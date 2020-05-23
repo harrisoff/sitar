@@ -18,8 +18,6 @@ export default class Index extends Component {
         this.log('miniApi', 'getUserInfo', {
           ...res.detail
         })
-        // reject
-        reject('已拒绝')
       }
       else {
         // 更新授权状态

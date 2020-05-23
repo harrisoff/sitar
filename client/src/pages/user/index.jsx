@@ -70,12 +70,13 @@ export default class Index extends BaseComponent {
             </View>
           </View>
           :
-          <View className='list'>
+          <View>
             <AtButton
+              className='button__auth'
               openType='getUserInfo'
               onGetUserInfo={this.handleGetUserInfo.bind(this)}
             >
-              点击授权
+              登录解锁全部功能
             </AtButton >
           </View>
         }

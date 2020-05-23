@@ -69,7 +69,7 @@ export default class Index extends BaseComponent {
     {
       type: 'song',
       iconInfo: { value: 'sound' },
-      value: '随机歌曲'
+      value: '每日一曲'
     },
     {
       type: 'image',
