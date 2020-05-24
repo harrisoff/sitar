@@ -36,13 +36,17 @@ export default class Index extends BaseComponent {
   @observable cacheCount = 0;
   @observable totalSize = 0;
 
-  @action handleDelete(realId, title) {
+  @action handleOpen(item) {
+    item.swiped = true
+  }
+  @action handleDelete(item) {
+    const {real_id, title} = item
     this.log('user', 'cache', {
       action: 'delete',
-      real_id: realId,
+      real_id,
       title
     })
-    deleteArticleCache(realId)
+    deleteArticleCache(real_id)
     this.initCacheData()
   }
   @action initCacheData() {
@@ -62,12 +66,21 @@ export default class Index extends BaseComponent {
           title,
           _id,
           real_id,
-          size
+          size,
+          swiped: false
         }
       })
       cacheList.sort((a, b) => b.last_visit - a.last_visit)
       this.cacheList = cacheList
       this.isPending = false
+    }
+  }
+  @action handleClickItem(item) {
+    if(item.swiped){
+      item.swiped = false
+    } else {
+      const {real_id, _id} = item
+      this.navigateToArticle(_id, real_id)
     }
   }
 
@@ -93,10 +106,14 @@ export default class Index extends BaseComponent {
                   <AtList>
                     {
                       this.cacheList.map(cacheItem => {
-                        const { title, _id, real_id, size } = cacheItem
+                        const { title, real_id, size } = cacheItem
                         return (
-                          <AtSwipeAction key={real_id} options={this.swipeOption} autoClose onClick={this.handleDelete.bind(this, real_id, title)}>
-                            <AtListItem title={title} extraText={size + 'kB'} onClick={() => this.navigateToArticle(_id, real_id)} />
+                          <AtSwipeAction key={real_id} options={this.swipeOption} autoClose 
+                            isOpened={cacheItem.swiped}
+                            onClick={this.handleDelete.bind(this, cacheItem)}
+                            onOpened={this.handleOpen.bind(this, cacheItem)}
+                          >
+                            <AtListItem title={title} extraText={size + 'kB'} onClick={this.handleClickItem.bind(this, cacheItem)} />
                           </AtSwipeAction>
                         )
                       })
