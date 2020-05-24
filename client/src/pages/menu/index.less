@@ -19,26 +19,34 @@
     .book-wrapper {
       margin: 30rpx 0;
       .book__info {
+        display: flex;
+        padding: 0 10rpx;
         view {
-          text-align: center;
+          padding: 10rpx;
         }
-        .book__cover {
-          display: block;
-          margin: 0 auto;
-          height: 400rpx;
+        .info_left {
+          width: 35%;
+          .book__cover {
+            display: block;
+            margin: 0 auto;
+            height: 400rpx;
+            width: 100%;
+          }
         }
-        .book__title {
-          font-size: @font24;
-          height: 50rpx;
-          line-height: 50rpx;
-          margin: 10rpx 0;
-        }
-        .book__author {
-          font-size: @font14;
-        }
-        .book__intro {
-          font-size: @font14;
-          color: #999;
+        .info_right {
+          width: 65%;
+          .book__title {
+            font-size: @font24;
+            line-height: 50rpx;
+            margin: 10rpx 0;
+          }
+          .book__author {
+            font-size: @font14;
+          }
+          .book__intro {
+            font-size: @font14;
+            color: #999;
+          }
         }
       }
       .book__menu {

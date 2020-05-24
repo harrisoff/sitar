@@ -136,14 +136,16 @@ export default class Index extends BaseComponent {
                 return (
                   <View key={id} className='book-wrapper'>
                     <View className='book__info'>
+                      <View className='info_left'>
                       <Image
                         className='book__cover'
                         src={genCloudFileURL(coverId)}
                         mode='aspectFit'
-                      ></Image>
+                      ></Image></View>
+                      <View className='info_right'>
                       <View className='book__title'>{title}</View>
                       <View className='book__author'>{author}</View>
-                      <View className='book__intro'>{intro}</View>
+                      <View className='book__intro'>{intro}</View></View>
                     </View>
                     <View className='book__menu'>
                       <AtAccordion
