@@ -97,18 +97,18 @@ export default class Index extends BaseComponent {
 
   render() {
     return (
-      <View className="page-user-cache">
+      <View className='page-user-cache'>
         <AtMessage />
         {this.isPending ? (
           <AtActivityIndicator
-            mode="center"
-            content="计算中..."
+            mode='center'
+            content='计算中...'
           ></AtActivityIndicator>
         ) : this.cacheCount === 0 ? (
-          <AtDivider content="没有缓存" fontColor="#aaa" />
+          <AtDivider content='没有缓存' fontColor='#aaa' />
         ) : (
           <View>
-            <View style="margin: 20rpx">
+            <View style='margin: 20rpx'>
               <View>
                 {this.cacheCount}条缓存，共{this.totalSize}kB
               </View>

@@ -281,74 +281,74 @@ export default class Index extends BaseComponent {
   render() {
     const hasAuth = this.props.userStore.hasAuth;
     return (
-      <View className="page-article">
+      <View className='page-article'>
         <AtMessage />
 
-        <View className="at-article">
-          <View className="at-article__h2">{this.title}</View>
+        <View className='at-article'>
+          <View className='at-article__h2'>{this.title}</View>
           {/* info */}
-          <View className="at-article__info">
+          <View className='at-article__info'>
             {this.author} {this.time}
             <View
-              className="at-article__info__action"
+              className='at-article__info__action'
               onClick={this.handleToggleLike.bind(this)}
             >
               <AtIcon
-                className="at-article__info__action__icon"
+                className='at-article__info__action__icon'
                 value={this.liked ? "heart-2" : "heart"}
-                size="18"
-                color="#6190E8"
+                size='18'
+                color='#6190E8'
               ></AtIcon>
-              <Text style="">{this.liked ? "已赞" : "点赞"}</Text>
+              <Text style=''>{this.liked ? "已赞" : "点赞"}</Text>
             </View>
-            <View className="at-article__info__action">
+            <View className='at-article__info__action'>
               <AtIcon
-                className="at-article__info__action__icon"
-                value="eye"
-                size="18"
-                color="#6190E8"
+                className='at-article__info__action__icon'
+                value='eye'
+                size='18'
+                color='#6190E8'
               ></AtIcon>
               <Text>{this.view}</Text>
             </View>
           </View>
           {/* content */}
-          <View className="at-article__content">
-            <View className="at-article__section">
+          <View className='at-article__content'>
+            <View className='at-article__section'>
               <RichText
                 nodes={this.html}
-                style="word-wrap:break-word;word-break:break-all;"
+                style='word-wrap:break-word;word-break:break-all;'
               ></RichText>
             </View>
           </View>
         </View>
         {/* comments */}
-        <View className="comments">
-          <View className="comments__header">{this.commentHeaderText}</View>
-          <View className="comments__body">
+        <View className='comments'>
+          <View className='comments__header'>{this.commentHeaderText}</View>
+          <View className='comments__body'>
             {this.hasLoadComments ? (
               this.comments.length === 0 ? (
-                <View className="comments_empty">
-                  <AtDivider content="抢沙发！" fontColor="#aaa" />
+                <View className='comments_empty'>
+                  <AtDivider content='抢沙发！' fontColor='#aaa' />
                 </View>
               ) : (
                 this.comments.map(item => (
-                  <View className="comments__item" key={item.ID}>
-                    <View className="comment__info">
-                      <Text className="comment__info__user">
+                  <View className='comments__item' key={item.ID}>
+                    <View className='comment__info'>
+                      <Text className='comment__info__user'>
                         {item.nickName}
                       </Text>
-                      <Text className="comment__info__time">
+                      <Text className='comment__info__time'>
                         {formatTime(item.timestamp)}
                       </Text>
                     </View>
-                    <View className="comment__content">{item.content}</View>
+                    <View className='comment__content'>{item.content}</View>
                   </View>
                 ))
               )
             ) : (
-              <View className="comments_empty">
+              <View className='comments_empty'>
                 {this.isLoadingComments ? (
-                  <AtActivityIndicator mode="center"></AtActivityIndicator>
+                  <AtActivityIndicator mode='center'></AtActivityIndicator>
                 ) : (
                   <Text onClick={this.loadComments.bind(this)}>
                     点击加载评论
@@ -359,9 +359,9 @@ export default class Index extends BaseComponent {
           </View>
         </View>
         {/* 发表评论 */}
-        <View className="comment__fixed">
+        <View className='comment__fixed'>
           <Input
-            className="comment__input"
+            className='comment__input'
             value={this.commentInput}
             onChange={this.handleInputChange.bind(this)}
             disabled={!hasAuth}
@@ -370,15 +370,15 @@ export default class Index extends BaseComponent {
           {/* <Text className='text_link'>发送</Text> */}
           {hasAuth ? (
             <Button
-              className="comments__add button_text text_link"
+              className='comments__add button_text text_link'
               onClick={this.handleSubmitComment.bind(this)}
             >
               评论
             </Button>
           ) : (
             <Button
-              className="comments__add button_text text_link"
-              openType="getUserInfo"
+              className='comments__add button_text text_link'
+              openType='getUserInfo'
               onGetUserInfo={this.handleGetUserInfo.bind(this)}
             >
               登录
