@@ -146,7 +146,6 @@ export default class Index extends BaseComponent {
     this.onGetUserInfo(res)
       .then(authSetting => {
         this.props.userStore.setAuthSetting(authSetting);
-        this.handleOpenForm()
       })
       .catch(this.$error)
   }
