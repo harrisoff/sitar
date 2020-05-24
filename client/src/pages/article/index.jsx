@@ -332,7 +332,7 @@ export default class Index extends BaseComponent {
                 </View>
               ) : (
                 this.comments.map(item => (
-                  <View className='comments__item' key={item.ID}>
+                  <View className='comments__item' key={item.id}>
                     <View className='comment__info'>
                       <Text className='comment__info__user'>
                         {item.nickName}
