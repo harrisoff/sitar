@@ -1,7 +1,7 @@
 import Taro from "@tarojs/taro";
 
 import callFunction from "./request";
-import logger from '../utils/Logger'
+import logger from "../utils/Logger";
 
 export function login(params) {
   return callFunction("base", {
@@ -13,7 +13,7 @@ export function login(params) {
 // 不是小程序的 userInfo，而是数据库里保存的 userData
 export function getUserData() {
   return callFunction("base", {
-    fn: "getUserData",
+    fn: "getUserData"
   });
 }
 
@@ -21,15 +21,15 @@ export function getUserData() {
 export function getAuthSetting() {
   return new Promise((resolve, reject) => {
     Taro.getSetting()
-      .then(({authSetting}) => {
-        logger.log('miniApi', 'authSetting', authSetting)
-        resolve(authSetting)
+      .then(({ authSetting }) => {
+        logger.log("miniApi", "authSetting", authSetting);
+        resolve(authSetting);
       })
       .catch(err => {
-        logger.error('miniApi', 'authSetting', err)
-        reject(err.errMsg)
-      })
-  })
+        logger.error("miniApi", "authSetting", err);
+        reject(err.errMsg);
+      });
+  });
 }
 
 // 保存 userInfo 到数据库
@@ -46,16 +46,16 @@ export function updateUserInfo(data) {
 export function getAndUpdateUserInfo() {
   return new Promise((resolve, reject) => {
     Taro.getUserInfo()
-      .then((res) => {
-        logger.log('miniApi', 'getUserInfo', res)
-        const { userInfo } = res
+      .then(res => {
+        logger.log("miniApi", "getUserInfo", res);
+        const { userInfo } = res;
         updateUserInfo(userInfo)
           .then(resolve)
-          .catch(reject)
+          .catch(reject);
       })
       .catch(err => {
-        logger.error('miniApi', 'getUserInfo', err)
-        reject(err.errMsg)
-      })
-  })
+        logger.error("miniApi", "getUserInfo", err);
+        reject(err.errMsg);
+      });
+  });
 }

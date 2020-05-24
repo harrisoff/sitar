@@ -31,26 +31,26 @@ export function getHomepageData() {
 export function getRandomArticle() {
   return callFunction("base", {
     fn: "getRandomArticle"
-  })
+  });
 }
 
 export function getRandomImage() {
   return callFunction("base", {
     fn: "getRandomImage"
-  })
+  });
 }
 
 export function getRandomSong() {
   return callFunction("base", {
     fn: "getRandomSong"
-  })
+  });
 }
 
 export function searchArticleByKeyword(keyword) {
   return callFunction("base", {
     fn: "searchArticleByKeyword",
     keyword
-  })
+  });
 }
 
 // ===== menu =====
@@ -58,7 +58,7 @@ export function searchArticleByKeyword(keyword) {
 export function getMenuData() {
   return callFunction("base", {
     fn: "getMenuData"
-  })
+  });
 }
 
 // ===== article =====
@@ -70,8 +70,8 @@ export function getArticleById(id, if_modified_since) {
       id,
       if_modified_since
     })
-      .then((data) => {
-        if (data) resolve(data)
+      .then(data => {
+        if (data) resolve(data);
         else reject({ errMsg: "没有找到文章!" });
       })
       .catch(reject);
@@ -82,7 +82,7 @@ export function getArticleComments(realId) {
   return callFunction("base", {
     fn: "getArticleComments",
     realId
-  })
+  });
 }
 
 // ===== comments =====
@@ -91,7 +91,7 @@ export function addComment({ realId, content, replyId }) {
   return callFunction("base", {
     fn: "addComment",
     commentData: { realId, content, replyId }
-  })
+  });
 }
 
 export function toggleLike({ id, like }) {
@@ -120,5 +120,5 @@ export function uploadLogs(data) {
   return callFunction("base", {
     fn: "uploadLogs",
     data
-  })
+  });
 }

@@ -10,7 +10,7 @@ class UserStore {
   @observable authSetting = {};
 
   @computed get hasAuth() {
-    return this.authSetting['scope.userInfo']
+    return this.authSetting["scope.userInfo"];
   }
 
   @action setAuthSetting(authSetting) {
@@ -26,25 +26,25 @@ class UserStore {
   }
   @action updateComments(comment) {
     // 时间降序排列
-    this.commentList.unshift(comment)
-    this.commentLimit -= 1
+    this.commentList.unshift(comment);
+    this.commentLimit -= 1;
   }
   @action updateLike(article, like) {
     if (like) {
-      this.likeList.push(article)
+      this.likeList.push(article);
     } else {
       for (let i = 0; i < this.likeList.length; i += 1) {
         if (this.likeList[i].id === article.id) {
-          this.likeList.splice(i, 1)
-          break
+          this.likeList.splice(i, 1);
+          break;
         }
       }
     }
   }
   // 封禁用户删除数据
   @action deleteBannedData() {
-    this.commentList = []
-    this.likeList = []
+    this.commentList = [];
+    this.likeList = [];
   }
 }
 

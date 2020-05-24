@@ -3,7 +3,10 @@
     {
       "action": "allow",
       "page": "pages/article/index",
-      "params": ["_id", "real_id"],
+      "params": [
+        "_id",
+        "real_id"
+      ],
       "matching": "exact"
     },
     {

@@ -152,12 +152,9 @@ export function deleteArticleCache(realId) {
 // 随机图片/文章/歌曲次数控制
 // 图片/文章共享限制次数，歌曲单独限制次数
 export function setRandomRecord(type, t) {
-  // 歌曲限制一次，所以只保存一条记录，但是仍然是数组的形式
   if (type === "song") {
     Taro.setStorageSync(RANDOM_SONG, [t || new Date().getTime()]);
-  }
-  // 其他的保存所有记录
-  else {
+  } else {
     const randomRecord = Taro.getStorageSync(RANDOM) || [];
     // 对于 50 条记录总大小在 10kB 以下
     randomRecord.push(t || new Date().getTime());

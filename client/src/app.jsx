@@ -3,7 +3,7 @@ import { Provider } from "@tarojs/mobx";
 
 import "taro-ui/dist/style/index.scss";
 import "taro-ui/dist/style/components/icon.scss";
-import "taro-ui/dist/style/components/button.scss"
+import "taro-ui/dist/style/components/button.scss";
 import "taro-ui/dist/style/components/message.scss";
 
 import store from "./store";
@@ -21,11 +21,11 @@ import {
   setBanned,
   deleteBannedCache
 } from "./utils/cache";
-import { MESSAGES } from './constants/message'
+import { MESSAGES } from "./constants/message";
 
-import BaseComponent from './components/Base.jsx'
+import BaseComponent from "./components/Base.jsx";
 
-import './styles/shared.less'
+import "./styles/shared.less";
 import "./app.less";
 
 // 如果需要在 h5 环境中开启 React Devtools
@@ -45,18 +45,18 @@ class App extends BaseComponent {
 
     // 使用 local storage 初始化 store 数据
     // 1. 缓存状态
-    console.log('[store] init cache status')
+    console.log("[store] init cache status");
     const cacheStatus = getCacheStatus();
     Object.keys(cacheStatus).forEach(key => {
       if (cacheStatus[key]) cacheStore.setDirty(key);
       else cacheStore.setClean(key);
     });
     // 2. 首页/目录页数据
-    console.log('[store] init homepage/menu data')
+    console.log("[store] init homepage/menu data");
     cacheStore.setHomepageData(getHomepageCache());
     cacheStore.setMenuData(getMenuCache());
     // 3. 版本号
-    console.log('[store] init version')
+    console.log("[store] init version");
     cacheStore.setVersion(getVersionCache());
 
     // await 不能阻塞子组件的渲染
@@ -69,36 +69,40 @@ class App extends BaseComponent {
       if (userStore.hasAuth) {
         // TODO: 这里应该干啥
         // const res = await Taro.getUserInfo();
-      }
-      else {
+      } else {
         // 没授权过 undefined，或拒绝 false
       }
 
-      const { params } = this.$router
+      const { params } = this.$router;
       // FIXME: 这里不会阻塞首页渲染
       // 当用户解封时，login 和 getHomepageData 基本同时发送
       // 后者会因为 localStorage 的 banned 仍然为 true 而请求失败
       const banned = await login(params);
-      this.log('user', 'login', { banned, authSetting, params, systemInfo: Taro.getSystemInfoSync() })
-      setBanned(banned)
+      this.log("user", "login", {
+        banned,
+        authSetting,
+        params,
+        systemInfo: Taro.getSystemInfoSync()
+      });
+      setBanned(banned);
       if (banned) {
-        deleteBannedCache()
-        cacheStore.deleteBannedData()
-        userStore.deleteBannedData()
-        throw MESSAGES.BANNED
+        deleteBannedCache();
+        cacheStore.deleteBannedData();
+        userStore.deleteBannedData();
+        throw MESSAGES.BANNED;
       }
 
       getUserData()
         .then(userData => {
-          console.log(userData)
-          userStore.setUserData(userData)
+          console.log(userData);
+          userStore.setUserData(userData);
         })
-        .catch(this.$error)
+        .catch(this.$error);
 
       // get version api
       getVersion()
         .then(newVersion => {
-          const oldVersion = cacheStore.version
+          const oldVersion = cacheStore.version;
           if (newVersion !== oldVersion) {
             // TODO: 这里依赖子组件的 observe
             // 但是如果 version 变化时子组件尚未挂载 observe
@@ -130,15 +134,15 @@ class App extends BaseComponent {
       this.$error(err);
     }
   }
-  componentWillUnmount() { }
+  componentWillUnmount() {}
   componentDidShow() {
-    console.log('[app] did show')
+    console.log("[app] did show");
   }
   componentDidHide() {
-    this.upload()
-    console.log('[app] did hide')
+    this.upload();
+    console.log("[app] did hide");
   }
-  componentDidCatchError() { }
+  componentDidCatchError() {}
 
   config = {
     pages: [
@@ -151,7 +155,7 @@ class App extends BaseComponent {
       "pages/article/index",
       "pages/cache/index",
       "pages/about/index",
-      "pages/search/index",
+      "pages/search/index"
     ],
     tabBar: {
       selectedColor: "#6190E8",
@@ -188,7 +192,7 @@ class App extends BaseComponent {
       navigationBarTitleText: "西塔尔之声",
       navigationBarTextStyle: "black"
     },
-    requiredBackgroundModes: ['audio'],
+    requiredBackgroundModes: ["audio"],
     usingComponents: {}
   };
 

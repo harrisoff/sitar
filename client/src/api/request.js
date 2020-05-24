@@ -1,14 +1,14 @@
-import Taro from '@tarojs/taro'
-import { getBanned } from '../utils/cache'
-import { MESSAGES } from '../constants/message';
-import logger from '../utils/Logger'
+import Taro from "@tarojs/taro";
+import { getBanned } from "../utils/cache";
+import { MESSAGES } from "../constants/message";
+import logger from "../utils/Logger";
 
 // interceptor
 export default function callFunction(name, data) {
-  const banned = getBanned()
+  const banned = getBanned();
   return new Promise((resolve, reject) => {
     // 被禁时只允许请求 login 接口
-    if (banned && data.fn !== 'login') return reject(MESSAGES.BANNED)
+    if (banned && data.fn !== "login") return reject(MESSAGES.BANNED);
     Taro.cloud
       .callFunction({
         name,
@@ -26,12 +26,12 @@ export default function callFunction(name, data) {
           // if (data.fn !== 'uploadLogs') logger.log('callFunction', data.fn)
           resolve(result);
         } else {
-          logger.error('callFunction', data.fn, response)
+          logger.error("callFunction", data.fn, response);
           reject(response);
         }
       })
       .catch(error => {
-        logger.error('callFunction', data.fn, error)
+        logger.error("callFunction", data.fn, error);
         // const { errCode, errMsg, requestID } = error;
         console.error(error);
         reject(error.errMsg);

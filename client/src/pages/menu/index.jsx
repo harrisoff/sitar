@@ -1,16 +1,23 @@
 import Taro from "@tarojs/taro";
 import { View, Image } from "@tarojs/components";
 import { observer, inject } from "@tarojs/mobx";
-import { AtAccordion, AtList, AtListItem, AtMessage, AtTabs, AtTabsPane } from "taro-ui";
+import {
+  AtAccordion,
+  AtList,
+  AtListItem,
+  AtMessage,
+  AtTabs,
+  AtTabsPane
+} from "taro-ui";
 import { computed, observable, action, observe } from "mobx";
 
-import "taro-ui/dist/style/components/tabs.scss"
+import "taro-ui/dist/style/components/tabs.scss";
 
 import { getMenuData } from "../../api";
 import { setMenuCache, setCleanCache } from "../../utils/cache";
-import { formatTime, genCloudFileURL } from '../../utils/weapp'
+import { formatTime, genCloudFileURL } from "../../utils/weapp";
 
-import BaseComponent from '../../components/Base.jsx'
+import BaseComponent from "../../components/Base.jsx";
 
 import "./index.less";
 
@@ -37,70 +44,66 @@ export default class Index extends BaseComponent {
     }
     this.initBooksAccordion();
 
-
     observe(cacheStore, ({ name, type, oldValue, newValue }) => {
-      if (name !== 'version') return
+      if (name !== "version") return;
       // init
       if (!oldValue && newValue) {
         //
       }
       // update
       else {
-        console.log('[menu] version update')
+        console.log("[menu] version update");
         this.requestBooksData();
       }
-    })
+    });
   }
-  componentDidShow() { }
-  componentDidHide() { }
-  componentDidCatchError() { }
+  componentDidShow() {}
+  componentDidHide() {}
+  componentDidCatchError() {}
 
   config = {
     navigationBarTitleText: "目录"
   };
 
   // tab
-  tabList = [
-    { title: '书籍' },
-    { title: '其他' },
-  ]
+  tabList = [{ title: "书籍" }, { title: "其他" }];
   @observable currentTabIndex = 0;
   // accordion
-  @observable booksAccordion = {}
-  @observable bookletsAccordion = {}
+  @observable booksAccordion = {};
+  @observable bookletsAccordion = {};
 
   @computed get bookList() {
     return this.props.cacheStore.booksData;
   }
   // booklets & others
   @computed get nonBookList() {
-    const otherList = []
+    const otherList = [];
     if (this.props.cacheStore.othersData.length) {
       otherList.push({
-        id: '',
-        title: '其他',
+        id: "",
+        title: "其他",
         articles: this.props.cacheStore.othersData
-      })
+      });
     }
-    return this.props.cacheStore.bookletsData.concat(otherList)
+    return this.props.cacheStore.bookletsData.concat(otherList);
   }
   @action toggleAccordion(bookId) {
     const booksAccordion = { ...this.booksAccordion };
     booksAccordion[bookId] = !booksAccordion[bookId];
-    this.booksAccordion = booksAccordion
+    this.booksAccordion = booksAccordion;
   }
   @action initBooksAccordion() {
     const booksAccordion = {};
     this.props.cacheStore.booksData.forEach(book => {
       booksAccordion[book._id] = false;
     });
-    this.booksAccordion = booksAccordion
+    this.booksAccordion = booksAccordion;
   }
   @action requestBooksData() {
     console.log("[menu] send request");
     getMenuData()
-      .then((data) => {
-        console.log(data)
+      .then(data => {
+        console.log(data);
         const { cacheStore } = this.props;
         cacheStore.setMenuData(data);
         cacheStore.setClean("menu");
@@ -111,7 +114,7 @@ export default class Index extends BaseComponent {
       .catch(this.$error);
   }
   @action handleClickTab(index) {
-    this.currentTabIndex = index
+    this.currentTabIndex = index;
   }
 
   render() {
@@ -119,9 +122,13 @@ export default class Index extends BaseComponent {
       <View className='page-menu'>
         <AtMessage />
 
-        <AtTabs current={this.currentTabIndex} tabList={this.tabList} onClick={this.handleClickTab.bind(this)}>
+        <AtTabs
+          current={this.currentTabIndex}
+          tabList={this.tabList}
+          onClick={this.handleClickTab.bind(this)}
+        >
           {/* BOOKS */}
-          <AtTabsPane current={this.currentTabIndex} index={0} >
+          <AtTabsPane current={this.currentTabIndex} index={0}>
             <View className='book-list'>
               {this.bookList.map(book => {
                 const {
@@ -137,15 +144,17 @@ export default class Index extends BaseComponent {
                   <View key={id} className='book-wrapper'>
                     <View className='book__info'>
                       <View className='info_left'>
-                      <Image
-                        className='book__cover'
-                        src={genCloudFileURL(coverId)}
-                        mode='aspectFit'
-                      ></Image></View>
+                        <Image
+                          className='book__cover'
+                          src={genCloudFileURL(coverId)}
+                          mode='aspectFit'
+                        ></Image>
+                      </View>
                       <View className='info_right'>
-                      <View className='book__title'>{title}</View>
-                      <View className='book__author'>{author}</View>
-                      <View className='book__intro'>{intro}</View></View>
+                        <View className='book__title'>{title}</View>
+                        <View className='book__author'>{author}</View>
+                        <View className='book__intro'>{intro}</View>
+                      </View>
                     </View>
                     <View className='book__menu'>
                       <AtAccordion
@@ -159,10 +168,14 @@ export default class Index extends BaseComponent {
                               key={article.realId}
                               title={article.title}
                               note={formatTime(article.timestamp)}
-                              onClick={() => this.navigateToArticle(article.id, article.realId)}
-                            />)
-
-                          )}
+                              onClick={() =>
+                                this.navigateToArticle(
+                                  article.id,
+                                  article.realId
+                                )
+                              }
+                            />
+                          ))}
                         </AtList>
                       </AtAccordion>
                     </View>
@@ -174,10 +187,10 @@ export default class Index extends BaseComponent {
           {/* BOOKLETS & OTHERS */}
           <AtTabsPane current={this.currentTabIndex} index={1}>
             <View className='non-book-list'>
-              {
-                this.nonBookList.map(item => {
-                  const { id, title, articles } = item
-                  return <View key={id} className='non-book-wrapper'>
+              {this.nonBookList.map(item => {
+                const { id, title, articles } = item;
+                return (
+                  <View key={id} className='non-book-wrapper'>
                     <View className='non-book__title'>{title}</View>
                     <View className='non-book__articles'>
                       <AtList hasBorder={false}>
@@ -186,14 +199,16 @@ export default class Index extends BaseComponent {
                             key={article.realId}
                             title={article.title}
                             note={formatTime(article.timestamp)}
-                            onClick={() => this.navigateToArticle(article.id, article.realId)}
-                          />)
-                        )}
+                            onClick={() =>
+                              this.navigateToArticle(article.id, article.realId)
+                            }
+                          />
+                        ))}
                       </AtList>
                     </View>
                   </View>
-                })
-              }
+                );
+              })}
             </View>
           </AtTabsPane>
         </AtTabs>

@@ -21,8 +21,8 @@ class CacheStore {
   }
   @action setMenuData({ books, booklets, others }) {
     this.booksData = books;
-    this.bookletsData = booklets
-    this.othersData = others
+    this.bookletsData = booklets;
+    this.othersData = others;
   }
   // 只有 version 变化时
   @action setVersion(version) {
@@ -38,12 +38,12 @@ class CacheStore {
   }
   // 封禁用户删除数据
   @action deleteBannedData() {
-    this.homepageData.carousel = []
-    this.homepageData.list = []
-    this.homepageData.top = []
-    this.booksData = []
-    this.bookletsData = []
-    this.othersData = []
+    this.homepageData.carousel = [];
+    this.homepageData.list = [];
+    this.homepageData.top = [];
+    this.booksData = [];
+    this.bookletsData = [];
+    this.othersData = [];
   }
 }
 

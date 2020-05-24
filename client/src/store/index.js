@@ -3,5 +3,5 @@ import userStore from "./user";
 
 export default {
   cacheStore,
-  userStore,
+  userStore
 };

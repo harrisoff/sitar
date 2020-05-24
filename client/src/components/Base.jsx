@@ -1,85 +1,83 @@
 import Taro, { Component } from "@tarojs/taro";
 
-import { ROUTES } from '../config'
-import { getAndUpdateUserInfo, getAuthSetting } from '../api/auth'
-import logger from '../utils/Logger'
+import { ROUTES } from "../config";
+import { getAndUpdateUserInfo, getAuthSetting } from "../api/auth";
+import logger from "../utils/Logger";
 
 export default class Index extends Component {
-  componentWillMount() { }
-  componentDidMount() { }
-  componentDidShow() { }
-  componentDidHide() { }
-  componentDidCatchError() { }
+  componentWillMount() {}
+  componentDidMount() {}
+  componentDidShow() {}
+  componentDidHide() {}
+  componentDidCatchError() {}
 
   // auth
   onGetUserInfo(res) {
     return new Promise((resolve, reject) => {
-      if (res.detail.errMsg === 'getUserInfo:fail auth deny') {
-        this.log('miniApi', 'getUserInfo', {
+      if (res.detail.errMsg === "getUserInfo:fail auth deny") {
+        this.log("miniApi", "getUserInfo", {
           ...res.detail
-        })
-      }
-      else {
+        });
+      } else {
         // 更新授权状态
         getAuthSetting()
           .then(resolve)
-          .catch(reject)
+          .catch(reject);
         // 更新 user 信息
         getAndUpdateUserInfo()
           .then()
-          .catch(this.$error)
+          .catch(this.$error);
       }
-
-    })
+    });
   }
   // log
   log(...params) {
-    logger.log(...params)
+    logger.log(...params);
   }
   debug(...params) {
-    logger.debug(...params)
+    logger.debug(...params);
   }
   error(...params) {
-    logger.error(...params)
+    logger.error(...params);
   }
   upload() {
-    logger.upload()
+    logger.upload();
   }
   // message
   $success(message) {
     Taro.atMessage({
       message,
-      type: 'success',
-    })
+      type: "success"
+    });
   }
   $info(message) {
     Taro.atMessage({
       message,
-      type: 'info',
-    })
+      type: "info"
+    });
   }
   $warn(message) {
     Taro.atMessage({
       message,
-      type: 'warning',
-    })
+      type: "warning"
+    });
   }
   $error(message) {
-    console.error(message)
+    console.error(message);
     Taro.atMessage({
       message,
-      type: 'error',
-    })
+      type: "error"
+    });
   }
   // navigate
   navigateTo(url) {
     Taro.navigateTo({
-      url,
-    })
+      url
+    });
   }
   navigateToArticle(id, realId, keyword) {
-    let url = `${ROUTES.ARTICLE}?_id=${id}&real_id=${realId}`
-    if (keyword) url += `&keyword=${keyword}`
+    let url = `${ROUTES.ARTICLE}?_id=${id}&real_id=${realId}`;
+    if (keyword) url += `&keyword=${keyword}`;
     Taro.navigateTo({
       url,
       events: {

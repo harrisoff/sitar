@@ -14,5 +14,5 @@ export function getUtf8StringBytes(str) {
     else if (code > 0x7ff && code <= 0xffff) s += 2;
     if (code >= 0xdc00 && code <= 0xdfff) i--; // trail surrogate
   }
-  return s
+  return s;
 }
