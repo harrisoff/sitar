@@ -19,7 +19,7 @@ class Logger {
     }
   }
   _upload() {
-    if (this._isUploading || this._timer) return
+    if (this._isUploading || this._timer || !this._logs.length) return
     // 记录回滚位置
     const currentLen = this._logs.length
     this._isUploading = true
