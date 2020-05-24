@@ -175,12 +175,6 @@ function getUserData(event) {
   });
 }
 
-// like 不需要授权
-function getUserLike() {}
-
-// comment 需要授权
-function getUserComment() {}
-
 function createUser(openId) {
   return db.collection(COLLECTIONS.USER).add({
     data: {
@@ -188,17 +182,6 @@ function createUser(openId) {
       banned: false, // 是否封禁
       first_login: new Date().getTime(),
       random_song: [], // 使用随机歌曲功能的记录，时间戳
-    },
-  });
-}
-
-function saveLog(openId, type, data) {
-  return db.collection(COLLECTIONS.LOG).add({
-    data: {
-      open_id: openId,
-      type,
-      ...data,
-      timestamp: new Date().getTime(),
     },
   });
 }
@@ -368,8 +351,6 @@ function getRandomSong(event) {
     }
   });
 }
-
-function getRandomSongRecord() {}
 
 // ===== 目录 =====
 
