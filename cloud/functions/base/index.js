@@ -34,7 +34,8 @@ const ENV = {
   CLOUD_ENV: PROCESS_ENV === "dev" ? DEV_ENV.CLOUD_ENV : PROD_ENV.CLOUD_ENV,
 };
 const { CLOUD_ENV } = ENV;
-const cdnPrefix = 'https://cdn.jjlin.online/sitar'
+const cdnPrefix = "https://cdn.jjlin.online/sitar";
+const ONE_DAY = 24 * 60 * 60 * 1000;
 
 // TIPS:
 // __dirname 是 /var/usr
@@ -53,8 +54,8 @@ function login(event) {
   return new Promise(async (resolve, reject) => {
     try {
       const { openId } = event.userInfo;
-      const user = await findUser(event);
-      const banned = user ? user.banned : false
+      const user = await findUser(event, ["banned"]);
+      const banned = user ? user.banned : false;
       // 新用户
       if (!user) {
         // 1. 初始化用户，相应的表中添加一条记录
@@ -67,23 +68,21 @@ function login(event) {
   });
 }
 
-function findUser(event) {
+function findUser(event, fields) {
   const { openId } = event.userInfo;
   return new Promise((resolve, reject) => {
     db.collection(COLLECTIONS.USER)
       .where({
-        open_id: openId
+        open_id: openId,
       })
-      .field({
-        banned: true
-      })
+      .field(createFieldObj(...fields))
       .get()
       .then(({ data }) => {
-        if (data.length) resolve(data[0])
-        else resolve(null)
+        if (data.length) resolve(data[0]);
+        else resolve(null);
       })
-      .catch(reject)
-  })
+      .catch(reject);
+  });
 }
 
 // 用户信息+赞过的列表+评论列表
@@ -92,49 +91,49 @@ function findUser(event) {
 function getUserData(event) {
   const { openId } = event.userInfo;
   return new Promise((resolve, reject) => {
-    db.collection(COLLECTIONS.USER).aggregate()
+    db.collection(COLLECTIONS.USER)
+      .aggregate()
       .match({
-        open_id: openId
+        open_id: openId,
       })
       .lookup({
         from: COLLECTIONS.ARTICLE,
-        localField: 'open_id',
-        foreignField: 'like_id',
-        as: 'like_list',
+        localField: "open_id",
+        foreignField: "like_id",
+        as: "like_list",
       })
       .lookup({
         from: COLLECTIONS.COMMENT,
-        localField: 'open_id',
-        foreignField: 'open_id',
-        as: 'comment_list',
+        localField: "open_id",
+        foreignField: "open_id",
+        as: "comment_list",
       })
       .end()
       .then(({ list }) => {
         // 前端会在 login 结束后再 getUserData
         // 所以即使是初次进入的用户，也一定有记录
-        const { banned, comment_list, like_list } = list[0]
-        const realIds = new Set() // 用来再查一次获取文章标题
+        const { banned, comment_list, like_list } = list[0];
+        const realIds = new Set(); // 用来再查一次获取文章标题
         // 评论过的
         const now = new Date().getTime();
-        const oneDay = 24 * 60 * 60 * 1000;
-        let commentLimit = 5
-        const commentList = []
-        comment_list.forEach(c => {
-          if (c.timestamp > now - oneDay) commentLimit -= 1
+        let commentLimit = 5;
+        const commentList = [];
+        comment_list.forEach((c) => {
+          if (c.timestamp > now - ONE_DAY) commentLimit -= 1;
           if (c.show) {
-            realIds.add(c.article_id)
+            realIds.add(c.article_id);
             // 查询结果时间正序，这里改成倒序
             commentList.unshift({
               id: c._id,
               timestamp: c.timestamp,
               content: c.content,
-              realId: c.article_id
-            })
+              realId: c.article_id,
+            });
           }
-        })
+        });
         // 赞过的
-        const likeList = []
-        like_list.forEach(l => {
+        const likeList = [];
+        like_list.forEach((l) => {
           if (l.show) {
             likeList.push({
               id: l._id,
@@ -142,23 +141,23 @@ function getUserData(event) {
               timestamp: l.timestamp,
               // 点赞数不能及时更新，显示出来意义不大
               // like: l.like_id.length,
-              title: l.title
-            })
+              title: l.title,
+            });
           }
-        })
+        });
         db.collection(COLLECTIONS.ARTICLE)
-          .field(createFieldObj('_id', 'real_id', 'title'))
+          .field(createFieldObj("_id", "real_id", "title"))
           .where({
-            real_id: _.in(Array.from(realIds))
+            real_id: _.in(Array.from(realIds)),
           })
           .get()
           .then(({ data }) => {
-            commentList.forEach(comment => {
-              const { realId } = comment
-              const article = data.find(d => d.real_id === realId)
-              comment.title = article.title
-              comment.articleId = article._id
-            })
+            commentList.forEach((comment) => {
+              const { realId } = comment;
+              const article = data.find((d) => d.real_id === realId);
+              comment.title = article.title;
+              comment.articleId = article._id;
+            });
             resolve({
               // 用户信息
               openId,
@@ -167,8 +166,8 @@ function getUserData(event) {
               likeList,
               // 评论
               commentList,
-              commentLimit: commentLimit > 0 ? commentLimit : 0
-            })
+              commentLimit: commentLimit > 0 ? commentLimit : 0,
+            });
           })
           .catch(reject);
       })
@@ -177,20 +176,20 @@ function getUserData(event) {
 }
 
 // like 不需要授权
-function getUserLike() { }
+function getUserLike() {}
 
 // comment 需要授权
-function getUserComment() { }
+function getUserComment() {}
 
 function createUser(openId) {
-  return db.collection(COLLECTIONS.USER)
-    .add({
-      data: {
-        open_id: openId,
-        banned: false, // 是否封禁
-        first_login: new Date().getTime()
-      },
-    })
+  return db.collection(COLLECTIONS.USER).add({
+    data: {
+      open_id: openId,
+      banned: false, // 是否封禁
+      first_login: new Date().getTime(),
+      random_song: [], // 使用随机歌曲功能的记录，时间戳
+    },
+  });
 }
 
 function saveLog(openId, type, data) {
@@ -209,15 +208,16 @@ function saveLog(openId, type, data) {
 function updateUserInfo(event) {
   const { userInfo, data } = event;
   const { openId } = userInfo;
-  return db.collection(COLLECTIONS.USER)
+  return db
+    .collection(COLLECTIONS.USER)
     .where({
-      open_id: openId
+      open_id: openId,
     })
     .update({
       data: {
-        ...data // 就是 userInfo，不过跟这里的 userInfo 重名
-      }
-    })
+        ...data, // 就是 userInfo，不过跟这里的 userInfo 重名
+      },
+    });
 }
 
 // ===== 首页 =====
@@ -242,23 +242,21 @@ function getHomepage(event) {
     .where(
       // 查询条件先后顺序是有影响的
       // 这里必须先 or 后 and
-      _
-        .or([
-          {
-            carousel: true,
-          },
-          {
-            top: true,
-          },
-          {
-            list: true,
-          },
-        ])
-        .and({
-          show: true,
-        })
+      _.or([
+        {
+          carousel: true,
+        },
+        {
+          top: true,
+        },
+        {
+          list: true,
+        },
+      ]).and({
+        show: true,
+      })
     )
-    .orderBy('timestamp', 'desc')
+    .orderBy("timestamp", "desc")
     .get();
 }
 
@@ -267,20 +265,21 @@ function getRandomArticle(event) {
     db.collection(COLLECTIONS.ARTICLE)
       .aggregate()
       .match({
-        show: true
+        show: true,
       })
       .sample({
-        size: 1
+        size: 1,
       })
       .end()
       .then(({ list }) => {
-        const { _id, real_id } = list[0]
+        const { _id, real_id } = list[0];
         resolve({
           id: _id,
-          realId: real_id
-        })
-      }).catch(reject)
-  })
+          realId: real_id,
+        });
+      })
+      .catch(reject);
+  });
 }
 
 function getRandomImage(event) {
@@ -288,73 +287,127 @@ function getRandomImage(event) {
     db.collection(COLLECTIONS.IMAGE_RAW)
       .aggregate()
       .sample({
-        size: 1
+        size: 1,
       })
       .end()
       .then(({ list }) => {
-        const { url, media_id } = list[0]
-        resolve({ url, media_id })
-      }).catch(reject)
-  })
+        const { url, media_id } = list[0];
+        resolve({ url, media_id });
+      })
+      .catch(reject);
+  });
 }
 
 function getRandomSong(event) {
-  return new Promise((resolve, reject) => {
-    db.collection(COLLECTIONS.SONG)
-      .aggregate()
-      .sample({
-        size: 1
-      })
-      .lookup({
-        from: COLLECTIONS.ALBUM,
-        localField: 'album_id',
-        foreignField: '_id',
-        as: 'albums',
-      })
-      .end()
-      .then(({ list }) => {
-        const song = list[0]
-        const { _id, albums, cloud_id, title } = song
-        const album = albums[0]
-        const result = {
-          _id,
-          title,
-          album: album.title,
-          cover: album.cover_id,
-          artist: album.artist,
-          cloudId: cloud_id,
-          cdnUrl: `${cdnPrefix}/${title}.mp3`
+  return new Promise(async (resolve, reject) => {
+    try {
+      let isLimit = false;
+      let user = null;
+      let latest = 0;
+      const serverControl = true;
+      if (serverControl) {
+        user = await findUser(event, ["_id", "random_song"]);
+        if (!user) throw { errMsg: "Oops! 找不到当前用户的信息" };
+        const record = user.random_song;
+        latest = record.sort().pop();
+        if (latest > new Date().getTime() - ONE_DAY) {
+          isLimit = true;
         }
-        resolve(result)
-      }).catch(reject)
-  })
+      }
+      if (isLimit) {
+        resolve({
+          latest,
+        });
+      } else {
+        // 获取
+        db.collection(COLLECTIONS.SONG)
+          .aggregate()
+          .sample({
+            size: 1,
+          })
+          .lookup({
+            from: COLLECTIONS.ALBUM,
+            localField: "album_id",
+            foreignField: "_id",
+            as: "albums",
+          })
+          .end()
+          .then(({ list }) => {
+            const song = list[0];
+            const { _id, albums, cloud_id, title } = song;
+            const album = albums[0];
+            const result = {
+              _id,
+              title,
+              album: album.title,
+              cover: album.cover_id,
+              artist: album.artist,
+              cloudId: cloud_id,
+              cdnUrl: `${cdnPrefix}/${title}.mp3`,
+            };
+            // 记录
+            db.collection(COLLECTIONS.USER)
+              .doc(user._id)
+              .update({
+                data: {
+                  random_song: _.push(new Date().getTime()),
+                },
+              })
+              .then((_) => {
+                resolve({
+                  song: result,
+                  latest,
+                });
+              })
+              .catch(reject);
+          })
+          .catch(reject);
+      }
+    } catch (err) {
+      reject(err);
+    }
+  });
 }
+
+function getRandomSongRecord() {}
 
 // ===== 目录 =====
 
 // book + booklet + other
 function getMenuData(event) {
   return new Promise((resolve, reject) => {
-    db.collection(COLLECTIONS.ARTICLE).aggregate()
+    db.collection(COLLECTIONS.ARTICLE)
+      .aggregate()
       .project({
         html: false,
-        text: false
+        text: false,
       })
       .lookup({
         from: COLLECTIONS.BOOK,
-        localField: 'book_id',
-        foreignField: '_id',
-        as: 'itsBook',
+        localField: "book_id",
+        foreignField: "_id",
+        as: "itsBook",
       })
       .limit(999)
       .end()
       .then(({ list }) => {
-        const books = []
-        const booklets = []
-        const otherArticles = []
+        const books = [];
+        const booklets = [];
+        const otherArticles = [];
 
-        list.forEach(article => {
-          const { book_id, _id, real_id, like_id, view, show, title, timestamp, url, itsBook } = article
+        list.forEach((article) => {
+          const {
+            book_id,
+            _id,
+            real_id,
+            like_id,
+            view,
+            show,
+            title,
+            timestamp,
+            url,
+            itsBook,
+          } = article;
           if (show) {
             // article
             const a = {
@@ -364,16 +417,16 @@ function getMenuData(event) {
               view,
               title,
               timestamp,
-              url
-            }
-            const book = itsBook[0]
+              url,
+            };
+            const book = itsBook[0];
             // book & booklet
             if (book) {
-              const { _id, author, cover_id, intro, title, type } = book
-              if (type === 'book') {
-                const b = books.find(e => e.id === _id)
+              const { _id, author, cover_id, intro, title, type } = book;
+              if (type === "book") {
+                const b = books.find((e) => e.id === _id);
                 if (b) {
-                  insert(b.articles, a)
+                  insert(b.articles, a);
                 } else {
                   books.push({
                     id: _id,
@@ -381,38 +434,38 @@ function getMenuData(event) {
                     coverId: cover_id,
                     intro,
                     title,
-                    articles: [a]
-                  })
+                    articles: [a],
+                  });
                 }
               }
               // booklets
-              else if (type === 'booklet') {
-                const b = booklets.find(e => e.id === _id)
+              else if (type === "booklet") {
+                const b = booklets.find((e) => e.id === _id);
                 if (b) {
-                  insert(b.articles, a)
+                  insert(b.articles, a);
                 } else {
                   booklets.push({
                     id: _id,
                     title,
-                    articles: [a]
-                  })
+                    articles: [a],
+                  });
                 }
               }
             }
             // 未分类
             else {
-              insert(otherArticles, a)
+              insert(otherArticles, a);
             }
           }
-        })
+        });
         resolve({
           books,
           booklets,
-          others: otherArticles
-        })
+          others: otherArticles,
+        });
       })
-      .catch(reject)
-  })
+      .catch(reject);
+  });
 }
 
 // ===== 文章 =====
@@ -450,43 +503,52 @@ function getArticleById(event) {
       )
       .get()
       .then((res) => {
-        const data = res.data
+        const data = res.data;
         if (!data.length) {
-          resolve(null)
+          resolve(null);
         } else {
-          const article = data[0]
-          const { last_modified } = article
+          const article = data[0];
+          const { last_modified } = article;
           // 无缓存/缓存过期时返回完整数据
           if (!if_modified_since || last_modified > if_modified_since) {
-            resolve(article)
+            resolve(article);
           }
           // 缓存未过期时，只返回点赞/点击数据
           else {
             resolve({
               like_id: article.like_id,
-              view: article.view
-            })
+              view: article.view,
+            });
           }
         }
       })
-      .catch(reject)
-  })
+      .catch(reject);
+  });
 }
 
 function searchArticleByKeyword(event) {
-  const { keyword } = event
-  return db.collection(COLLECTIONS.ARTICLE)
-    .field(createFieldObj('_id', 'book_id', 'book_title', 'real_id', 'title', 'timestamp', 'url'))
-    .where(
-      {
-        show: true,
-        text: db.RegExp({
-          regexp: `.*${keyword}`,
-          options: 'i',
-        })
-      }
+  const { keyword } = event;
+  return db
+    .collection(COLLECTIONS.ARTICLE)
+    .field(
+      createFieldObj(
+        "_id",
+        "book_id",
+        "book_title",
+        "real_id",
+        "title",
+        "timestamp",
+        "url"
+      )
     )
-    .get()
+    .where({
+      show: true,
+      text: db.RegExp({
+        regexp: `.*${keyword}`,
+        options: "i",
+      }),
+    })
+    .get();
 }
 
 // 获取评论
@@ -501,45 +563,47 @@ function getArticleComments(event) {
       })
       .lookup({
         from: COLLECTIONS.USER,
-        localField: 'open_id',
-        foreignField: 'open_id',
-        as: 'user',
+        localField: "open_id",
+        foreignField: "open_id",
+        as: "user",
       })
       .lookup({
         from: COLLECTIONS.ARTICLE,
-        localField: 'article_id',
-        foreignField: 'real_id',
-        as: 'article',
+        localField: "article_id",
+        foreignField: "real_id",
+        as: "article",
       })
       .sort({
-        timestamp: -1
+        timestamp: -1,
       })
       .end()
       .then(({ list }) => {
-        resolve(list.map(e => {
-          const user = e.user[0]
-          let article = e.article[0]
-          article = article.show ? article : null
-          return {
-            id: e._id,
-            timestamp: e.timestamp,
-            content: e.content,
-            replyId: e.reply_id,
-            openId: e.open_id,
-            // user
-            banned: user && user.banned,
-            avatarUrl: user && user.avatarUrl,
-            gender: user && user.gender,
-            nickName: user && user.nickName,
-            // article
-            title: article && article.title,
-            articleId: article && article._id,
-            realId: article && article.real_id
-          }
-        }))
+        resolve(
+          list.map((e) => {
+            const user = e.user[0];
+            let article = e.article[0];
+            article = article.show ? article : null;
+            return {
+              id: e._id,
+              timestamp: e.timestamp,
+              content: e.content,
+              replyId: e.reply_id,
+              openId: e.open_id,
+              // user
+              banned: user && user.banned,
+              avatarUrl: user && user.avatarUrl,
+              gender: user && user.gender,
+              nickName: user && user.nickName,
+              // article
+              title: article && article.title,
+              articleId: article && article._id,
+              realId: article && article.real_id,
+            };
+          })
+        );
       })
-      .catch(reject)
-  })
+      .catch(reject);
+  });
 }
 
 // 点赞/取消赞
@@ -547,19 +611,17 @@ function toggleLike(event) {
   const { id, userInfo, like } = event;
   const { openId } = userInfo;
   const data = {
-    like_id: like ? _.addToSet(openId) : _.pull(openId)
-  }
-  return db
-    .collection(COLLECTIONS.ARTICLE)
-    .doc(id).update({
-      data,
-    });
+    like_id: like ? _.addToSet(openId) : _.pull(openId),
+  };
+  return db.collection(COLLECTIONS.ARTICLE).doc(id).update({
+    data,
+  });
 }
 
 function addComment(event) {
   const { userInfo, commentData } = event;
   const { openId } = userInfo;
-  const { content, realId, replyId } = commentData
+  const { content, realId, replyId } = commentData;
   return db.collection(COLLECTIONS.COMMENT).add({
     data: {
       open_id: openId,
@@ -567,7 +629,7 @@ function addComment(event) {
       show: true,
       content,
       article_id: realId,
-      reply_id: replyId
+      reply_id: replyId,
     },
   });
 }
@@ -600,16 +662,15 @@ function getVersion(event) {
 // };
 function uploadLogs(event) {
   const { userInfo, data } = event;
-  data.forEach(item => {
-    item.open_id = userInfo.openId
-    if (item.level === 'error' || item.type === 'login') {
-      item.context = cloud.getWXContext()
+  data.forEach((item) => {
+    item.open_id = userInfo.openId;
+    if (item.level === "error" || item.type === "login") {
+      item.context = cloud.getWXContext();
     }
-  })
-  return db.collection(COLLECTIONS.LOG)
-    .add({
-      data
-    })
+  });
+  return db.collection(COLLECTIONS.LOG).add({
+    data,
+  });
 }
 
 // ===== utils =====
@@ -623,15 +684,15 @@ function createFieldObj(...fields) {
 
 // 按 timestamp 倒序排序并加入数组
 function insert(arr, ele) {
-  if (arr.length === 0) return arr.push(ele)
+  if (arr.length === 0) return arr.push(ele);
   for (let i = 0; i < arr.length; i += 1) {
     if (ele.timestamp > arr[i].timestamp) {
-      arr.splice(i, 0, ele)
-      break
+      arr.splice(i, 0, ele);
+      break;
     }
     if (i === arr.length - 1) {
-      arr.push(ele)
-      break
+      arr.push(ele);
+      break;
     }
   }
 }
@@ -659,7 +720,7 @@ exports.main = (event, context) => {
     case "getArticleComments":
       return getArticleComments(event);
     // 关键字搜索文章
-    case 'searchArticleByKeyword':
+    case "searchArticleByKeyword":
       return searchArticleByKeyword(event);
     // 获取首页轮播/指定/最近更新文章
     case "getHomepage":

@@ -69,7 +69,7 @@ export default class Index extends BaseComponent {
     {
       type: 'song',
       iconInfo: { value: 'sound' },
-      value: '每日一曲'
+      value: '每日一披'
     },
     {
       type: 'image',
@@ -90,6 +90,8 @@ export default class Index extends BaseComponent {
   @observable randomUrl = ''
   @observable isRandomImageVisible = false;
   @observable isGettingRandom = false;
+
+  @observable randomTitle = ''
 
   // computed data
 
@@ -151,6 +153,7 @@ export default class Index extends BaseComponent {
     } else if (type === 'image') {
       getRandomImage()
         .then(res => {
+          this.randomTitle = ''
           this.randomUrl = res.url
           this.isRandomImageVisible = true
           setRandomRecord(type)
@@ -161,13 +164,22 @@ export default class Index extends BaseComponent {
           this.isGettingRandom = false
         })
     } else {
+      // 本地和服务端都记录上次使用时间
+      // 一般情况下只需要本地判断，到达使用次数时不会发送请求
+      // 但是如果本地缓存被清空，就会发送请求，由服务端判断
       getRandomSong()
-        .then((res) => {
-          if (!res) {
-            return this.$warn(MESSAGES.RANDOM_SONG_ERROR)
+        .then(({song, latest}) => {
+          // 更新本地记录
+          setRandomRecord(type, latest)
+          // 到达使用次数时，不返回 song 数据
+          if (!song) {
+            return this.$warn(MESSAGES.RANDOM_SONG_LIMIT)
           }
-          const { _id, title, cover, album, cloudId, cdnUrl, artist } = res
+          const { _id, cover, album, cloudId, cdnUrl, artist } = song
+          // 原 title 像这样：B4. Sun King
+          const title = song.title.split('. ').pop()
           const url = cdnUrl ? encodeURI(cdnUrl) : genCloudFileURL(cloudId)
+          const coverImgUrl = genCloudFileURL(cover)
           const backgroundAudioManager = Taro.getBackgroundAudioManager()
           backgroundAudioManager.onError(err => {
             console.error(err)
@@ -182,9 +194,11 @@ export default class Index extends BaseComponent {
           backgroundAudioManager.title = title
           backgroundAudioManager.epname = album
           backgroundAudioManager.singer = artist
-          backgroundAudioManager.coverImgUrl = genCloudFileURL(cover)
+          backgroundAudioManager.coverImgUrl = coverImgUrl
           backgroundAudioManager.src = url
-          setRandomRecord(type)
+          this.randomUrl = coverImgUrl
+          this.randomTitle = title
+          this.isRandomImageVisible = true
           this.log('user', 'random', { type, _id, title })
         })
         .catch(this.$error)
@@ -280,7 +294,7 @@ export default class Index extends BaseComponent {
           </View>
         </View>
 
-        {/* 随机图片 */}
+        {/* 随机图片/歌曲封面 */}
         <View className='random-image'>
           <AtCurtain
             isOpened={this.isRandomImageVisible}
@@ -292,6 +306,7 @@ export default class Index extends BaseComponent {
                 backgroundImage: `url("${this.randomUrl}")`,
               }}
             ></View>
+            {this.randomTitle && <View style='color: white; text-align: center; font-weight: bold'>{this.randomTitle}</View>}
           </AtCurtain>
         </View>
       </View>
