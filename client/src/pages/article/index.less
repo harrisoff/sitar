@@ -18,7 +18,8 @@
   .comments {
     // 傻逼小程序，真机上 margin-bottom 无效
     // margin-bottom: 98rpx;
-    padding-bottom: 98rpx;
+    padding-bottom: calc(98rpx + constant(safe-area-inset-bottom));
+    padding-bottom: calc(98rpx + env(safe-area-inset-bottom));
 
     .comments__header {
       color: grey;
@@ -86,28 +87,29 @@
           font-size: @font14;
         }
       }
-
     }
   }
   .comment__fixed {
-    position: fixed; 
+    position: fixed;
     z-index: 999;
-    bottom: 0; 
-    height: 90rpx; 
-    width: 100%; 
-    background-color: white; 
-    box-shadow: 0 0 8rpx 0 #eee; 
+    bottom: 0;
+    height: 90rpx;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 0 8rpx 0 #ddd;
     display: flex;
     align-items: center;
     justify-content: space-around;
-      .comment__input {
-        border: 1rpx solid #f2f2f2;
-        width: 70%; 
-        height: 70rpx;
-        margin: 10rpx 0;
-        padding: 0 35rpx;
-        border-radius: 35rpx;
-        font-size: @font14;
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
+    .comment__input {
+      border: 2rpx solid #f0f0f0;
+      width: 70%;
+      height: 70rpx;
+      margin: 10rpx 0;
+      padding: 0 35rpx;
+      border-radius: 35rpx;
+      font-size: @font14;
     }
   }
   // comment
