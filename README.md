@@ -4,20 +4,18 @@
 
 ## TODO
 
+- [ ] 区分开发环境和生产环境
 - [ ] 小程序后台设置最低基础库版本（设置-基本信息-功能设置
 - [ ] 分解 getMenuData 接口，那缓存逻辑也要改一下
 - [ ] 分解 getUserInfo 接口
 - [ ] 小程序内关注公众号
-- [ ] 内容安全
-   - [ ] API 文档 https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/sec-check/security.msgSecCheck.html
-   - [ ] 后台【用户生成内容场景信息安全声明】（设置-基本设置-用户生成内容场景信息安全声明
 
 ### 有空再搞
 
+- [ ] 拦截器
 - [ ] 如果从分享的文章页面进入
    - [ ] 数据加载是怎么个情况？
    - [ ] 用户封禁好像也会失效
-- [ ] 打开评论 modal 时 autofocus
 - [ ] 目录页每篇文章右侧添加一个 info 键点击显示 digest 和 thumb，需要替换 List 组件
 - [ ] eslint
 - [ ] 目录的数据可以提前请求，但是注意不能写在 /index 里
@@ -85,6 +83,11 @@
 - [x] 目录改为抽屉
 - [x] 组件的变量根据用途分类而不是类型
 - [x] 持续集成，参考 https://juejin.im/post/5ec527dff265da770a61520d
+- [x] 内容安全
+   - [x] API 文档 https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/sec-check/security.msgSecCheck.html
+   - [x] 后台【用户生成内容场景信息安全声明】（设置-基本设置-用户生成内容场景信息安全声明
+- [x] getVersion
+- [x] 目录按时间正序
 
 ## NOTES
 
