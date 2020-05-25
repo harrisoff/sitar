@@ -64,8 +64,9 @@ export default class Index extends Component {
   }
   $error(message) {
     console.error(message);
+    const parsed = typeof message === 'string' ? message : JSON.stringify(message)
     Taro.atMessage({
-      message,
+      message: parsed,
       type: "error"
     });
   }
