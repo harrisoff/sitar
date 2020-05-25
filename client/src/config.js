@@ -1,9 +1,3 @@
-export const COLLECTIONS = {
-  TYPES: "types",
-  SERIES: "series",
-  ARTICLES: "articles"
-};
-
 // local storage
 export const CACHE = {
   VERSION: "cache-version",
