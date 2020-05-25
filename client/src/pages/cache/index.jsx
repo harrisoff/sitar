@@ -15,6 +15,7 @@ import "taro-ui/dist/style/components/swipe-action.scss";
 
 import { getArticleCaches, deleteArticleCache } from "../../utils/cache";
 import { getUtf8StringKb } from "../../utils";
+import {SETTINGS} from '../../config'
 
 import BaseComponent from "../../components/Base.jsx";
 
@@ -112,6 +113,7 @@ export default class Index extends BaseComponent {
               <View>
                 {this.cacheCount}条缓存，共{this.totalSize}kB
               </View>
+              <View>达到 {SETTINGS.ARTICLE_CACHE_LIMIT}kB 时自动删除最近未访问的缓存</View>
               <View>滑动以删除</View>
             </View>
             <View>
