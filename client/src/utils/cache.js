@@ -2,6 +2,7 @@ import Taro from "@tarojs/taro";
 
 import logger from "../utils/Logger";
 import { getUtf8StringKb } from "../utils/index";
+import { setStorageSync, getStorageSync } from '../utils/weapp'
 import { CACHE, SETTINGS } from "../config";
 
 const {
@@ -17,7 +18,7 @@ const {
 
 // 首页缓存
 export function setHomepageCache(data) {
-  Taro.setStorageSync(HOMEPAGE, data);
+  setStorageSync(HOMEPAGE, data);
 }
 export function getHomepageCache() {
   const dft = {
@@ -25,12 +26,12 @@ export function getHomepageCache() {
     top: [],
     carousel: []
   };
-  return Taro.getStorageSync(HOMEPAGE) || dft;
+  return getStorageSync(HOMEPAGE) || dft;
 }
 
 // 目录页缓存，这里会占 50kB+
 export function setMenuCache(data) {
-  Taro.setStorageSync(MENU, data);
+  setStorageSync(MENU, data);
 }
 export function getMenuCache() {
   const dft = {
@@ -38,30 +39,30 @@ export function getMenuCache() {
     booklets: [],
     others: []
   };
-  return Taro.getStorageSync(MENU) || dft;
+  return getStorageSync(MENU) || dft;
 }
 
 // 版本信息
 export function setVersionCache(data) {
-  Taro.setStorageSync(VERSION, data);
+  setStorageSync(VERSION, data);
 }
 export function getVersionCache() {
-  return Taro.getStorageSync(VERSION) || 0;
+  return getStorageSync(VERSION) || 0;
 }
 
 // 首页和目录页的缓存状态
 export function setDirtyCache(...keys) {
   let cache = getCacheStatus();
   keys.forEach(key => (cache[key] = true));
-  Taro.setStorageSync(DIRTY, cache);
+  setStorageSync(DIRTY, cache);
 }
 export function setCleanCache(...keys) {
   const cache = getCacheStatus();
   keys.forEach(key => (cache[key] = false));
-  Taro.setStorageSync(DIRTY, cache);
+  setStorageSync(DIRTY, cache);
 }
 export function getCacheStatus() {
-  const cache = Taro.getStorageSync(DIRTY);
+  const cache = getStorageSync(DIRTY);
   if (cache) {
     return cache;
   }
@@ -71,17 +72,17 @@ export function getCacheStatus() {
       homepage: true,
       menu: true
     };
-    Taro.setStorageSync(DIRTY, dft);
+    setStorageSync(DIRTY, dft);
     return dft;
   }
 }
 
 // 封禁状态
 export function setBanned(banned) {
-  Taro.setStorageSync(BANNED, banned);
+  setStorageSync(BANNED, banned);
 }
 export function getBanned() {
-  return Taro.getStorageSync(BANNED);
+  return getStorageSync(BANNED);
 }
 // 封禁后，除了 cache-user-banned 其他缓存全部删除
 export function deleteBannedCache() {
@@ -92,33 +93,33 @@ export function deleteBannedCache() {
 
 // 文章缓存
 export function setArticleCache(article) {
-  const articleCaches = Taro.getStorageSync(ARTICLE) || {};
+  const articleCaches = getStorageSync(ARTICLE) || {};
   const { real_id, last_modified } = article;
   articleCaches[real_id] = {
     last_modified,
     article,
     last_visit: new Date().getTime() // 最后一次访问的时间
   };
-  Taro.setStorageSync(ARTICLE, articleCaches);
+  setStorageSync(ARTICLE, articleCaches);
 }
 export function getArticleCaches() {
-  return Taro.getStorageSync(ARTICLE) || {};
+  return getStorageSync(ARTICLE) || {};
 }
 export function getArticleCache(realId) {
-  const articleCaches = Taro.getStorageSync(ARTICLE);
+  const articleCaches = getStorageSync(ARTICLE);
   if (!articleCaches) return null;
   const articleCache = articleCaches[realId];
   return articleCache ? articleCache.article : null;
 }
 export function updateArticleCacheTime(realId) {
-  const articleCaches = Taro.getStorageSync(ARTICLE);
+  const articleCaches = getStorageSync(ARTICLE);
   const articleCache = articleCaches[realId];
   articleCache.last_visit = new Date().getTime();
-  Taro.setStorageSync(ARTICLE, articleCaches);
+  setStorageSync(ARTICLE, articleCaches);
 }
 // 计算文章缓存大小，判断是否需要清理
 export function garbageCollect() {
-  const articleCaches = Taro.getStorageSync(ARTICLE);
+  const articleCaches = getStorageSync(ARTICLE);
   const cacheString = JSON.stringify(articleCaches);
   const kbSize = getUtf8StringKb(cacheString);
   if (kbSize >= SETTINGS.ARTICLE_CACHE_LIMIT) {
@@ -140,36 +141,36 @@ export function garbageCollect() {
       console.log(articleCaches[i.realId].article.title);
       delete articleCaches[i.realId];
     });
-    Taro.setStorageSync(ARTICLE, articleCaches);
+    setStorageSync(ARTICLE, articleCaches);
   }
 }
 export function deleteArticleCache(realId) {
-  const articleCaches = Taro.getStorageSync(ARTICLE);
+  const articleCaches = getStorageSync(ARTICLE);
   if (articleCaches[realId]) delete articleCaches[realId];
-  Taro.setStorageSync(ARTICLE, articleCaches);
+  setStorageSync(ARTICLE, articleCaches);
 }
 
 // 随机图片/文章/歌曲次数控制
 // 图片/文章共享限制次数，歌曲单独限制次数
 export function setRandomRecord(type, t) {
   if (type === "song") {
-    Taro.setStorageSync(RANDOM_SONG, [t || new Date().getTime()]);
+    setStorageSync(RANDOM_SONG, [t || new Date().getTime()]);
   } else {
-    const randomRecord = Taro.getStorageSync(RANDOM) || [];
+    const randomRecord = getStorageSync(RANDOM) || [];
     // 对于 50 条记录总大小在 10kB 以下
     randomRecord.push(t || new Date().getTime());
-    Taro.setStorageSync(RANDOM, randomRecord);
+    setStorageSync(RANDOM, randomRecord);
   }
 }
 export function getRandomLimit(type) {
   const oneDay = 24 * 60 * 60 * 1000;
   const now = new Date().getTime();
   if (type === "song") {
-    const randomRecord = Taro.getStorageSync(RANDOM_SONG) || [];
+    const randomRecord = getStorageSync(RANDOM_SONG) || [];
     const latest = randomRecord[0] || 0;
     return latest > now - oneDay ? 0 : 1;
   } else {
-    let randomRecord = Taro.getStorageSync(RANDOM) || [];
+    let randomRecord = getStorageSync(RANDOM) || [];
     // 删除一天以前的记录
     randomRecord = randomRecord.filter(r => r > now - oneDay);
     // 一天内的使用次数
