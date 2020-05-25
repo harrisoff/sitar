@@ -32,5 +32,5 @@ export const SETTINGS = {
   COMMENT_PER_DAY: 10, // 24 小时内评论次数限制
   RANDOM_PER_DAY: 50, // 24 小时内随机文章/图片功能次数限制
   RANDOM_SONG_PER_DAY: 1, // 24 小时内随机歌曲次数限制
-  ARTICLE_CACHE_LIMIT: 5 * 1024 // kb
+  ARTICLE_CACHE_LIMIT: 1 * 1024 // kb
 };
