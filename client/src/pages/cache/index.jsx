@@ -79,8 +79,8 @@ export default class Index extends BaseComponent {
       });
       cacheList.sort((a, b) => b.last_visit - a.last_visit);
       this.cacheList = cacheList;
-      this.isPending = false;
     }
+    this.isPending = false;
   }
   @action handleClickItem(item) {
     if (item.swiped) {
