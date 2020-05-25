@@ -676,11 +676,11 @@ function createFieldObj(...fields) {
   return fieldObj;
 }
 
-// 按 timestamp 倒序排序并加入数组
+// 按 timestamp 正序排序并加入数组
 function insert(arr, ele) {
   if (arr.length === 0) return arr.push(ele);
   for (let i = 0; i < arr.length; i += 1) {
-    if (ele.timestamp > arr[i].timestamp) {
+    if (ele.timestamp <= arr[i].timestamp) {
       arr.splice(i, 0, ele);
       break;
     }
