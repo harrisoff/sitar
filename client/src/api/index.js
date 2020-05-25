@@ -72,7 +72,7 @@ export function getArticleById(id, if_modified_since) {
     })
       .then(data => {
         if (data) resolve(data);
-        else reject({ errMsg: "没有找到文章!" });
+        else reject("没有找到文章!");
       })
       .catch(reject);
   });

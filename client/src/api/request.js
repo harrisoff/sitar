@@ -27,7 +27,7 @@ export default function callFunction(name, data) {
           resolve(result);
         } else {
           logger.error("callFunction", data.fn, response);
-          reject(response);
+          reject(errMsg);
         }
       })
       .catch(error => {
