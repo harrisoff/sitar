@@ -2,16 +2,17 @@ import Taro from "@tarojs/taro";
 import { View, Image } from "@tarojs/components";
 import { observer, inject } from "@tarojs/mobx";
 import {
-  AtAccordion,
   AtList,
   AtListItem,
   AtMessage,
   AtTabs,
-  AtTabsPane
+  AtTabsPane,
+  AtDrawer
 } from "taro-ui";
 import { computed, observable, action, observe } from "mobx";
 
 import "taro-ui/dist/style/components/tabs.scss";
+import "taro-ui/dist/style/components/drawer.scss";
 
 import { getMenuData } from "../../api";
 import { setMenuCache, setCleanCache } from "../../utils/cache";
@@ -42,7 +43,6 @@ export default class Index extends BaseComponent {
     } else {
       console.log("[menu] cache is available");
     }
-    this.initBooksAccordion();
 
     observe(cacheStore, ({ name, type, oldValue, newValue }) => {
       if (name !== "version") return;
@@ -65,13 +65,16 @@ export default class Index extends BaseComponent {
     navigationBarTitleText: "目录"
   };
 
+  // book menu
+  @observable selectedBookId = '';
+  @observable isShowDrawer = false;
   // tab
   tabList = [{ title: "书籍" }, { title: "其他" }];
   @observable currentTabIndex = 0;
-  // accordion
-  @observable booksAccordion = {};
-  @observable bookletsAccordion = {};
 
+  @computed get menuItems() {
+    return this.selectedBookId ? this.bookList.find(b => b.id === this.selectedBookId).articles : []
+  }
   @computed get bookList() {
     return this.props.cacheStore.booksData;
   }
@@ -87,18 +90,6 @@ export default class Index extends BaseComponent {
     }
     return this.props.cacheStore.bookletsData.concat(otherList);
   }
-  @action toggleAccordion(bookId) {
-    const booksAccordion = { ...this.booksAccordion };
-    booksAccordion[bookId] = !booksAccordion[bookId];
-    this.booksAccordion = booksAccordion;
-  }
-  @action initBooksAccordion() {
-    const booksAccordion = {};
-    this.props.cacheStore.booksData.forEach(book => {
-      booksAccordion[book._id] = false;
-    });
-    this.booksAccordion = booksAccordion;
-  }
   @action requestBooksData() {
     console.log("[menu] send request");
     getMenuData()
@@ -109,12 +100,19 @@ export default class Index extends BaseComponent {
         cacheStore.setClean("menu");
         setMenuCache(data);
         setCleanCache("menu");
-        this.initBooksAccordion();
       })
       .catch(this.$error);
   }
   @action handleClickTab(index) {
     this.currentTabIndex = index;
+  }
+
+  @action handleClickBook(id) {
+    this.selectedBookId = id
+    this.isShowDrawer = true
+  }
+  @action handleCloseDrawer() {
+    this.isShowDrawer = false
   }
 
   render() {
@@ -133,15 +131,13 @@ export default class Index extends BaseComponent {
               {this.bookList.map(book => {
                 const {
                   id,
-                  url,
                   coverId,
                   intro,
                   title,
                   author,
-                  articles
                 } = book;
                 return (
-                  <View key={id} className='book-wrapper'>
+                  <View key={id} className='book-wrapper' onClick={this.handleClickBook.bind(this, id)}>
                     <View className='book__info'>
                       <View className='info_left'>
                         <Image
@@ -155,29 +151,6 @@ export default class Index extends BaseComponent {
                         <View className='book__author'>{author}</View>
                         <View className='book__intro'>{intro}</View>
                       </View>
-                    </View>
-                    <View className='book__menu'>
-                      <AtAccordion
-                        open={this.booksAccordion[id]}
-                        onClick={this.toggleAccordion.bind(this, id)}
-                        title='目录'
-                      >
-                        <AtList hasBorder={false}>
-                          {articles.map(article => (
-                            <AtListItem
-                              key={article.realId}
-                              title={article.title}
-                              note={formatTime(article.timestamp)}
-                              onClick={() =>
-                                this.navigateToArticle(
-                                  article.id,
-                                  article.realId
-                                )
-                              }
-                            />
-                          ))}
-                        </AtList>
-                      </AtAccordion>
                     </View>
                   </View>
                 );
@@ -212,6 +185,25 @@ export default class Index extends BaseComponent {
             </View>
           </AtTabsPane>
         </AtTabs>
+
+        {/* 目录 */}
+        <AtDrawer 
+          show={this.isShowDrawer} 
+          mask
+          width='80%'
+          onClose={this.handleCloseDrawer.bind(this)}
+        >
+          <AtList hasBorder={false}>
+            {this.menuItems.map(article => (
+              <AtListItem
+                key={article.realId}
+                title={article.title}
+                note={formatTime(article.timestamp)}
+                onClick={() => this.navigateToArticle(article.id, article.realId)}
+              />
+            ))}
+          </AtList>
+        </AtDrawer>
       </View>
     );
   }
