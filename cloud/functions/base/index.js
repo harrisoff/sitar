@@ -599,20 +599,36 @@ function toggleLike(event) {
   });
 }
 
-function addComment(event) {
+async function addComment(event) {
   const { userInfo, commentData } = event;
   const { openId } = userInfo;
   const { content, realId, replyId } = commentData;
-  return db.collection(COLLECTIONS.COMMENT).add({
-    data: {
-      open_id: openId,
-      timestamp: new Date().getTime(),
-      show: true,
-      content,
-      article_id: realId,
-      reply_id: replyId,
-    },
-  });
+  let isLegal = true
+  try {
+    await cloud.openapi.security.msgSecCheck({ content })
+  }
+  catch (err) {
+    // 1. 内容不合法
+    if (err.errCode === 87014) isLegal = false
+    // 2. 请求失败，姑且算内容是合法的
+  }
+  try {
+    await db.collection(COLLECTIONS.COMMENT)
+      .add({
+        data: {
+          open_id: openId,
+          timestamp: new Date().getTime(),
+          show: isLegal,
+          is_legal: isLegal,
+          content,
+          article_id: realId,
+          reply_id: replyId,
+        },
+      })
+    return isLegal ? {} : { errCode: 87014 }
+  } catch (err) {
+    throw err
+  }
 }
 
 // ===== 其他 =====

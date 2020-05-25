@@ -18,6 +18,7 @@ import {
   updateArticleCacheTime,
   garbageCollect
 } from "../../utils/cache";
+import { MESSAGES } from '../../constants/message'
 
 import BaseComponent from "../../components/Base.jsx";
 
@@ -197,10 +198,16 @@ export default class Index extends BaseComponent {
       replyId: ""
     };
     addComment(data)
-      .then(() => {
-        this.commentInput = "";
-        this.$success("评论成功");
-        this.updateComments(true);
+      .then(({ errCode }) => {
+        if (errCode === 87014) {
+          // 评论内容不合法
+          // 实际上还是保存到数据库了，只是不显示
+          this.$warn(MESSAGES.ILLEGAL_COMMENT)
+        } else {
+          this.commentInput = "";
+          this.$success("评论成功");
+          this.updateComments(true);
+        }
       })
       .catch(this.$error);
   }
