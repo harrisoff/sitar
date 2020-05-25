@@ -640,10 +640,7 @@ function getVersion(event) {
       })
       .get()
       .then(({ data }) => {
-        if (data.length === 0) reject({ errMsg: "数据库未设置缓存版本信息" });
-        else {
-          resolve(data[0].version);
-        }
+        resolve(data[0].version);
       })
       .catch(reject);
   });
