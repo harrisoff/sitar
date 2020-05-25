@@ -1,0 +1,38 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+defaults:
+  run:
+    working-directory: client
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: install
+      run: npm i
+    - name: build
+      run: npm run build:weapp
+    - name: save private key as file
+      run: echo "$MINI_UPLOAD_PRIVATE_KEY" > private.key
+      env:
+        MINI_UPLOAD_PRIVATE_KEY: ${{secrets.MINI_UPLOAD_PRIVATE_KEY}}
+    - name: set version env
+      run: "echo ::set-env name=PACKAGE_VERSION::$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')"
+    - name: upload
+      run: npx miniprogram-ci upload --pp ../ --pkp ./private.key --appid ${{ secrets.MINI_APPID }} --uv "$PACKAGE_VERSION"
