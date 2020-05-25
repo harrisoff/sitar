@@ -19,10 +19,6 @@ import "./index.less";
 @inject("userStore")
 @observer
 export default class Index extends BaseComponent {
-  componentDidMount() { }
-  componentDidShow() { }
-  componentDidHide() { }
-  componentDidCatchError() { }
 
   config = {
     navigationBarTitleText: "我的"

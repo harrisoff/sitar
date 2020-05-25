@@ -12,14 +12,6 @@ import "./index.less";
 @inject("userStore")
 @observer
 export default class Index extends BaseComponent {
-  componentWillMount() {}
-  componentDidMount() {
-    console.log(this.props.userStore.commentList);
-    console.log(this.props.userStore.likeList);
-  }
-  componentDidShow() {}
-  componentDidHide() {}
-  componentDidCatchError() {}
 
   config = {
     navigationBarTitleText: "我的评论"

@@ -23,14 +23,32 @@ import "./index.less";
 
 @observer
 export default class Index extends BaseComponent {
-  componentWillMount() {}
   componentDidMount() {
     this.initCacheData();
   }
-  componentDidShow() {}
-  componentDidHide() {}
-  componentDidCatchError() {}
 
+  config = {
+    navigationBarTitleText: "文章缓存"
+  };
+
+  // 交互
+  @observable isPending = true;
+  @action handleOpen(item) {
+    item.swiped = true;
+  }
+  @action handleClickItem(item) {
+    if (item.swiped) {
+      item.swiped = false;
+    } else {
+      const { real_id, _id } = item;
+      this.navigateToArticle(_id, real_id);
+    }
+  }
+
+  // 缓存数据和操作
+  @observable cacheList = [];
+  @observable cacheCount = 0;
+  @observable totalSize = 0;
   swipeOption = [
     {
       text: "删除",
@@ -39,24 +57,6 @@ export default class Index extends BaseComponent {
       }
     }
   ];
-  @observable isPending = true;
-  @observable cacheList = [];
-  @observable cacheCount = 0;
-  @observable totalSize = 0;
-
-  @action handleOpen(item) {
-    item.swiped = true;
-  }
-  @action handleDelete(item) {
-    const { real_id, title } = item;
-    this.log("user", "cache", {
-      action: "delete",
-      real_id,
-      title
-    });
-    deleteArticleCache(real_id);
-    this.initCacheData();
-  }
   @action initCacheData() {
     this.isPending = true;
     const caches = getArticleCaches();
@@ -83,18 +83,16 @@ export default class Index extends BaseComponent {
     }
     this.isPending = false;
   }
-  @action handleClickItem(item) {
-    if (item.swiped) {
-      item.swiped = false;
-    } else {
-      const { real_id, _id } = item;
-      this.navigateToArticle(_id, real_id);
-    }
+  @action handleDelete(item) {
+    const { real_id, title } = item;
+    this.log("user", "cache", {
+      action: "delete",
+      real_id,
+      title
+    });
+    deleteArticleCache(real_id);
+    this.initCacheData();
   }
-
-  config = {
-    navigationBarTitleText: "文章缓存"
-  };
 
   render() {
     return (

@@ -5,11 +5,6 @@ import { getAndUpdateUserInfo, getAuthSetting } from "../api/auth";
 import logger from "../utils/Logger";
 
 export default class Index extends Component {
-  componentWillMount() {}
-  componentDidMount() {}
-  componentDidShow() {}
-  componentDidHide() {}
-  componentDidCatchError() {}
 
   // auth
   onGetUserInfo(res) {

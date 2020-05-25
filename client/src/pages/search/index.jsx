@@ -13,7 +13,6 @@ import "./index.less";
 
 @observer
 export default class Index extends BaseComponent {
-  componentWillMount() { }
   componentDidMount() {
     const { keyword } = this.$router.params
     this.log('user', 'search', {
@@ -29,16 +28,13 @@ export default class Index extends BaseComponent {
         this.hasResponse = true
       })
   }
-  componentDidShow() { }
-  componentDidHide() { }
-  componentDidCatchError() { }
-
-  @observable hasResponse = false
-  @observable searchResults = []
 
   config = {
     navigationBarTitleText: ""
   };
+
+  @observable hasResponse = false
+  @observable searchResults = []
 
   handleClickResult(articleId, realId) {
     this.navigateToArticle(articleId, realId, this.$router.params.keyword)

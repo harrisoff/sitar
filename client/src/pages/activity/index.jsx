@@ -9,11 +9,6 @@ import "./index.less";
 
 @observer
 export default class Index extends BaseComponent {
-  componentWillMount() {}
-  componentDidMount() {}
-  componentDidShow() {}
-  componentDidHide() {}
-  componentDidCatchError() {}
 
   config = {
     navigationBarTitleText: "活动"

@@ -12,11 +12,6 @@ import "./index.less";
 @inject("cacheStore")
 @observer
 export default class Index extends BaseComponent {
-  componentWillMount() {}
-  componentDidMount() {}
-  componentDidShow() {}
-  componentDidHide() {}
-  componentDidCatchError() {}
 
   config = {
     navigationBarTitleText: "关于"

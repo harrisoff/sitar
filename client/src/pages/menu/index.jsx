@@ -36,10 +36,10 @@ export default class Index extends BaseComponent {
     const isDirty = cacheStore.dirty.menu;
     if (cacheStore.version === 0) {
       console.log("[menu] no cache");
-      this.requestBooksData();
+      this.requestMenuData();
     } else if (isDirty) {
       console.log("[menu] cache is dirty");
-      this.requestBooksData();
+      this.requestMenuData();
     } else {
       console.log("[menu] cache is available");
     }
@@ -53,32 +53,26 @@ export default class Index extends BaseComponent {
       // update
       else {
         console.log("[menu] version update");
-        this.requestBooksData();
+        this.requestMenuData();
       }
     });
   }
-  componentDidShow() {}
-  componentDidHide() {}
-  componentDidCatchError() {}
 
   config = {
     navigationBarTitleText: "目录"
   };
 
-  // book menu
-  @observable selectedBookId = '';
-  @observable isShowDrawer = false;
-  // tab
+  // 标签页
   tabList = [{ title: "书籍" }, { title: "其他" }];
   @observable currentTabIndex = 0;
-
-  @computed get menuItems() {
-    return this.selectedBookId ? this.bookList.find(b => b.id === this.selectedBookId).articles : []
+  @action handleClickTab(index) {
+    this.currentTabIndex = index;
   }
+
+  // book 和 booklet 数据
   @computed get bookList() {
     return this.props.cacheStore.booksData;
   }
-  // booklets & others
   @computed get nonBookList() {
     const otherList = [];
     if (this.props.cacheStore.othersData.length) {
@@ -90,7 +84,7 @@ export default class Index extends BaseComponent {
     }
     return this.props.cacheStore.bookletsData.concat(otherList);
   }
-  @action requestBooksData() {
+  @action requestMenuData() {
     console.log("[menu] send request");
     getMenuData()
       .then(data => {
@@ -103,10 +97,13 @@ export default class Index extends BaseComponent {
       })
       .catch(this.$error);
   }
-  @action handleClickTab(index) {
-    this.currentTabIndex = index;
-  }
 
+  // menu
+  @observable selectedBookId = '';
+  @observable isShowDrawer = false;
+  @computed get menuItems() {
+    return this.selectedBookId ? this.bookList.find(b => b.id === this.selectedBookId).articles : []
+  }
   @action handleClickBook(id) {
     this.selectedBookId = id
     this.isShowDrawer = true

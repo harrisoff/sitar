@@ -139,6 +139,7 @@ class App extends BaseComponent {
     console.log("[app] did show");
   }
   componentDidHide() {
+    // 触发日志上传
     this.upload();
     console.log("[app] did hide");
   }

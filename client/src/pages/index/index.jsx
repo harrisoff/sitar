@@ -34,9 +34,7 @@ import "./index.less";
 @inject("cacheStore")
 @observer
 export default class Index extends BaseComponent {
-  // life cycle
 
-  componentWillMount() {}
   componentDidMount() {
     // 初始化
     const { cacheStore } = this.props;
@@ -70,12 +68,59 @@ export default class Index extends BaseComponent {
       }
     });
   }
-  componentWillUnmount() {}
-  componentDidShow() {}
-  componentDidHide() {}
+  onShareAppMessage(res) {
+    const { from } = res;
+    // 页面内转发按钮
+    if (from === "button") {
+    }
+    // 右上角菜单
+    else if (from === "menu") {
+    }
+    return {
+      title: "西塔尔之声",
+      path: ROUTES.INDEX
+      // imageUrl: ''
+    };
+  }
 
-  // data
+  config = {
+    navigationBarTitleText: "首页"
+  };
 
+  // 文章数据
+  @computed get latestList() {
+    const { list, top } = this.props.cacheStore.homepageData;
+    return top.concat(list);
+  }
+  @computed get carousel() {
+    return this.props.cacheStore.homepageData.carousel;
+  }
+  @action requestHomepageData() {
+    console.log("[homepage] send request");
+    getHomepageData()
+      .then(data => {
+        const { cacheStore } = this.props;
+        cacheStore.setHomepageData(data);
+        cacheStore.setClean("homepage");
+        setHomepageCache(data);
+        setCleanCache("homepage");
+      })
+      .catch(this.$error);
+  }
+
+  // 搜索
+  @observable keyword = "";
+  @action handleKeywordChange(value) {
+    this.keyword = value;
+  }
+  @action handleSearch() {
+    if (!this.keyword) return;
+    Taro.navigateTo({
+      url: `${ROUTES.SEARCH}?keyword=${this.keyword}`
+    });
+  }
+
+  // 随机
   randomItems = [
     {
       type: "article",
@@ -93,60 +138,14 @@ export default class Index extends BaseComponent {
       value: "随机图片"
     }
   ];
-
-  config = {
-    navigationBarTitleText: "首页"
-  };
-
-  // reactive data
-
-  // search
-  @observable keyword = "";
-  // random image
   @observable randomUrl = "";
   @observable isRandomImageVisible = false;
   @observable isGettingRandom = false;
-
   @observable randomTitle = "";
-
-  // computed data
-
-  @computed get latestList() {
-    const { list, top } = this.props.cacheStore.homepageData;
-    return top.concat(list);
-  }
-  @computed get carousel() {
-    return this.props.cacheStore.homepageData.carousel;
-  }
-
-  // actions
-
-  @action requestHomepageData() {
-    console.log("[homepage] send request");
-    getHomepageData()
-      .then(data => {
-        const { cacheStore } = this.props;
-        cacheStore.setHomepageData(data);
-        cacheStore.setClean("homepage");
-        setHomepageCache(data);
-        setCleanCache("homepage");
-      })
-      .catch(this.$error);
-  }
-  @action handleKeywordChange(value) {
-    this.keyword = value;
-  }
-  @action handleSearch() {
-    if (!this.keyword) return;
-    Taro.navigateTo({
-      url: `${ROUTES.SEARCH}?keyword=${this.keyword}`
-    });
-  }
   @action handleRandomClose() {
     this.isRandomImageVisible = false;
   }
-
-  handleGetRandom({ type }) {
+  @action handleGetRandom({ type }) {
     // 并不能完全防止多次触发
     if (this.isGettingRandom) return;
     const limit = getRandomLimit(type);
@@ -223,21 +222,6 @@ export default class Index extends BaseComponent {
           this.isGettingRandom = false;
         });
     }
-  }
-
-  onShareAppMessage(res) {
-    const { from } = res;
-    // 页面内转发按钮
-    if (from === "button") {
-    }
-    // 右上角菜单
-    else if (from === "menu") {
-    }
-    return {
-      title: "西塔尔之声",
-      path: ROUTES.INDEX
-      // imageUrl: ''
-    };
   }
 
   render() {

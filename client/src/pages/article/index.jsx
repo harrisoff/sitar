@@ -26,7 +26,6 @@ import "./index.less";
 @inject("cacheStore", "userStore")
 @observer
 export default class Index extends BaseComponent {
-  componentWillMount() {}
   componentDidMount() {
     let { _id, real_id, keyword } = this.$router.params;
     this.id = _id;
@@ -79,15 +78,33 @@ export default class Index extends BaseComponent {
       })
       .catch(this.$error);
   }
-  componentDidShow() {}
-  componentDidHide() {}
-  componentDidCatchError() {}
+
+  onShareAppMessage(res) {
+    const { from } = res;
+    // 页面内转发按钮
+    if (from === "button") {
+    }
+    // 右上角菜单
+    else if (from === "menu") {
+    }
+    let { path, params } = this.$router;
+    const { _id, real_id } = params;
+    const option = {
+      title: this.title,
+      path: `${path}?_id=${_id}&real_id=${real_id}`
+    };
+    // 微信图文素材不一定都有 thumb_url
+    if (this.thumb_url) {
+      option.imageUrl = this.thumb_url;
+    }
+    return option;
+  }
 
   config = {
     navigationBarTitleText: ""
   };
 
-  // article
+  // 文章
   @observable id = ""; // _id
   @observable realId = ""; // real_id
   @observable title = "";
@@ -97,18 +114,6 @@ export default class Index extends BaseComponent {
   @observable likeIds = [];
   @observable liked = false; // 是否已赞
   @observable view = 0; // 阅读量
-  // comment
-  @observable hasLoadComments = false; // 默认不显示评论
-  @observable isLoadingComments = false;
-  @observable comments = [];
-  @observable commentInput = "";
-  // auth
-  @observable isTipVisible = false;
-
-  @computed get commentHeaderText() {
-    return this.hasLoadComments ? `评论 (${this.comments.length})` : "评论";
-  }
-
   @action applyArticleData(articleData, isFull) {
     const {
       title,
@@ -135,7 +140,6 @@ export default class Index extends BaseComponent {
       Taro.setNavigationBarTitle({ title });
     }
   }
-  // 点赞/取消赞
   @action handleToggleLike() {
     toggleLike({
       id: this.id,
@@ -156,20 +160,22 @@ export default class Index extends BaseComponent {
       })
       .catch(this.$error);
   }
-  // 授权 userInfo
-  @action handleGetUserInfo(res) {
-    this.onGetUserInfo(res)
-      .then(authSetting => {
-        this.props.userStore.setAuthSetting(authSetting);
-      })
-      .catch(this.$error);
+
+  // 评论列表
+  @observable hasLoadComments = false; // 默认不显示评论
+  @observable isLoadingComments = false;
+  @observable comments = [];
+  @computed get commentHeaderText() {
+    return this.hasLoadComments ? `评论 (${this.comments.length})` : "评论";
   }
-  // 评论
   @action loadComments() {
     if (this.isLoadingComments || this.hasLoadComments) return;
     this.isLoadingComments = true;
     this.updateComments(false);
   }
+
+  // 发表评论
+  @observable commentInput = "";
   @action handleInputChange(e) {
     this.commentInput = e.target.value;
   }
@@ -232,6 +238,16 @@ export default class Index extends BaseComponent {
     }
   }
 
+  // 授权
+  @action handleGetUserInfo(res) {
+    this.onGetUserInfo(res)
+      .then(authSetting => {
+        this.props.userStore.setAuthSetting(authSetting);
+      })
+      .catch(this.$error);
+  }
+
+  // utils
   highlightKeyword(html, keyword) {
     const reg = new RegExp(keyword, "g");
     html = html.replace(
@@ -255,27 +271,6 @@ export default class Index extends BaseComponent {
     //   }
     // })
     // return resultArr.join('')
-  }
-
-  onShareAppMessage(res) {
-    const { from } = res;
-    // 页面内转发按钮
-    if (from === "button") {
-    }
-    // 右上角菜单
-    else if (from === "menu") {
-    }
-    let { path, params } = this.$router;
-    const { _id, real_id } = params;
-    const option = {
-      title: this.title,
-      path: `${path}?_id=${_id}&real_id=${real_id}`
-    };
-    // 微信图文素材不一定都有 thumb_url
-    if (this.thumb_url) {
-      option.imageUrl = this.thumb_url;
-    }
-    return option;
   }
 
   render() {
