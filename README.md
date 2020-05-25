@@ -1,13 +1,16 @@
 # SITAR
 
+![](https://github.com/harrisoff/sitar/workflows/build/badge.svg)
+
 ## TODO
 
-- [ ] 日志重复上传
-- [ ] 评论输入框边框颜色
-- [ ] 分解 getMenuData 接口
+- [ ] 小程序后台设置最低基础库版本（设置-基本信息-功能设置
+- [ ] 分解 getMenuData 接口，那缓存逻辑也要改一下
 - [ ] 分解 getUserInfo 接口
-- [ ] 持续集成，参考 https://juejin.im/post/5ec527dff265da770a61520d
 - [ ] 小程序内关注公众号
+- [ ] 内容安全
+   - [ ] API 文档 https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/sec-check/security.msgSecCheck.html
+   - [ ] 后台【用户生成内容场景信息安全声明】（设置-基本设置-用户生成内容场景信息安全声明
 
 ### 有空再搞
 
@@ -15,13 +18,14 @@
    - [ ] 数据加载是怎么个情况？
    - [ ] 用户封禁好像也会失效
 - [ ] 打开评论 modal 时 autofocus
-- [ ] 基准颜色
-- [ ] 用户页里，赞过的和评论过的分开
 - [ ] 目录页每篇文章右侧添加一个 info 键点击显示 digest 和 thumb，需要替换 List 组件
 - [ ] eslint
 - [ ] 目录的数据可以提前请求，但是注意不能写在 /index 里
 - [ ] 删除评论功能
 - [ ] assets 上传到 cdn
+- [ ] AppServiceSdkKnownError/APP-SERVICE-SDK:setStorageSync:fail write DB data fail
+   - https://developers.weixin.qq.com/community/develop/doc/000a8cd25f4240c4b428957d254c00
+   - https://developers.weixin.qq.com/community/develop/doc/0006cceda9419843871afff7353400
 
 ### 搞不定
 
@@ -73,6 +77,14 @@
 - [x] 目录页样式
 - [x] 全面屏适配
 - [x] 分享打开文章页时，添加一个进入首页的入口 - 小程序自带
+- [x] 评论输入框边框颜色
+- [x] 日志重复上传
+- [x] setStorage 增加异常捕捉
+- [x] 缓存页增加说明
+- [x] 基准颜色，taro-ui 的蓝色
+- [x] 目录改为抽屉
+- [x] 组件的变量根据用途分类而不是类型
+- [x] 持续集成，参考 https://juejin.im/post/5ec527dff265da770a61520d
 
 ## NOTES
 
