@@ -11,6 +11,9 @@ const COLLECTIONS = {
   ALBUM: "album",
   NOTICE: "notice",
 };
+const SETTINGS = {
+  COMMENT_LIMIT: 5
+}
 const CLOUD_ENV = process.env.CLOUD_ENV
 const cdnPrefixes = [
   "http://sitar-cdn-1.jjlin.online/sitar",
@@ -73,6 +76,9 @@ function findUser(event, fields) {
 function getUserData(event) {
   const { openId } = event.userInfo;
   return new Promise((resolve, reject) => {
+    const now = new Date().getTime();
+    const oneDayAgo = now - ONE_DAY
+    const serverControl = true
     db.collection(COLLECTIONS.USER)
       .aggregate()
       .match({
@@ -95,19 +101,37 @@ function getUserData(event) {
             .done(),
         as: 'notices',
       })
+      // 找一天以内的评论
+      .lookup({
+        from: COLLECTIONS.COMMENT,
+        let: {
+          timestamp: '$timestamp'
+        },
+        pipeline:
+          $.pipeline()
+            .match(
+              _.expr(
+                $.gt(['$timestamp', oneDayAgo])
+              )
+            )
+            .done(),
+        as: 'comment_list',
+      })
       .end()
       .then(({ list }) => {
         const user = list[0]
-        const { banned, notices } = user
+        const { banned, notices, comment_list } = user
         if (notices.length) {
           // 时间倒序
           notices.sort((a, b) => b.timestamp - a.timestamp)
         }
+        const commentLimit = serverControl ? SETTINGS.COMMENT_LIMIT - comment_list.length : 999
         // 通知排序，
         resolve({
           // 用户信息
           openId,
           banned,
+          commentLimit: commentLimit < 0 ? 0 : commentLimit,
           notice: notices[0] // 取最近的一条
         });
       })
@@ -134,12 +158,9 @@ function getUserCommentList(event) {
       })
       .end()
       .then(({ list }) => {
-        const now = new Date().getTime();
         const commentList = []
-        let commentLimit = 5;
         list.forEach(c => {
           const article = c.article[0]
-          if (c.timestamp > now - ONE_DAY) commentLimit -= 1;
           if (c.show) {
             commentList.push({
               id: c._id,
@@ -151,11 +172,7 @@ function getUserCommentList(event) {
             });
           }
         })
-        resolve({
-          // 评论
-          commentList,
-          commentLimit: commentLimit > 0 ? commentLimit : 0,
-        });
+        resolve(commentList);
       })
       .catch(reject);
   });

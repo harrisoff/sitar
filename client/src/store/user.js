@@ -24,9 +24,10 @@ class UserStore {
     this.authSetting = authSetting;
   }
   @action setUserData(data) {
-    const { openId, banned, notice } = data;
+    const { openId, banned, notice, commentLimit } = data;
     this.openId = openId;
     this.banned = banned;
+    this.commentLimit = commentLimit;
     if (notice) this.notice = notice
   }
   @action setUserLike(data) {
@@ -34,9 +35,7 @@ class UserStore {
     this.hasLikeList = true
   }
   @action setUserComment(data) {
-    const { commentList, commentLimit } = data
-    this.commentList = commentList;
-    this.commentLimit = commentLimit;
+    this.commentList = data;
     this.hasCommentList = true;
   }
   @action updateComments(comment) {
