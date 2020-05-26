@@ -11,6 +11,7 @@
   "globals": {
     "N4": true,
     "N10": true,
-    "CLOUD_ENV": true
+    "CLOUD_ENV": true,
+    "CLOUD_FN": true
   }
 }

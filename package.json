@@ -1,0 +1,23 @@
+{
+  "name": "sitar",
+  "version": "1.0.0",
+  "description": "![](https://github.com/harrisoff/sitar/workflows/build/badge.svg)",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "uglify-es": "^3.3.9"
+  },
+  "scripts": {
+    "build:cloud": "npx uglifyjs --compress --mangle -o ./cloud/functions/prod/index.js -- ./cloud/functions/dev/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harrisoff/sitar.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/harrisoff/sitar/issues"
+  },
+  "homepage": "https://github.com/harrisoff/sitar#readme"
+}

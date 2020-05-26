@@ -3,8 +3,10 @@ import { getBanned } from "../utils/cache";
 import { MESSAGES } from "../constants/message";
 import logger from "../utils/Logger";
 
+const cloudFn = CLOUD_FN // 定义在 /config
+
 // interceptor
-export default function callFunction(fn, data = {}, mainFn = 'base') {
+export default function callFunction(fn, data = {}, mainFn = cloudFn) {
   data.fn = fn
   const banned = getBanned();
   const benchmark = `[benchmark] ${fn}`

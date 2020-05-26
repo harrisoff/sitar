@@ -4,7 +4,8 @@ module.exports = {
   },
   defineConstants: {
     N4: 7369,
-    CLOUD_ENV: 'sitar-prod'
+    CLOUD_ENV: 'sitar-prod',
+    CLOUD_FN: 'prod'
   },
   mini: {},
   uglify: {

@@ -4,7 +4,8 @@ module.exports = {
   },
   defineConstants: {
     N4: 7369,
-    CLOUD_ENV: 'sitar-dev'
+    CLOUD_ENV: 'sitar-dev',
+    CLOUD_FN: 'dev'
   },
   mini: {},
   h5: {}
