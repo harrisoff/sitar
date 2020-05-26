@@ -6,10 +6,12 @@ import {
   AtMessage,
   AtSearchBar,
   AtActivityIndicator,
-  AtGrid
+  AtGrid,
+  AtNoticebar
 } from "taro-ui";
 import { computed, observable, action, observe } from "mobx";
 import "taro-ui/dist/style/components/grid.scss";
+import "taro-ui/dist/style/components/noticebar.scss"
 
 import {
   getHomepageData,
@@ -31,7 +33,7 @@ import BaseComponent from "../../components/Base.jsx";
 
 import "./index.less";
 
-@inject("cacheStore")
+@inject("cacheStore", "userStore")
 @observer
 export default class Index extends BaseComponent {
 
@@ -224,7 +226,15 @@ export default class Index extends BaseComponent {
     }
   }
 
+  // 通知
+  handleClickNotice() {
+    Taro.navigateTo({
+      url: ROUTES.NOTICE
+    });
+  }
+
   render() {
+    const { notice } = this.props.userStore
     return (
       <View className='page-homepage'>
         <AtMessage />
@@ -233,6 +243,9 @@ export default class Index extends BaseComponent {
           mode='center'
           size={48}
         ></AtActivityIndicator>
+        {
+          notice && <AtNoticebar single showMore onGotoMore={this.handleClickNotice.bind(this)}>{notice.content}</AtNoticebar>
+        }
 
         {/* search */}
         <AtSearchBar

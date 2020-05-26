@@ -21,6 +21,7 @@ const COLLECTIONS = {
   LOG: "log",
   SONG: "song",
   ALBUM: "album",
+  NOTICE: "notice",
   // raw
   MATERIAL_RAW: "wx_material",
   VOICE_RAW: "wx_voice",
@@ -45,6 +46,7 @@ const db = cloud.database({
   env: CLOUD_ENV,
 });
 const _ = db.command;
+const $ = db.command.aggregate;
 
 // ===== user =====
 // 登录，不是授权
@@ -85,10 +87,101 @@ function findUser(event, fields) {
   });
 }
 
-// 用户信息+赞过的列表+评论列表
+// 用户信息+最近一条未读的通知
 // 注意，如果返回 userInfo 授权后才有的字段
 // 需要在前端控制如何展示
 function getUserData(event) {
+  const { openId } = event.userInfo;
+  return new Promise((resolve, reject) => {
+    db.collection(COLLECTIONS.USER)
+      .aggregate()
+      .match({
+        open_id: openId
+      })
+      // 找用户没读过的通知
+      .lookup({
+        from: COLLECTIONS.NOTICE,
+        let: {
+          last_notice: '$last_notice'
+        },
+        pipeline:
+          $.pipeline()
+            .match(
+              _.expr(
+                // 查找发布时间比用户最后一次读通知晚的
+                $.gt(['$timestamp', '$$last_notice'])
+              )
+            )
+            .done(),
+        as: 'notices',
+      })
+      .end()
+      .then(({ list }) => {
+        const user = list[0]
+        const { banned, notices } = user
+        if (notices.length) {
+          // 时间倒序
+          notices.sort((a, b) => b.timestamp - a.timestamp)
+        }
+        // 通知排序，
+        resolve({
+          // 用户信息
+          openId,
+          banned,
+          notice: notices[0] // 取最近的一条
+        });
+      })
+      .catch(reject);
+  });
+}
+
+function getUserCommentList(event) {
+  const { openId } = event.userInfo;
+  return new Promise((resolve, reject) => {
+    db.collection(COLLECTIONS.COMMENT)
+      .aggregate()
+      .match({
+        open_id: openId,
+      })
+      .sort({
+        timestamp: -1
+      })
+      .lookup({
+        from: COLLECTIONS.ARTICLE,
+        localField: "article_id",
+        foreignField: "real_id",
+        as: "article",
+      })
+      .end()
+      .then(({ list }) => {
+        const now = new Date().getTime();
+        const commentList = []
+        let commentLimit = 5;
+        list.forEach(c => {
+          const article = c.article[0]
+          if (c.timestamp > now - ONE_DAY) commentLimit -= 1;
+          if (c.show) {
+            commentList.push({
+              id: c._id,
+              timestamp: c.timestamp,
+              content: c.content,
+              realId: c.article_id,
+              articleId: article._id,
+              title: article.title
+            });
+          }
+        })
+        resolve({
+          // 评论
+          commentList,
+          commentLimit: commentLimit > 0 ? commentLimit : 0,
+        });
+      })
+      .catch(reject);
+  });
+}
+
+function getUserLikeList(event) {
   const { openId } = event.userInfo;
   return new Promise((resolve, reject) => {
     db.collection(COLLECTIONS.USER)
@@ -102,35 +195,9 @@ function getUserData(event) {
         foreignField: "like_id",
         as: "like_list",
       })
-      .lookup({
-        from: COLLECTIONS.COMMENT,
-        localField: "open_id",
-        foreignField: "open_id",
-        as: "comment_list",
-      })
       .end()
       .then(({ list }) => {
-        // 前端会在 login 结束后再 getUserData
-        // 所以即使是初次进入的用户，也一定有记录
-        const { banned, comment_list, like_list } = list[0];
-        const realIds = new Set(); // 用来再查一次获取文章标题
-        // 评论过的
-        const now = new Date().getTime();
-        let commentLimit = 5;
-        const commentList = [];
-        comment_list.forEach((c) => {
-          if (c.timestamp > now - ONE_DAY) commentLimit -= 1;
-          if (c.show) {
-            realIds.add(c.article_id);
-            // 查询结果时间正序，这里改成倒序
-            commentList.unshift({
-              id: c._id,
-              timestamp: c.timestamp,
-              content: c.content,
-              realId: c.article_id,
-            });
-          }
-        });
+        const { like_list } = list[0];
         // 赞过的
         const likeList = [];
         like_list.forEach((l) => {
@@ -145,31 +212,7 @@ function getUserData(event) {
             });
           }
         });
-        db.collection(COLLECTIONS.ARTICLE)
-          .field(createFieldObj("_id", "real_id", "title"))
-          .where({
-            real_id: _.in(Array.from(realIds)),
-          })
-          .get()
-          .then(({ data }) => {
-            commentList.forEach((comment) => {
-              const { realId } = comment;
-              const article = data.find((d) => d.real_id === realId);
-              comment.title = article.title;
-              comment.articleId = article._id;
-            });
-            resolve({
-              // 用户信息
-              openId,
-              banned,
-              // 赞过的
-              likeList,
-              // 评论
-              commentList,
-              commentLimit: commentLimit > 0 ? commentLimit : 0,
-            });
-          })
-          .catch(reject);
+        resolve(likeList);
       })
       .catch(reject);
   });
@@ -667,6 +710,34 @@ function uploadLogs(event) {
   });
 }
 
+// 获取通知列表
+function getNoticeList(event) {
+  const { openId } = event.userInfo;
+  return new Promise((resolve, reject) => {
+    // 1. 获取
+    db.collection(COLLECTIONS.NOTICE)
+      .orderBy('timestamp', 'desc')
+      .get()
+      .then(({ data }) => {
+        // 2. 更新用户最后一次阅读通知的时间
+        db.collection(COLLECTIONS.USER)
+          .where({
+            open_id: openId
+          })
+          .update({
+            data: {
+              last_notice: new Date().getTime()
+            },
+          })
+          .then(_ => {
+            resolve(data)
+          })
+          .catch(reject)
+      })
+      .catch(reject);
+  });
+}
+
 // ===== utils =====
 function createFieldObj(...fields) {
   const fieldObj = {};
@@ -707,6 +778,10 @@ exports.main = (event, context) => {
     // 获取用户信息
     case "getUserData":
       return getUserData(event);
+    case "getUserCommentList":
+      return getUserCommentList(event);
+    case "getUserLikeList":
+      return getUserLikeList(event);
     // 文章点赞/取消赞
     case "toggleLike":
       return toggleLike(event);
@@ -746,6 +821,12 @@ exports.main = (event, context) => {
     // 上传日志
     case "uploadLogs":
       return uploadLogs(event);
+    // 通知列表
+    case "getNoticeList":
+      return getNoticeList(event);
+    // 更新用户已读通知的时间戳
+    case "updateUserNotice":
+      return updateUserNotice(event);
     default:
       return Promise.reject("empty function");
   }

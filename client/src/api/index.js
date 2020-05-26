@@ -102,6 +102,28 @@ export function toggleLike({ id, like }) {
   });
 }
 
+// ===== notices =====
+
+export function getNoticeList() {
+  return callFunction("base", {
+    fn: "getNoticeList"
+  });
+}
+
+// ===== user =====
+
+export function getUserLikeList() {
+  return callFunction("base", {
+    fn: "getUserLikeList"
+  });
+}
+
+export function getUserCommentList() {
+  return callFunction("base", {
+    fn: "getUserCommentList"
+  });
+}
+
 // ===== ?? =====
 
 export function getVersion() {

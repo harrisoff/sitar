@@ -44,6 +44,10 @@
     {
       "action": "disallow",
       "page": "pages/about/index"
+    },
+    {
+      "action": "disallow",
+      "page": "pages/notice/index"
     }
   ]
 }

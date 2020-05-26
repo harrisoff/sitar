@@ -19,7 +19,8 @@ export const ROUTES = {
   USER_COMMENT: "/pages/user/comment/index",
   USER_LIKE: "/pages/user/like/index",
   CACHE: "/pages/cache/index",
-  ABOUT: "/pages/about/index"
+  ABOUT: "/pages/about/index",
+  NOTICE: "/pages/notice/index"
 };
 
 export const SETTINGS = {

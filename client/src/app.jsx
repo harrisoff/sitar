@@ -156,7 +156,8 @@ class App extends BaseComponent {
       "pages/article/index",
       "pages/cache/index",
       "pages/about/index",
-      "pages/search/index"
+      "pages/search/index",
+      "pages/notice/index"
     ],
     tabBar: {
       selectedColor: "#6190E8",
