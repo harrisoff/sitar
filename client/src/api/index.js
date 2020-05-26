@@ -1,13 +1,10 @@
 import callFunction from "./request";
-import { formatTime } from "../utils/weapp";
 
 // ===== homepage =====
 
 export function getHomepageData() {
   return new Promise((resolve, reject) => {
-    callFunction("base", {
-      fn: "getHomepage"
-    })
+    callFunction("getHomepage")
       .then(({ data, errMsg }) => {
         const r = {
           carousel: [],
@@ -29,47 +26,32 @@ export function getHomepageData() {
 }
 
 export function getRandomArticle() {
-  return callFunction("base", {
-    fn: "getRandomArticle"
-  });
+  return callFunction("getRandomArticle");
 }
 
 export function getRandomImage() {
-  return callFunction("base", {
-    fn: "getRandomImage"
-  });
+  return callFunction("getRandomImage");
 }
 
 export function getRandomSong() {
-  return callFunction("base", {
-    fn: "getRandomSong"
-  });
+  return callFunction("getRandomSong");
 }
 
 export function searchArticleByKeyword(keyword) {
-  return callFunction("base", {
-    fn: "searchArticleByKeyword",
-    keyword
-  });
+  return callFunction("searchArticleByKeyword", { keyword });
 }
 
 // ===== menu =====
 
 export function getMenuData() {
-  return callFunction("base", {
-    fn: "getMenuData"
-  });
+  return callFunction("getMenuData");
 }
 
 // ===== article =====
 
 export function getArticleById(id, if_modified_since) {
   return new Promise((resolve, reject) => {
-    callFunction("base", {
-      fn: "getArticleById",
-      id,
-      if_modified_since
-    })
+    callFunction("getArticleById", { id, if_modified_since })
       .then(data => {
         if (data) resolve(data);
         else reject("没有找到文章!");
@@ -79,58 +61,42 @@ export function getArticleById(id, if_modified_since) {
 }
 
 export function getArticleComments(realId) {
-  return callFunction("base", {
-    fn: "getArticleComments",
-    realId
-  });
+  return callFunction("getArticleComments", { realId });
 }
 
 // ===== comments =====
 
 export function addComment({ realId, content, replyId }) {
-  return callFunction("base", {
-    fn: "addComment",
+  return callFunction("addComment", {
     commentData: { realId, content, replyId }
   });
 }
 
 export function toggleLike({ id, like }) {
-  return callFunction("base", {
-    fn: "toggleLike",
-    id,
-    like
-  });
+  return callFunction("toggleLike", { id, like });
 }
 
 // ===== notices =====
 
 export function getNoticeList() {
-  return callFunction("base", {
-    fn: "getNoticeList"
-  });
+  return callFunction("getNoticeList");
 }
 
 // ===== user =====
 
 export function getUserLikeList() {
-  return callFunction("base", {
-    fn: "getUserLikeList"
-  });
+  return callFunction("getUserLikeList");
 }
 
 export function getUserCommentList() {
-  return callFunction("base", {
-    fn: "getUserCommentList"
-  });
+  return callFunction("getUserCommentList");
 }
 
 // ===== ?? =====
 
 export function getVersion() {
   return new Promise((resolve, reject) => {
-    callFunction("base", {
-      fn: "getVersion"
-    })
+    callFunction("getVersion")
       .then(version => {
         resolve(parseInt(version));
       })
@@ -139,8 +105,5 @@ export function getVersion() {
 }
 
 export function uploadLogs(data) {
-  return callFunction("base", {
-    fn: "uploadLogs",
-    data
-  });
+  return callFunction("uploadLogs", { data });
 }

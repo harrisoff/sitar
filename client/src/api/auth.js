@@ -4,17 +4,12 @@ import callFunction from "./request";
 import logger from "../utils/Logger";
 
 export function login(params) {
-  return callFunction("base", {
-    fn: "login",
-    params
-  });
+  return callFunction("login", { params });
 }
 
 // 不是小程序的 userInfo，而是数据库里保存的 userData
 export function getUserData() {
-  return callFunction("base", {
-    fn: "getUserData"
-  });
+  return callFunction("getUserData");
 }
 
 // 获取用户授权情况
@@ -34,10 +29,7 @@ export function getAuthSetting() {
 
 // 保存 userInfo 到数据库
 export function updateUserInfo(data) {
-  return callFunction("base", {
-    fn: "updateUserInfo",
-    data
-  });
+  return callFunction("updateUserInfo", { data });
 }
 
 // 用户授权 userInfo 后更新数据库（无论是否新用户）

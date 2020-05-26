@@ -4,16 +4,17 @@ import { MESSAGES } from "../constants/message";
 import logger from "../utils/Logger";
 
 // interceptor
-export default function callFunction(name, data) {
+export default function callFunction(fn, data = {}, mainFn = 'base') {
+  data.fn = fn
   const banned = getBanned();
-  const benchmark = `[benchmark] ${data.fn}`
+  const benchmark = `[benchmark] ${fn}`
   console.time(benchmark)
   return new Promise((resolve, reject) => {
     // 被禁时只允许请求 login 接口
-    if (banned && data.fn !== "login") return reject(MESSAGES.BANNED);
+    if (banned && fn !== "login") return reject(MESSAGES.BANNED);
     Taro.cloud
       .callFunction({
-        name,
+        name: mainFn,
         // 传递给云函数的event参数
         data
       })
@@ -25,15 +26,15 @@ export default function callFunction(name, data) {
         } = response;
         if (errMsg === "cloud.callFunction:ok") {
           // 先不记录了，太多了
-          // if (data.fn !== 'uploadLogs') logger.log('callFunction', data.fn)
+          // if (fn !== 'uploadLogs') logger.log('callFunction', fn)
           resolve(result);
         } else {
-          logger.error("callFunction", data.fn, response);
+          logger.error("callFunction", fn, response);
           reject(errMsg);
         }
       })
       .catch(error => {
-        logger.error("callFunction", data.fn, error);
+        logger.error("callFunction", fn, error);
         // const { errCode, errMsg, requestID } = error;
         console.error(error);
         reject(error.errMsg);
