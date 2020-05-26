@@ -39,7 +39,9 @@ class App extends BaseComponent {
     // 这里 async/await 无效
   }
   async componentDidMount() {
-    Taro.cloud.init();
+    Taro.cloud.init({
+      env: CLOUD_ENV
+    });
 
     const { cacheStore, userStore } = store;
 
