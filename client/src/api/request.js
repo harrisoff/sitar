@@ -6,6 +6,8 @@ import logger from "../utils/Logger";
 // interceptor
 export default function callFunction(name, data) {
   const banned = getBanned();
+  const benchmark = `[benchmark] ${data.fn}`
+  console.time(benchmark)
   return new Promise((resolve, reject) => {
     // 被禁时只允许请求 login 接口
     if (banned && data.fn !== "login") return reject(MESSAGES.BANNED);
@@ -35,6 +37,9 @@ export default function callFunction(name, data) {
         // const { errCode, errMsg, requestID } = error;
         console.error(error);
         reject(error.errMsg);
-      });
+      })
+      .then(_ => {
+        console.timeEnd(benchmark)
+      })
   });
 }
