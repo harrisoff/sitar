@@ -1,40 +1,17 @@
 const cloud = require("wx-server-sdk");
 
-const PROCESS_ENV = "dev";
-const N10 = "1302052182";
-const DEV_ENV = {
-  N4: "7369",
-  CLOUD_ENV: "sitar-dev",
-};
-const PROD_ENV = {
-  N4: "",
-  CLOUD_ENV: "",
-};
 const COLLECTIONS = {
   COMMENT: "comment",
   USER: "user",
-  FILE: "file",
   ARTICLE: "article",
   BOOK: "book",
-  BACKUP: "backup",
   SETTING: "setting",
   LOG: "log",
   SONG: "song",
   ALBUM: "album",
   NOTICE: "notice",
-  // raw
-  MATERIAL_RAW: "wx_material",
-  VOICE_RAW: "wx_voice",
-  IMAGE_RAW: "wx_image",
-  VIDEO_RAW: "wx_video",
-  NEWS_RAW: "wx_news",
 };
-const ENV = {
-  N10: N10,
-  N4: PROCESS_ENV === "dev" ? DEV_ENV.N4 : PROD_ENV.N4,
-  CLOUD_ENV: PROCESS_ENV === "dev" ? DEV_ENV.CLOUD_ENV : PROD_ENV.CLOUD_ENV,
-};
-const { CLOUD_ENV } = ENV;
+const CLOUD_ENV = process.env.CLOUD_ENV
 const cdnPrefixes = [
   "http://sitar-cdn-1.jjlin.online/sitar",
   "http://sitar-cdn-2.jjlin.online"
