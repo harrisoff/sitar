@@ -35,7 +35,10 @@ const ENV = {
   CLOUD_ENV: PROCESS_ENV === "dev" ? DEV_ENV.CLOUD_ENV : PROD_ENV.CLOUD_ENV,
 };
 const { CLOUD_ENV } = ENV;
-const cdnPrefix = "https://cdn.jjlin.online/sitar";
+const cdnPrefixes = [
+  "http://sitar-cdn-1.jjlin.online/sitar",
+  "http://sitar-cdn-2.jjlin.online"
+]
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
 // TIPS:
@@ -331,14 +334,12 @@ function getRandomSong(event) {
       let user = null;
       let latest = 0;
       const serverControl = true;
-      if (serverControl) {
-        user = await findUser(event, ["_id", "random_song"]);
-        if (!user) throw { errMsg: "Oops! 找不到当前用户的信息" };
-        const record = user.random_song;
-        latest = record.sort().pop();
-        if (latest > new Date().getTime() - ONE_DAY) {
-          isLimit = true;
-        }
+      user = await findUser(event, ["_id", "random_song"]);
+      if (!user) throw { errMsg: "Oops! 找不到当前用户的信息" };
+      const record = user.random_song;
+      latest = record.sort().pop();
+      if (latest > new Date().getTime() - ONE_DAY && serverControl) {
+        isLimit = true;
       }
       if (isLimit) {
         resolve({
@@ -369,7 +370,7 @@ function getRandomSong(event) {
               cover: album.cover_id,
               artist: album.artist,
               cloudId: cloud_id,
-              cdnUrl: `${cdnPrefix}/${title}.mp3`,
+              cdnUrl: `${getCdnPrefix()}/${title}.mp3`,
             };
             // 记录
             db.collection(COLLECTIONS.USER)
@@ -745,6 +746,10 @@ function createFieldObj(...fields) {
     fieldObj[field] = true;
   });
   return fieldObj;
+}
+
+function getCdnPrefix() {
+  return Math.random() > 0.5 ? cdnPrefixes[0] : cdnPrefixes[1]
 }
 
 // 按 timestamp 正序排序并加入数组
