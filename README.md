@@ -4,15 +4,15 @@
 
 ## TODO
 
-- [ ] 区分开发环境和生产环境
+- [ ] 通知功能
+   - [x] 基础功能
+   - [ ] 在用户页添加一个入口
 - [ ] 小程序后台设置最低基础库版本（设置-基本信息-功能设置
 - [ ] 分解 getMenuData 接口，那缓存逻辑也要改一下
-- [ ] 分解 getUserInfo 接口
 - [ ] 小程序内关注公众号
 
 ### 有空再搞
 
-- [ ] 拦截器
 - [ ] 如果从分享的文章页面进入
    - [ ] 数据加载是怎么个情况？
    - [ ] 用户封禁好像也会失效
@@ -21,13 +21,14 @@
 - [ ] 目录的数据可以提前请求，但是注意不能写在 /index 里
 - [ ] 删除评论功能
 - [ ] assets 上传到 cdn
-- [ ] AppServiceSdkKnownError/APP-SERVICE-SDK:setStorageSync:fail write DB data fail
+- [ ] AppServiceSdkKnownError/APP-SERVICE-SDK:setStorageSync:fail write DB data fail，要改异步的话太麻烦了
    - https://developers.weixin.qq.com/community/develop/doc/000a8cd25f4240c4b428957d254c00
    - https://developers.weixin.qq.com/community/develop/doc/0006cceda9419843871afff7353400
 
 ### 搞不定
 
 - [ ] 小程序不支持链接
+- [ ] 路由拦截器，貌似不能实现类似 vue-router 的导航守卫功能
 
 ### 完成
 
@@ -88,7 +89,32 @@
    - [x] 后台【用户生成内容场景信息安全声明】（设置-基本设置-用户生成内容场景信息安全声明
 - [x] getVersion
 - [x] 目录按时间正序
+- [x] 分解 getUserData 接口
+- [x] 云函数环境变量
+- [x] 压缩云函数代码，生产环境根据环境变量自动使用压缩后的
+- [x] getUserData 接口需要返回可评论次数
+- [x] 区分开发环境和生产环境
+- [x] store 变量分类
 
 ## NOTES
 
 1. 当一个 fixed 在底部的 view 中套一个 input 的时候，input focus 时软键盘弹出，会覆盖 input 下方的部分，除非显式设置了 input 的 margin-bottom。
+
+## DEPLOY
+
+### 数据库
+
+1. 建表
+2. 建索引
+3. 后台添加数据
+
+### 云函数
+
+1. 创建
+2. 环境变量
+3. 上传前压缩
+
+### CDN
+
+1. 上传文件
+2. 修改云函数 cdn 前缀
