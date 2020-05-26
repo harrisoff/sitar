@@ -1,28 +1,11 @@
 import { observable, computed, action } from "mobx";
 
 class UserStore {
+  // 小程序和公众号关联之后就有 unionId 了
   // @observable unionId = "";
   @observable openId = "";
   @observable banned = false;
-  
-  @observable commentList = [];
   @observable commentLimit = 0;
-  @observable hasCommentList = false;
-
-  @observable likeList = [];
-  @observable hasLikeList = false;
-
-  @observable authSetting = {};
-  
-  @observable notice = null;
-
-  @computed get hasAuth() {
-    return this.authSetting["scope.userInfo"];
-  }
-
-  @action setAuthSetting(authSetting) {
-    this.authSetting = authSetting;
-  }
   @action setUserData(data) {
     const { openId, banned, notice, commentLimit } = data;
     this.openId = openId;
@@ -30,6 +13,11 @@ class UserStore {
     this.commentLimit = commentLimit;
     if (notice) this.notice = notice
   }
+  
+  @observable commentList = [];
+  @observable hasCommentList = false;
+  @observable likeList = [];
+  @observable hasLikeList = false;
   @action setUserLike(data) {
     this.likeList = data
     this.hasLikeList = true
@@ -60,9 +48,19 @@ class UserStore {
     this.commentList = [];
     this.likeList = [];
   }
+  
+  @observable notice = null;
   // 通知已读
   @action deleteNotice() {
     this.notice = null
+  }
+
+  @observable authSetting = {};
+  @computed get hasAuth() {
+    return this.authSetting["scope.userInfo"];
+  }
+  @action setAuthSetting(authSetting) {
+    this.authSetting = authSetting;
   }
 }
 
