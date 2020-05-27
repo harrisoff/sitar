@@ -10,6 +10,7 @@ const COLLECTIONS = {
   SONG: "song",
   ALBUM: "album",
   NOTICE: "notice",
+  IMAGE_RAW: "wx_image",
 };
 const SETTINGS = {
   COMMENT_LIMIT: 5
