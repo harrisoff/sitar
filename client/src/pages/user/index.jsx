@@ -54,13 +54,13 @@ export default class Index extends BaseComponent {
           <View className='list'>
             <View className='list__item'>
               <AtList>
-                <AtListItem title='赞过的' arrow='right' onClick={this.navigateTo.bind(this, ROUTES.USER_LIKE)} />
-                <AtListItem title='我的评论' arrow='right' onClick={this.navigateTo.bind(this, ROUTES.USER_COMMENT)} />
+                <AtListItem title='赞过的' onClick={this.navigateTo.bind(this, ROUTES.USER_LIKE)} />
+                <AtListItem title='我的评论' onClick={this.navigateTo.bind(this, ROUTES.USER_COMMENT)} />
+                <AtListItem title='文章缓存' onClick={this.navigateTo.bind(this, ROUTES.CACHE)} />
               </AtList>
             </View>
             <View className='list__item'>
               <AtList>
-                <AtListItem title='文章缓存' onClick={this.navigateTo.bind(this, ROUTES.CACHE)} />
                 <AtListItem title='关于' onClick={this.navigateTo.bind(this, ROUTES.ABOUT)} />
               </AtList>
             </View>
