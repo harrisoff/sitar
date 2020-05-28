@@ -29,3 +29,8 @@ export const SETTINGS = {
   RANDOM_SONG_PER_DAY: 1, // 24 小时内随机歌曲次数限制
   ARTICLE_CACHE_LIMIT: 1 * 1024 // kb
 };
+
+export const CDN = {
+  PREFIX1: 'http://sitar-cdn-1.jjlin.online/sitar',
+  PREFIX2: 'http://sitar-cdn-2.jjlin.online'
+}
