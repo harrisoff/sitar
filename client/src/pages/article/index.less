@@ -39,24 +39,11 @@
         box-shadow: rgba(97, 144, 232, 0.2) 0px 0.14933rem 0.256rem 0px;
         border-radius: 1px;
       }
-      .comments__add {
-        display: inline;
-        // 不能用 float 或 flex
-        // 否则会覆盖到页面的首屏区域
-        // 傻逼小程序
-        position: absolute;
-        right: 20rpx;
-      }
-      .comments__add_login {
-        color: rgb(84, 102, 217);
-        position: absolute;
-        right: 20rpx;
-        display: inline;
-      }
     }
     .comments__body {
       min-height: 52rpx;
       padding: 10rpx;
+      // 未加载或没有评论
       .comments_empty {
         color: grey;
         text-align: center;
@@ -89,11 +76,12 @@
       }
     }
   }
+  @commentHeight: 90rpx;
   .comment__fixed {
     position: fixed;
     z-index: 999;
     bottom: 0;
-    height: 90rpx;
+    height: @commentHeight;
     width: 100%;
     background-color: white;
     box-shadow: 0 0 8rpx 0 #ddd;
@@ -104,12 +92,22 @@
     padding-bottom: env(safe-area-inset-bottom);
     .comment__input {
       border: 2rpx solid #f0f0f0;
-      width: 70%;
+      width: 80%;
       height: 70rpx;
-      margin: 10rpx 0;
+      margin: 10rpx;
       padding: 0 35rpx;
       border-radius: 35rpx;
       font-size: @font14;
+    }
+    .comment__button {
+      width: 20%;
+      min-width: 120rpx;
+      margin: 10rpx;
+      text-align: center;
+      button {
+        height: @commentHeight - 20rpx;
+        line-height: @commentHeight - 20rpx;
+      }
     }
   }
   // comment

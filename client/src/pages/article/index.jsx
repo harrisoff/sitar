@@ -367,25 +367,26 @@ export default class Index extends BaseComponent {
             value={this.commentInput}
             onChange={this.handleInputChange.bind(this)}
             disabled={!hasAuth}
-            placeholder={hasAuth ? "" : "登录才能评论"}
+            placeholder={hasAuth ? "" : "没登录不样评论"}
           />
-          {/* <Text className='text_link'>发送</Text> */}
-          {hasAuth ? (
-            <Button
-              className='comments__add button_text text_link'
-              onClick={this.handleSubmitComment.bind(this)}
-            >
-              评论
-            </Button>
-          ) : (
-            <Button
-              className='comments__add button_text text_link'
-              openType='getUserInfo'
-              onGetUserInfo={this.handleGetUserInfo.bind(this)}
-            >
-              登录
-            </Button>
-          )}
+          <View className='comment__button'>
+            {hasAuth ? (
+              <Button
+                className='button_text text_link'
+                onClick={this.handleSubmitComment.bind(this)}
+              >
+                评论
+              </Button>
+            ) : (
+                <Button
+                  className='button_text text_link'
+                  openType='getUserInfo'
+                  onGetUserInfo={this.handleGetUserInfo.bind(this)}
+                >
+                  登录
+                </Button>
+              )}
+          </View>
         </View>
       </View>
     );
