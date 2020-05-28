@@ -186,9 +186,14 @@ export default class Index extends BaseComponent {
       // 一般情况下只需要本地判断，到达使用次数时不会发送请求
       // 但是如果本地缓存被清空，就会发送请求，由服务端判断
       getRandomSong()
-        .then(({ song, latest }) => {
+        .then(({ song, latest, errMsg }) => {
           // 更新本地记录
           setRandomRecord(type, latest);
+          // 留个坑
+          // 如果出现版权问题，不需要发布新版本，只改服务端返回值就好了
+          if (errMsg) {
+            return this.$warn(errMsg);
+          }
           // 到达使用次数时，不返回 song 数据
           if (!song) {
             return this.$warn(MESSAGES.RANDOM_SONG_LIMIT);
