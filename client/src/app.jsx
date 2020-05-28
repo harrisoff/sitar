@@ -178,7 +178,7 @@ class App extends BaseComponent {
         },
         {
           pagePath: "pages/activity/index",
-          text: "活动",
+          text: "✨",
           iconPath: "assets/images/ringo1.png",
           selectedIconPath: "assets/images/ringo2.png"
         },
