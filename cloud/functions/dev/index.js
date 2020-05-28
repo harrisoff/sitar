@@ -133,7 +133,7 @@ function getUserData(event) {
           openId,
           banned,
           commentLimit: commentLimit < 0 ? 0 : commentLimit,
-          notice: notices[0] // 取最近的一条
+          notice: notices[0] && notices[0].title // 取最近的一条，首页只需要显示标题
         });
       })
       .catch(reject);

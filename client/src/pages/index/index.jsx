@@ -239,7 +239,7 @@ export default class Index extends BaseComponent {
   }
 
   render() {
-    const { notice } = this.props.userStore
+    const { noticeTitle } = this.props.userStore
     return (
       <View className='page-homepage'>
         <AtMessage />
@@ -249,7 +249,7 @@ export default class Index extends BaseComponent {
           size={48}
         ></AtActivityIndicator>
         {
-          notice && <AtNoticebar single showMore onGotoMore={this.handleClickNotice.bind(this)}>{notice.content}</AtNoticebar>
+          noticeTitle && <AtNoticebar single showMore onGotoMore={this.handleClickNotice.bind(this)}>{noticeTitle}</AtNoticebar>
         }
 
         {/* search */}

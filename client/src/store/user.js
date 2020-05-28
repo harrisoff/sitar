@@ -11,7 +11,7 @@ class UserStore {
     this.openId = openId;
     this.banned = banned;
     this.commentLimit = commentLimit;
-    if (notice) this.notice = notice
+    if (notice) this.noticeTitle = notice
   }
   
   @observable commentList = [];
@@ -49,10 +49,10 @@ class UserStore {
     this.likeList = [];
   }
   
-  @observable notice = null;
+  @observable noticeTitle = null;
   // 通知已读
   @action deleteNotice() {
-    this.notice = null
+    this.noticeTitle = null
   }
 
   @observable authSetting = {};
