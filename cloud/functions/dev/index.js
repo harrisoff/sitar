@@ -712,6 +712,9 @@ function getNoticeList(event) {
   return new Promise((resolve, reject) => {
     // 1. 获取
     db.collection(COLLECTIONS.NOTICE)
+      .where({
+        show: true
+      })
       .orderBy('timestamp', 'desc')
       .get()
       .then(({ data }) => {
