@@ -697,7 +697,7 @@ function uploadLogs(event) {
   const { userInfo, data } = event;
   data.forEach((item) => {
     item.open_id = userInfo.openId;
-    if (item.level === "error" || item.type === "login") {
+    if (item.level === "error" || item.sub_type === "login") {
       item.context = cloud.getWXContext();
     }
   });
