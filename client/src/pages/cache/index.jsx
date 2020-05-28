@@ -109,10 +109,9 @@ export default class Index extends BaseComponent {
           <View>
             <View style='margin: 20rpx'>
               <View>
-                {this.cacheCount}条缓存，共{this.totalSize}kB
+                {this.cacheCount}条缓存，共{this.totalSize}kB。滑动删除
               </View>
-              <View>达到 {SETTINGS.ARTICLE_CACHE_LIMIT}kB 时自动删除最近未访问的缓存</View>
-              <View>滑动以删除</View>
+              <View>达到 {SETTINGS.ARTICLE_CACHE_LIMIT}kB 时会自动清理</View>
             </View>
             <View>
               <AtList>
