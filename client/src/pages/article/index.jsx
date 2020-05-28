@@ -147,6 +147,11 @@ export default class Index extends BaseComponent {
       like: !this.liked
     })
       .then(() => {
+        this.log('user', 'like', {
+          liked: this.liked,
+          realId: this.realId,
+          title: this.title
+        })
         this.liked = !this.liked;
         // 更新用户页已赞数据
         this.props.userStore.updateLike(
@@ -199,7 +204,9 @@ export default class Index extends BaseComponent {
     };
     addComment(data)
       .then(({ errCode }) => {
+        let isLegal = true
         if (errCode === 87014) {
+          isLegal = false
           // 评论内容不合法
           // 实际上还是保存到数据库了，只是不显示
           this.$warn(MESSAGES.ILLEGAL_COMMENT)
@@ -208,6 +215,11 @@ export default class Index extends BaseComponent {
           this.$success("评论成功");
           this.updateComments(true);
         }
+        this.log('user', 'comment', {
+          isLegal,
+          realId: this.realId,
+          title: this.title
+        })
       })
       .catch(this.$error);
   }
@@ -218,7 +230,7 @@ export default class Index extends BaseComponent {
       this.comments = articleCommentList;
       this.hasLoadComments = true;
       if (updateStore) {
-        // 找到刚才发表的
+        // 找到刚才发表的，更新用户评论列表
         const oldIds = this.props.userStore.commentList.map(e => e.id);
         let newUserComment = null;
         for (const comment of articleCommentList) {
