@@ -39,18 +39,10 @@ export default class Index extends BaseComponent {
         {
           this.noticeList.map(notice => {
             const { _id, timestamp, content, title, level } = notice
-            const extra = level === 'info' ? '' : '重要'
             return (
               <AtCard key={_id}
                 note={formatTime(timestamp, true)}
                 title={title}
-                extra={extra}
-                extraStyle={{
-                  backgroundColor: 'red',
-                  color: 'white',
-                  padding: '0 10rpx',
-                  borderRadius: '10rpx'
-                }}
               >{content}</AtCard>
             )
           })
