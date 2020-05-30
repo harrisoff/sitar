@@ -19,9 +19,11 @@ import {
   setVersionCache,
   setDirtyCache,
   setBanned,
-  deleteBannedCache
+  deleteBannedCache,
+  garbageCollect
 } from "./utils/cache";
 import { MESSAGES } from "./constants/message";
+import { isActive } from './config'
 
 import BaseComponent from "./components/Base.jsx";
 
@@ -42,6 +44,11 @@ class App extends BaseComponent {
     Taro.cloud.init({
       env: CLOUD_ENV
     });
+
+    // 删除傻逼审核员的本地缓存
+    if (!isActive) {
+      garbageCollect(true)
+    }
 
     const { cacheStore, userStore } = store;
 
@@ -136,7 +143,7 @@ class App extends BaseComponent {
       this.$error(err);
     }
   }
-  componentWillUnmount() {}
+  componentWillUnmount() { }
   componentDidShow() {
     console.log("[app] did show");
   }
@@ -145,7 +152,7 @@ class App extends BaseComponent {
     this.upload();
     console.log("[app] did hide");
   }
-  componentDidCatchError() {}
+  componentDidCatchError() { }
 
   config = {
     pages: [

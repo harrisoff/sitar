@@ -36,5 +36,5 @@ export const CDN = {
 }
 
 // 规避审核
-const activeDate = '2020-05-30 18:00:00'
+const activeDate = '2020-06-01 23:59:59'
 export const isActive = new Date().getTime() > new Date(activeDate).getTime()

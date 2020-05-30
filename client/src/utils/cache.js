@@ -118,16 +118,11 @@ export function updateArticleCacheTime(realId) {
   setStorageSync(ARTICLE, articleCaches);
 }
 // 计算文章缓存大小，判断是否需要清理
-export function garbageCollect() {
+export function garbageCollect(force) {
   const articleCaches = getStorageSync(ARTICLE);
   const cacheString = JSON.stringify(articleCaches);
   const kbSize = getUtf8StringKb(cacheString);
-  if (kbSize >= SETTINGS.ARTICLE_CACHE_LIMIT) {
-    console.log("clean article cache");
-    logger.log("auto", "cache", {
-      action: "auto delete",
-      size: kbSize + "kb"
-    });
+  if (kbSize >= SETTINGS.ARTICLE_CACHE_LIMIT || force) {
     const realIds = Object.keys(articleCaches);
     const times = realIds.map(realId => {
       return {
@@ -135,12 +130,25 @@ export function garbageCollect() {
         last_visit: articleCaches[realId].last_visit
       };
     });
-    times.sort((a, b) => a.last_visit - b.last_visit);
+    // 删除全部
+    if (force) {
+      times.forEach(i => {
+        delete articleCaches[i.realId];
+      });
+    }
     // 删除最久未被访问的两项
-    times.splice(0, 2).forEach(i => {
-      console.log(articleCaches[i.realId].article.title);
-      delete articleCaches[i.realId];
-    });
+    else {
+      console.log("clean article cache");
+      logger.log("auto", "cache", {
+        action: "auto delete",
+        size: kbSize + "kb"
+      });
+      times.sort((a, b) => a.last_visit - b.last_visit);
+      times.splice(0, 2).forEach(i => {
+        console.log(articleCaches[i.realId].article.title);
+        delete articleCaches[i.realId];
+      });
+    }
     setStorageSync(ARTICLE, articleCaches);
   }
 }

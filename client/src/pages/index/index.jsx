@@ -145,11 +145,6 @@ export default class Index extends BaseComponent {
       type: "article",
       iconInfo: { value: "align-left" },
       value: "随机文章"
-    },
-    {
-      type: "image",
-      iconInfo: { value: "image" },
-      value: "随机图片"
     }
   ];
   randomItems = isActive ? this.randomItemsFull : this.randomItemsForAudit;
