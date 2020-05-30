@@ -290,6 +290,8 @@ function getRandomArticle(event) {
       .aggregate()
       .match({
         show: true,
+        // 临时规避审核
+        book_title: _.in(['', '游记', '知识点'])
       })
       .sample({
         size: 1,

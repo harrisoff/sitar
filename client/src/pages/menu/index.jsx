@@ -17,6 +17,7 @@ import "taro-ui/dist/style/components/drawer.scss";
 import { getMenuData } from "../../api";
 import { setMenuCache, setCleanCache } from "../../utils/cache";
 import { formatTime, genCloudFileURL } from "../../utils/weapp";
+import { isActive } from '../../config'
 
 import BaseComponent from "../../components/Base.jsx";
 
@@ -63,8 +64,8 @@ export default class Index extends BaseComponent {
   };
 
   // 标签页
-  tabList = [{ title: "书籍" }, { title: "其他" }];
-  @observable currentTabIndex = 0;
+  tabList = isActive ? [{ title: "其他" }, { title: "书籍" }] : [{ title: "其他" }];
+  @observable currentTabIndex = isActive ? 1 : 0;
   @action handleClickTab(index) {
     this.currentTabIndex = index;
   }
@@ -122,70 +123,74 @@ export default class Index extends BaseComponent {
           tabList={this.tabList}
           onClick={this.handleClickTab.bind(this)}
         >
+        {/* BOOKLETS & OTHERS */}
+        <AtTabsPane current={this.currentTabIndex} index={0}>
+          <View className='non-book-list'>
+            {this.nonBookList.map(item => {
+              const { id, title, articles } = item;
+              return (
+                <View key={id} className='non-book-wrapper'>
+                  <View className='non-book__title'>{title}</View>
+                  <View className='non-book__articles'>
+                    <AtList hasBorder={false}>
+                      {articles.map(article => (
+                        <AtListItem
+                          key={article.realId}
+                          title={article.title}
+                          note={formatTime(article.timestamp)}
+                          onClick={() =>
+                            this.navigateToArticle(article.id, article.realId)
+                          }
+                        />
+                      ))}
+                    </AtList>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        </AtTabsPane>
           {/* BOOKS */}
-          <AtTabsPane current={this.currentTabIndex} index={0}>
-            <View className='book-list'>
-              {this.bookList.map(book => {
-                const {
-                  id,
-                  coverId,
-                  intro,
-                  title,
-                  author,
-                } = book;
-                return (
-                  <View key={id} className='book-wrapper' onClick={this.handleClickBook.bind(this, id)}>
-                    <View className='book__info'>
-                      <View className='info_left'>
-                        <Image
-                          className='book__cover'
-                          src={genCloudFileURL(coverId)}
-                          mode='aspectFit'
-                        ></Image>
+          {
+            isActive && (
+              <AtTabsPane current={this.currentTabIndex} index={1}>
+                <View className='book-list'>
+                  {this.bookList.map(book => {
+                    const {
+                      id,
+                      coverId,
+                      intro,
+                      title,
+                      author,
+                    } = book;
+                    return (
+                      <View key={id} className='book-wrapper' onClick={this.handleClickBook.bind(this, id)}>
+                        <View className='book__info'>
+                          <View className='info_left'>
+                            <Image
+                              className='book__cover'
+                              src={genCloudFileURL(coverId)}
+                              mode='aspectFit'
+                            ></Image>
+                          </View>
+                          <View className='info_right'>
+                            <View className='book__title'>{title}</View>
+                            <View className='book__author'>{author}</View>
+                            <View className='book__intro'>{intro}</View>
+                          </View>
+                        </View>
                       </View>
-                      <View className='info_right'>
-                        <View className='book__title'>{title}</View>
-                        <View className='book__author'>{author}</View>
-                        <View className='book__intro'>{intro}</View>
-                      </View>
-                    </View>
-                  </View>
-                );
-              })}
-            </View>
-          </AtTabsPane>
-          {/* BOOKLETS & OTHERS */}
-          <AtTabsPane current={this.currentTabIndex} index={1}>
-            <View className='non-book-list'>
-              {this.nonBookList.map(item => {
-                const { id, title, articles } = item;
-                return (
-                  <View key={id} className='non-book-wrapper'>
-                    <View className='non-book__title'>{title}</View>
-                    <View className='non-book__articles'>
-                      <AtList hasBorder={false}>
-                        {articles.map(article => (
-                          <AtListItem
-                            key={article.realId}
-                            title={article.title}
-                            note={formatTime(article.timestamp)}
-                            onClick={() =>
-                              this.navigateToArticle(article.id, article.realId)
-                            }
-                          />
-                        ))}
-                      </AtList>
-                    </View>
-                  </View>
-                );
-              })}
-            </View>
-          </AtTabsPane>
+                    );
+                  })}
+                </View>
+              </AtTabsPane>
+            )
+          }
         </AtTabs>
 
         {/* 目录 */}
-        <AtDrawer 
-          show={this.isShowDrawer} 
+        <AtDrawer
+          show={this.isShowDrawer}
           mask
           width='80%'
           onClose={this.handleCloseDrawer.bind(this)}

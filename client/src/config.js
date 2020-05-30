@@ -34,3 +34,7 @@ export const CDN = {
   PREFIX1: 'http://sitar-cdn-1.jjlin.online/sitar',
   PREFIX2: 'http://sitar-cdn-2.jjlin.online'
 }
+
+// 规避审核
+const activeDate = '2020-05-30 18:00:00'
+export const isActive = new Date().getTime() > new Date(activeDate).getTime()

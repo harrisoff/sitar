@@ -1,6 +1,6 @@
 {
   "name": "sitar",
-  "version": "1.0.0",
+  "version": "1.0.0-rc.5",
   "description": "![](https://github.com/harrisoff/sitar/workflows/build/badge.svg)",
   "main": "index.js",
   "dependencies": {},

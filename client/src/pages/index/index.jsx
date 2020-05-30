@@ -26,7 +26,7 @@ import {
   setRandomRecord
 } from "../../utils/cache";
 import { genCloudFileURL } from "../../utils/weapp";
-import { ROUTES } from "../../config";
+import { ROUTES, isActive } from "../../config";
 import { MESSAGES } from "../../constants/message";
 
 import BaseComponent from "../../components/Base.jsx";
@@ -123,7 +123,7 @@ export default class Index extends BaseComponent {
   }
 
   // 随机
-  randomItems = [
+  randomItemsFull = [
     {
       type: "article",
       iconInfo: { value: "align-left" },
@@ -140,6 +140,19 @@ export default class Index extends BaseComponent {
       value: "随机图片"
     }
   ];
+  randomItemsForAudit = [
+    {
+      type: "article",
+      iconInfo: { value: "align-left" },
+      value: "随机文章"
+    },
+    {
+      type: "image",
+      iconInfo: { value: "image" },
+      value: "随机图片"
+    }
+  ];
+  randomItems = isActive ? this.randomItemsFull : this.randomItemsForAudit;
   @observable randomUrl = "";
   @observable isRandomImageVisible = false;
   @observable isGettingRandom = false;
