@@ -86,7 +86,7 @@ class App extends BaseComponent {
       // FIXME: 这里不会阻塞首页渲染
       // 当用户解封时，login 和 getHomepageData 基本同时发送
       // 后者会因为 localStorage 的 banned 仍然为 true 而请求失败
-      const banned = await login(params);
+      const { banned } = await login(params);
       this.log("user", "login", {
         banned,
         authSetting,

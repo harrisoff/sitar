@@ -47,7 +47,7 @@ function login(event) {
         // 1. 初始化用户，相应的表中添加一条记录
         await createUser(openId);
       }
-      resolve(banned);
+      resolve({ banned });
     } catch (err) {
       reject(err);
     }
@@ -415,7 +415,7 @@ function getMenuData(event) {
       .then(({ list }) => {
         const books = [];
         const booklets = [];
-        const otherArticles = [];
+        const others = [];
 
         list.forEach((article) => {
           const {
@@ -466,24 +466,26 @@ function getMenuData(event) {
                 if (b) {
                   insert(b.articles, a);
                 } else {
-                  booklets.push({
-                    id: _id,
-                    title,
-                    articles: [a],
-                  });
+                  if (title === '旅游攻略') {
+                    booklets.push({
+                      id: _id,
+                      title,
+                      articles: [a],
+                    });
+                  }
                 }
               }
             }
             // 未分类
             else {
-              insert(otherArticles, a);
+              insert(others, a);
             }
           }
         });
         resolve({
-          books,
+          books: [],
           booklets,
-          others: otherArticles,
+          others: [],
         });
       })
       .catch(reject);
