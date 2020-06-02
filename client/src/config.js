@@ -39,5 +39,5 @@ export const CDN = {
 
 // 规避审核
 // iOS 线上环境不识别 YYYY-MM-DD 写法，调试模式没问题
-const activeDate = '2020-06-05 12:00:00'
+const activeDate = '2020-06-05 00:00:01'
 export const isActive = new Date().getTime() > dayjs(activeDate).valueOf()
