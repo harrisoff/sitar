@@ -22,7 +22,7 @@ export default class Index extends BaseComponent {
           <Image src={`${CDN.PREFIX1}/activity-ringo.jpg`} mode='aspectFit' />
         </View>
         <View style='padding: 10rpx 20rpx'>
-          其实三个页面就够了。
+          其实只需要三个页面。
         </View>
         <View style='padding: 10rpx 20rpx'>
           但是一家人就是要整整齐齐的。
