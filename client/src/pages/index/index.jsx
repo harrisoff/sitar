@@ -178,12 +178,15 @@ export default class Index extends BaseComponent {
         });
     } else if (type === "image") {
       getRandomImage()
-        .then(res => {
-          this.randomTitle = "";
-          this.randomUrl = res.url;
-          this.isRandomImageVisible = true;
+        .then(({ url, media_id, errMsg }) => {
           setRandomRecord(type);
-          this.log("user", "random", { type, media_id: res.media_id });
+          if (errMsg) {
+            return this.$warn(errMsg);
+          }
+          this.randomTitle = "";
+          this.randomUrl = url;
+          this.isRandomImageVisible = true;
+          this.log("user", "random", { type, media_id: media_id });
         })
         .catch(this.$error)
         .then(_ => {
