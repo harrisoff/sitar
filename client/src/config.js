@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 // local storage
 export const CACHE = {
   VERSION: "cache-version",
@@ -36,5 +38,6 @@ export const CDN = {
 }
 
 // 规避审核
-const activeDate = '2020-06-01 23:59:59'
-export const isActive = new Date().getTime() > new Date(activeDate).getTime()
+// iOS 线上环境不识别 YYYY-MM-DD 写法，调试模式没问题
+const activeDate = '2020-06-05 12:00:00'
+export const isActive = new Date().getTime() > dayjs(activeDate).valueOf()
