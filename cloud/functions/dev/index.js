@@ -290,8 +290,6 @@ function getRandomArticle(event) {
       .aggregate()
       .match({
         show: true,
-        // 临时规避审核
-        book_title: _.in(['旅游攻略'])
       })
       .sample({
         size: 1,
@@ -466,13 +464,11 @@ function getMenuData(event) {
                 if (b) {
                   insert(b.articles, a);
                 } else {
-                  if (title === '旅游攻略') {
-                    booklets.push({
-                      id: _id,
-                      title,
-                      articles: [a],
-                    });
-                  }
+                  booklets.push({
+                    id: _id,
+                    title,
+                    articles: [a],
+                  });
                 }
               }
             }
@@ -483,9 +479,9 @@ function getMenuData(event) {
           }
         });
         resolve({
-          books: [],
+          books,
           booklets,
-          others: [],
+          others,
         });
       })
       .catch(reject);
