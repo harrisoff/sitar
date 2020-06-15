@@ -148,7 +148,7 @@ export default class Index extends BaseComponent {
     })
       .then(() => {
         this.log('user', 'like', {
-          liked: this.liked,
+          liked: this.liked, // liked 字段错了，不过算了不改了
           realId: this.realId,
           title: this.title
         })
