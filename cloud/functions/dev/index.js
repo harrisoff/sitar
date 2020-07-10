@@ -20,7 +20,7 @@ const cdnPrefixes = [
   "http://sitar-cdn-1.jjlin.online/sitar",
   "http://sitar-cdn-2.jjlin.online"
 ]
-const ONE_DAY = 24 * 60 * 60 * 1000;
+const ONE_DAY = 20 * 60 * 60 * 1000;
 
 // TIPS:
 // __dirname 是 /var/usr
