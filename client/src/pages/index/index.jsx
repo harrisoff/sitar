@@ -211,6 +211,7 @@ export default class Index extends BaseComponent {
           }
           const { _id, cover, album, cloudId, cdnUrl, artist } = song;
           // 原 title 像这样：B4. Sun King
+          // FIXME: 见云函数 getRandomSong
           const title = song.title.split(". ").pop();
           const url = cdnUrl ? encodeURI(cdnUrl) : genCloudFileURL(cloudId);
           const coverImgUrl = genCloudFileURL(cover);

@@ -20,7 +20,7 @@ const cdnPrefixes = [
   "http://sitar-cdn-1.jjlin.online/sitar",
   "http://sitar-cdn-2.jjlin.online"
 ]
-const ONE_DAY = 24 * 60 * 60 * 1000;
+const ONE_DAY = 20 * 60 * 60 * 1000;
 
 // TIPS:
 // __dirname 是 /var/usr
@@ -358,9 +358,14 @@ function getRandomSong(event) {
             const song = list[0];
             const { _id, albums, cloud_id, title } = song;
             const album = albums[0];
+            // FIXME: 小程序端处理 title 不当导致歌曲名中有 . 的 title 显示不全
+            // 按道理说应该改小程序，但是还要审核太麻烦了。。
+            const titleArr = title.split('. ')
+            const songSide = titleArr.shift()
+            const songTitle = `${songSide}. ${titleArr.join('.')}`
             const result = {
               _id,
-              title,
+              title: songTitle,
               album: album.title,
               cover: album.cover_id,
               artist: album.artist,
