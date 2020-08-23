@@ -2,6 +2,28 @@
 
 ![](https://github.com/harrisoff/sitar/workflows/build/badge.svg)
 
+同名公众号【西塔尔之声】的小程序版本。
+
+【西塔尔之声】由不愿透露姓名的阿思翠马同志经营，主要内容为用爱发电翻译的[披头士](https://en.wikipedia.org/wiki/The_Beatles)相关书籍，目前已完成的有：
+- [Wonderful Tonight](https://en.wikipedia.org/wiki/Wonderful_Today)
+- [Postcards from the Boys](https://en.wikipedia.org/wiki/Postcards_from_the_Boys)
+- [I Me Mine](https://en.wikipedia.org/wiki/I,_Me,_Mine)
+- [The Beatles Anthology](https://en.wikipedia.org/wiki/The_Beatles_Anthology_(book))
+
+除此之外，还有游记等内容。
+
+欢迎 GitHub 上的广大披头曼尼亚关注。
+
+公众号
+
+![西塔尔之声公众号](https://harrisoff.github.io/static/img/sitar-public-qrcode.jpg)
+
+小程序
+
+![西塔尔之声小程序](https://harrisoff.github.io/static/img/sitar-mini-qrcode.jpg)
+
+（第一次写 react，轻喷
+
 ## TODO
 
 - [ ] 修改 login 接口，告诉前端是否新用户
