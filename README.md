@@ -2,7 +2,7 @@
 
 ![](https://github.com/harrisoff/sitar/workflows/build/badge.svg)
 
-同名公众号【西塔尔之声】的小程序版本。
+同名公众号【西塔尔之声】的小程序版本。另有配套的[后台管理系统](https://github.com/harrisoff/sitar-admin)。
 
 【西塔尔之声】由不愿透露姓名的阿思翠马同志经营，主要内容为用爱发电翻译的[披头士](https://en.wikipedia.org/wiki/The_Beatles)相关书籍，目前已完成的有：
 - [Wonderful Tonight](https://en.wikipedia.org/wiki/Wonderful_Today)
